@@ -1,15 +1,24 @@
+html{
+  height:100%;
+}
 body{
   margin:0;
   min-height:100vh;
+  min-height:100svh;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
   gap:1.6rem;
   position:relative;
-  overflow:hidden;
+  overflow-x:hidden;
+  overflow-y:auto;
+  padding:5.5rem 1rem 2rem;
+  box-sizing:border-box;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  background: radial-gradient(circle at 50% 40%, #427f9d, #0c083b 70%);}
+  background: radial-gradient(circle at 50% 40%, #427f9d, #0c083b 70%);
+  background-attachment:fixed;
+}
 
 body::before{
   content:"";
@@ -24,6 +33,59 @@ body::before{
   z-index:1;
 }
 
+/* ============================================
+   HEADER SEKOLAH (index.html)
+   ============================================ */
+.school-header{
+  position:absolute;
+  top:.9rem;
+  left:1rem;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+}
+.school-logo-slot{
+  flex-shrink:0;
+  width:2.4rem;
+  height:2.4rem;
+  border-radius:50%;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.35);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.school-logo-slot img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+.school-logo-placeholder{
+  font-size:.55rem;
+  font-weight:700;
+  letter-spacing:.05em;
+  color:#dce3ff;
+  opacity:.7;
+}
+.school-text{
+  display:flex;
+  flex-direction:column;
+  line-height:1.2;
+}
+.school-name{
+  font-size:.68rem;
+  font-weight:700;
+  letter-spacing:.03em;
+  color:#fff;
+  text-shadow:0 1px 4px rgba(0,0,0,.5);
+}
+.school-region{
+  font-size:.6rem;
+  color:#b9c4e0;
+}
+
 .hero{
   width:100%;
   max-width:700px;
@@ -31,24 +93,18 @@ body::before{
   padding:0 1rem;
   margin:0 auto;
 }
-.swoosh{
-  width:min(480px,85vw);
-  height:auto;
-  display:block;
-  margin:0 auto .2rem;
-  filter:drop-shadow(0 0 8px rgba(140, 255, 217, 0.6));
-}
 .title{
   margin:0;
   font-family:'Cinzel Decorative','Cinzel',Georgia,serif;
   font-size:clamp(2rem,6.5vw,3.6rem);
   font-weight:700;
   letter-spacing:.03em;
-  background:linear-gradient(90deg,#77ca2a,#4972be,#edc749);
+  background:linear-gradient(90deg,#9be85c,#f4d64d,#ffe07a);
   -webkit-background-clip:text;
   background-clip:text;
   color:transparent;
-  text-shadow:0 0 30px rgba(244, 214, 82, 0.4);
+  -webkit-text-stroke:.5px rgba(0,0,0,.45);
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.65)) drop-shadow(0 0 22px rgba(244,214,82,.45));
 }
 .subtitle{
   font-family:'Cinzel','Cinzel Decorative',Georgia,serif;
@@ -68,18 +124,27 @@ body::before{
 .menu{
   display:flex;
   flex-direction:column;
+  align-items:stretch;
   gap:.9rem;
-  width:min(190px, 26%);
+  width:100%;
+  max-width:260px;
 }
 
 .menu-btn{
-  all:unset; cursor:pointer; display:flex; align-items:center; gap:.6rem;
-  padding:.28rem .7rem .28rem .28rem; border-radius:999px;
+  all:unset;
+  box-sizing:border-box;
+  width:100%;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  padding:.4rem .9rem .4rem .35rem;
+  border-radius:999px;
   box-shadow:0 4px 14px rgba(0,0,0,.35);
   transition:transform .2s ease, box-shadow .2s ease;
 }
 .menu-btn:hover{
-  transform:scale(1.08);
+  transform:scale(1.06);
   box-shadow:0 6px 20px rgba(0,0,0,.5);
 }
 .menu-btn:active{
@@ -88,32 +153,544 @@ body::before{
 }
 
 .menu-btn .icon-circle{
-  width:1.4rem; height:1.4rem; border-radius:50%; background:#fff;
-  display:flex; align-items:center; justify-content:center; font-size:.7rem;
+  flex-shrink:0;
+  width:1.5rem; height:1.5rem; border-radius:50%; background:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem;
 }
 
-.menu-btn .label{ font-size:.66rem; font-weight:700; color:#fff; }
+.menu-btn .label{
+  font-size:.72rem;
+  font-weight:700;
+  color:#fff;
+  text-decoration:none;
+  white-space:nowrap;
+}
 
-/* Mulai Misi — ungu */
+/* Mulai Misi — cyan-teal */
 .btn-mulai-misi{ background:linear-gradient(90deg,#3dbef5,#32d2aa); }
-.btn-mulai-misi .icon-circle{ color:#6a3df5; }
+.btn-mulai-misi .icon-circle{ color:#1a9fc9; }
 
 /* Peta Eksplorasi — biru */
-.btn-peta-eksplorasi{ background:linear-gradient(90deg,#0d9d47,#329c82); }
+.btn-peta-eksplorasi{ background:linear-gradient(90deg,#2f7ce8,#4a9cf5); }
 .btn-peta-eksplorasi .icon-circle{ color:#2f7ce8; }
 
-/* Sangiran — hijau */
-.btn-sangiran{ background:linear-gradient(90deg,#90ca25,#41ca7e); }
-.btn-sangiran .icon-circle{ color:#1e9e63; }
+/* Jalur Sutra — emas/pasir (nuansa gurun & karavan) */
+.btn-jalur-sutra{ background:linear-gradient(90deg,#c98a2b,#e0b24a); }
+.btn-jalur-sutra .icon-circle{ color:#c98a2b; }
 
-/* Jalur Rempah — oranye */
-.btn-jalur-rempah{ background:linear-gradient(90deg,#f3c327,#9d6017); }
-.btn-jalur-rempah .icon-circle{ color:#e07a2b; }
+/* Jalur Migrasi — hijau (nuansa perjalanan lintas benua) */
+.btn-jalur-migrasi{ background:linear-gradient(90deg,#3f8f4f,#6fbf73); }
+.btn-jalur-migrasi .icon-circle{ color:#3f8f4f; }
 
 /* Tantangan Masa Kini — pink/merah */
-.btn-tantangan-masa-kini{ background:linear-gradient(90deg,#da770e,#9e4005); }
+.btn-tantangan-masa-kini{ background:linear-gradient(90deg,#e0435f,#ef6f8c); }
 .btn-tantangan-masa-kini .icon-circle{ color:#e0435f; }
 
 /* Galeri Karya — ungu magenta */
-.btn-galeri-karya{ background:linear-gradient(90deg,#873d0e,#60230b); }
+.btn-galeri-karya{ background:linear-gradient(90deg,#8b3fd6,#b25df0); }
 .btn-galeri-karya .icon-circle{ color:#8b3fd6; }
+
+/* ============================================
+   HALAMAN PETA EKSPLORASI (peta.html)
+   ============================================ */
+body.page-peta{
+  display:block;
+  overflow-y:auto;
+  padding:1.6rem 1rem 3rem;
+}
+
+.back-link{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  color:#fff;
+  text-decoration:none;
+  font-size:.78rem;
+  font-weight:700;
+  margin-bottom:1.2rem;
+  padding:.5rem 1rem .5rem .7rem;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.18);
+  backdrop-filter:blur(6px);
+  transition:transform .15s ease, background .15s ease, box-shadow .15s ease;
+}
+.back-link .back-icon{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:1.4rem;
+  height:1.4rem;
+  border-radius:50%;
+  background:rgba(255,255,255,.15);
+  font-size:.8rem;
+  transition:transform .15s ease;
+}
+.back-link:hover{
+  background:rgba(255,255,255,.16);
+  box-shadow:0 4px 14px rgba(0,0,0,.3);
+  transform:translateX(-2px);
+}
+.back-link:hover .back-icon{ transform:translateX(-2px); }
+.back-link:active{ transform:scale(.96); }
+
+.page-header{
+  text-align:center;
+  max-width:600px;
+  margin:0 auto 1.4rem;
+}
+.page-title{
+  font-family:'Cinzel Decorative','Cinzel',Georgia,serif;
+  font-size:clamp(1.6rem,4.5vw,2.4rem);
+  font-weight:700;
+  margin:0;
+  background:linear-gradient(90deg,#9be85c,#f4d64d,#ffe07a);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  -webkit-text-stroke:.5px rgba(0,0,0,.45);
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.65)) drop-shadow(0 0 18px rgba(244,214,82,.4));
+}
+.page-subtitle{
+  font-size:.9rem;
+  color:#b9c4e0;
+  margin-top:.4rem;
+}
+
+.map-frame{
+  max-width:900px;
+  margin:0 auto 1.6rem;
+  aspect-ratio:16/9;
+  border-radius:14px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.04);
+}
+.map-placeholder{
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:.5rem;
+  color:#8b95bd;
+  font-size:.85rem;
+  text-align:center;
+  padding:1rem;
+}
+
+.location-cards{
+  max-width:900px;
+  margin:0 auto 2rem;
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));
+  gap:1rem;
+}
+.card{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+.card-thumb{
+  height:110px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:2.4rem;
+}
+.thumb-jalur-sutra{ background:linear-gradient(135deg,#c98a2b,#3a2a12); }
+.thumb-jalur-migrasi{ background:linear-gradient(135deg,#3f8f4f,#12291a); }
+.card-body{
+  padding:.9rem 1rem 1.1rem;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+.card-body h3{
+  margin:0 0 .3rem;
+  font-family:'Cinzel','Cinzel Decorative',Georgia,serif;
+  font-size:1rem;
+  color:#fff;
+}
+.card-body p{
+  margin:0 0 .8rem;
+  font-size:.8rem;
+  color:#b9c4e0;
+  flex:1;
+}
+.card-btn{
+  all:unset;
+  box-sizing:border-box;
+  display:block;
+  width:100%;
+  cursor:pointer;
+  text-align:center;
+  padding:.5rem;
+  border-radius:999px;
+  font-size:.78rem;
+  font-weight:700;
+  color:#fff;
+  transition:transform .15s ease;
+}
+.card-btn:hover{ transform:scale(1.04); }
+.btn-jalur-sutra-card{ background:linear-gradient(90deg,#c98a2b,#e0b24a); }
+.btn-jalur-migrasi-card{ background:linear-gradient(90deg,#3f8f4f,#6fbf73); }
+
+.bottom-nav{
+  max-width:500px;
+  margin:0 auto;
+  display:flex;
+  justify-content:space-between;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;
+  padding:.7rem .5rem;
+}
+.nav-item{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:.25rem;
+  font-size:1.1rem;
+  color:#8b95bd;
+}
+.nav-item span{ font-size:.62rem; font-weight:600; }
+.nav-item.active{ color:#dc9d27; }
+/* ============================================
+   HALAMAN LOKASI / VIRTUAL TOUR (jalur-sutra.html, jalur-migrasi.html)
+   ============================================ */
+.tour-frame{
+  max-width:900px;
+  margin:0 auto 1.2rem;
+  aspect-ratio:16/9;
+  border-radius:14px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.04);
+  position:relative;
+}
+.tour-placeholder{
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:.5rem;
+  color:#8b95bd;
+  font-size:.85rem;
+  text-align:center;
+  padding:1rem;
+}
+
+.thumb-strip{
+  max-width:900px;
+  margin:0 auto 1.6rem;
+  display:flex;
+  gap:.6rem;
+  overflow-x:auto;
+  padding-bottom:.3rem;
+}
+.thumb-chip{
+  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:.3rem;
+  padding:.5rem .8rem;
+  border-radius:10px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.12);
+  color:#b9c4e0;
+  font-size:.68rem;
+  font-weight:600;
+}
+.thumb-chip .thumb-icon{ font-size:1.3rem; }
+
+.hotspot-list{
+  max-width:900px;
+  margin:0 auto 1.6rem;
+  display:flex;
+  flex-wrap:wrap;
+  gap:.7rem;
+  justify-content:center;
+}
+.hotspot-btn{
+  all:unset;
+  box-sizing:border-box;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  padding:.55rem 1rem .55rem .55rem;
+  border-radius:999px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.16);
+  color:#fff;
+  font-size:.74rem;
+  font-weight:700;
+  transition:transform .15s ease, background .15s ease;
+}
+.hotspot-btn:hover{ transform:scale(1.04); }
+.hotspot-btn.active{
+  background:linear-gradient(90deg,#2f7ce8,#4a9cf5);
+  border-color:transparent;
+}
+.hotspot-num{
+  flex-shrink:0;
+  width:1.6rem; height:1.6rem;
+  border-radius:50%;
+  background:rgba(255,255,255,.15);
+  display:flex; align-items:center; justify-content:center;
+  font-size:.68rem;
+}
+
+.hotspot-card{
+  max-width:560px;
+  margin:0 auto 1rem;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:16px;
+  padding:1.1rem 1.2rem 1.3rem;
+  display:none;
+}
+.hotspot-card.active{ display:block; }
+.hotspot-card-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.6rem;
+  margin-bottom:.5rem;
+}
+.hotspot-card h3{
+  margin:0;
+  font-family:'Cinzel','Cinzel Decorative',Georgia,serif;
+  font-size:1rem;
+  color:#fff;
+}
+.hotspot-card p{
+  margin:0 0 .8rem;
+  font-size:.82rem;
+  color:#c9d1ee;
+  line-height:1.5;
+}
+.solo-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:.3rem;
+  font-size:.62rem;
+  font-weight:700;
+  padding:.25rem .6rem;
+  border-radius:999px;
+  white-space:nowrap;
+}
+.solo-uni{ background:rgba(47,124,232,.18); color:#6fa8f5; }
+.solo-multi{ background:rgba(63,143,79,.2); color:#7fd18e; }
+.solo-relational{ background:rgba(201,138,43,.2); color:#e6b45c; }
+.solo-extended{ background:rgba(139,63,214,.2); color:#c497f5; }
+
+.hotspot-options{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.5rem;
+  margin-bottom:.8rem;
+}
+.hotspot-option{
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+  font-size:.76rem;
+  color:#dce3ff;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.12);
+  padding:.4rem .7rem;
+  border-radius:999px;
+  cursor:pointer;
+}
+
+.hotspot-input{
+  width:100%;
+  box-sizing:border-box;
+  min-height:70px;
+  resize:vertical;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:10px;
+  padding:.6rem .7rem;
+  color:#fff;
+  font-size:.8rem;
+  font-family:inherit;
+  margin-bottom:.7rem;
+}
+.hotspot-input::placeholder{ color:#8b95bd; }
+
+.hotspot-submit{
+  all:unset;
+  box-sizing:border-box;
+  display:block;
+  width:100%;
+  text-align:center;
+  cursor:pointer;
+  padding:.6rem;
+  border-radius:999px;
+  font-size:.8rem;
+  font-weight:700;
+  color:#fff;
+  background:linear-gradient(90deg,#2f7ce8,#4a9cf5);
+  transition:transform .15s ease;
+}
+.hotspot-submit:hover{ transform:scale(1.03); }
+
+/* ============================================
+   HALAMAN TANTANGAN MASA KINI (tantangan.html)
+   ============================================ */
+.challenge-card{
+  max-width:560px;
+  margin:0 auto 1.6rem;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:16px;
+  padding:1.2rem 1.3rem 1.4rem;
+  text-align:center;
+}
+.challenge-card h3{
+  margin:0 0 .5rem;
+  font-family:'Cinzel','Cinzel Decorative',Georgia,serif;
+  font-size:1.05rem;
+  color:#fff;
+}
+.challenge-card p{
+  margin:0 0 1rem;
+  font-size:.82rem;
+  color:#c9d1ee;
+  line-height:1.5;
+}
+
+.format-chips{
+  display:flex;
+  justify-content:center;
+  gap:.7rem;
+  margin-bottom:1.1rem;
+  flex-wrap:wrap;
+}
+.format-chip{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:.35rem;
+  padding:.7rem 1rem;
+  border-radius:12px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.14);
+  color:#dce3ff;
+  font-size:.7rem;
+  font-weight:600;
+  cursor:pointer;
+  transition:transform .15s ease, background .15s ease;
+  min-width:80px;
+}
+.format-chip .format-icon{ font-size:1.4rem; }
+.format-chip:hover{ transform:scale(1.05); }
+.format-chip.selected{
+  background:linear-gradient(180deg,rgba(139,63,214,.35),rgba(139,63,214,.15));
+  border-color:#b25df0;
+  color:#fff;
+}
+
+.upload-btn{
+  all:unset;
+  box-sizing:border-box;
+  display:block;
+  width:100%;
+  text-align:center;
+  cursor:pointer;
+  padding:.7rem;
+  border-radius:999px;
+  font-size:.85rem;
+  font-weight:700;
+  color:#fff;
+  background:linear-gradient(90deg,#8b3fd6,#b25df0);
+  transition:transform .15s ease;
+}
+.upload-btn:hover{ transform:scale(1.03); }
+
+/* ============================================
+   HALAMAN GALERI KARYA (galeri.html)
+   ============================================ */
+.gallery-tabs{
+  max-width:700px;
+  margin:0 auto 1.4rem;
+  display:flex;
+  justify-content:center;
+  gap:.5rem;
+  flex-wrap:wrap;
+}
+.gallery-tab{
+  all:unset;
+  box-sizing:border-box;
+  cursor:pointer;
+  padding:.4rem 1rem;
+  border-radius:999px;
+  font-size:.72rem;
+  font-weight:700;
+  color:#b9c4e0;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.12);
+  transition:background .15s ease, color .15s ease;
+}
+.gallery-tab.active{
+  background:linear-gradient(90deg,#8b3fd6,#b25df0);
+  color:#fff;
+  border-color:transparent;
+}
+
+.gallery-grid{
+  max-width:900px;
+  margin:0 auto 2rem;
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+  gap:1rem;
+}
+.gallery-card{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+.gallery-card[data-type]{ display:flex; }
+.gallery-card.hidden{ display:none; }
+.gallery-thumb{
+  height:110px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:2rem;
+  background:linear-gradient(135deg,#3a2a64,#12122d);
+  position:relative;
+}
+.gallery-thumb .play-icon{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.6rem;
+}
+.gallery-body{ padding:.8rem .9rem 1rem; }
+.gallery-body h4{
+  margin:0 0 .25rem;
+  font-size:.85rem;
+  color:#fff;
+  font-family:'Cinzel','Cinzel Decorative',Georgia,serif;
+}
+.gallery-meta{
+  font-size:.68rem;
+  color:#8b95bd;
+  display:flex;
+  justify-content:space-between;
+}

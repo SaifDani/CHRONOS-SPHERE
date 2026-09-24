@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHRONOS-SPHERE — Tantangan Masa Kini</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+</head>
+<body class="page-peta">
+
+  <a href="index.html" class="back-link"><span class="back-icon">&larr;</span> Kembali ke Beranda</a>
+
+  <div class="page-header">
+    <h1 class="page-title">Tantangan Masa Kini</h1>
+    <p class="page-subtitle">Terapkan hasil belajarmu untuk menyelesaikan masalah nyata di lingkungan sekitar</p>
+  </div>
+
+  <div class="challenge-card">
+    <h3>Apa Solusi Kita?</h3>
+    <p>Buatlah ide atau solusi kreatif untuk mengatasi permasalahan lingkungan di Tulungagung berdasarkan pembelajaran dari masa lalu.</p>
+
+    <div class="format-chips">
+      <div class="format-chip selected" data-format="video">
+        <span class="format-icon">🎬</span>Video
+      </div>
+      <div class="format-chip" data-format="infografis">
+        <span class="format-icon">🖼️</span>Infografis
+      </div>
+      <div class="format-chip" data-format="poster">
+        <span class="format-icon">🎨</span>Poster
+      </div>
+    </div>
+
+    <textarea class="hotspot-input" placeholder="Tulis ide/solusimu di sini sebelum mengunggah karya..."></textarea>
+    <button class="upload-btn">Unggah Karya</button>
+  </div>
+
+  <nav class="bottom-nav">
+    <div class="nav-item"><a href="peta.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">🗺️<span>Peta Interaktif</span></a></div>
+    <div class="nav-item">📖<span>Panduan</span></div>
+    <div class="nav-item">📊<span>Progres</span></div>
+    <div class="nav-item">⚙️<span>Pengaturan</span></div>
+  </nav>
+
+  <script>
+    document.querySelectorAll('.format-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.format-chip').forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+      });
+    });
+  </script>
+
+</body>
+</html>

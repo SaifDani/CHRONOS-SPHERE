@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHRONOS-SPHERE — Jalur Sutra</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+</head>
+<body class="page-peta">
+
+  <a href="peta.html" class="back-link"><span class="back-icon">&larr;</span> Kembali ke Peta</a>
+
+  <div class="page-header">
+    <h1 class="page-title">Jalur Sutra</h1>
+    <p class="page-subtitle">Menelusuri jejak perdagangan &amp; pertukaran budaya lintas peradaban</p>
+  </div>
+
+  <div class="tour-frame">
+    <!-- GANTI baris di bawah ini dengan iframe embed panorama 360° Google Earth kamu -->
+    <!--
+    <iframe src="LINK_EMBED_PANORAMA" width="100%" height="100%" style="border:0;" loading="lazy" allowfullscreen></iframe>
+    -->
+    <div class="tour-placeholder">
+      🐫<br>Tempel iframe embed panorama 360° Jalur Sutra di sini
+    </div>
+  </div>
+
+  <div class="thumb-strip">
+    <div class="thumb-chip"><span class="thumb-icon">🏛️</span>Area Situs</div>
+    <div class="thumb-chip"><span class="thumb-icon">🏺</span>Museum</div>
+    <div class="thumb-chip"><span class="thumb-icon">⛏️</span>Penggalian</div>
+    <div class="thumb-chip"><span class="thumb-icon">📜</span>Artefak</div>
+    <div class="thumb-chip"><span class="thumb-icon">🏜️</span>Pemandangan</div>
+  </div>
+
+  <div class="hotspot-list" id="hotspotList">
+    <button class="hotspot-btn active" data-target="hs1"><span class="hotspot-num">01</span>Temukan Bukti</button>
+    <button class="hotspot-btn" data-target="hs2"><span class="hotspot-num">02</span>Baca Ruang</button>
+    <button class="hotspot-btn" data-target="hs3"><span class="hotspot-num">03</span>Hubungkan</button>
+    <button class="hotspot-btn" data-target="hs4"><span class="hotspot-num">04</span>Uji Bukti</button>
+  </div>
+
+  <div class="hotspot-card active" id="hs1">
+    <div class="hotspot-card-head">
+      <h3>Temukan Bukti</h3>
+      <span class="solo-badge solo-uni">Unistructural</span>
+    </div>
+    <p>Apa bukti perdagangan yang kamu temukan di lokasi ini? Sebutkan satu bukti dan informasi yang dapat kamu peroleh darinya.</p>
+    <textarea class="hotspot-input" placeholder="Tulis jawabanmu di sini..."></textarea>
+    <button class="hotspot-submit">Kirim</button>
+  </div>
+
+  <div class="hotspot-card" id="hs2">
+    <div class="hotspot-card-head">
+      <h3>Baca Ruang</h3>
+      <span class="solo-badge solo-multi">Multistructural</span>
+    </div>
+    <p>Bagaimana kondisi geografis jalur ini dapat membantu kita memahami mengapa perdagangan &amp; pertukaran budaya berkembang di sepanjang rute ini?</p>
+    <textarea class="hotspot-input" placeholder="Tulis jawabanmu di sini..."></textarea>
+    <button class="hotspot-submit">Kirim</button>
+  </div>
+
+  <div class="hotspot-card" id="hs3">
+    <div class="hotspot-card-head">
+      <h3>Hubungkan</h3>
+      <span class="solo-badge solo-relational">Relational</span>
+    </div>
+    <p>Perhatikan posisi geografis, kebutuhan hidup, dan teknologi transportasi pada masa itu. Bagaimana ketiga unsur tersebut saling berhubungan dalam membentuk Jalur Sutra?</p>
+    <div class="hotspot-options">
+      <span class="hotspot-option">Geografis</span>
+      <span class="hotspot-option">Kebutuhan</span>
+      <span class="hotspot-option">Teknologi</span>
+    </div>
+    <textarea class="hotspot-input" placeholder="Tulis jawabanmu di sini..."></textarea>
+    <button class="hotspot-submit">Kirim</button>
+  </div>
+
+  <div class="hotspot-card" id="hs4">
+    <div class="hotspot-card-head">
+      <h3>Uji Bukti</h3>
+      <span class="solo-badge solo-extended">Extended Abstract</span>
+    </div>
+    <p>Jangan langsung percaya! Pilih bukti yang paling kuat untuk mendukung kesimpulanmu tentang pentingnya Jalur Sutra. Apa alasannya?</p>
+    <div class="hotspot-options">
+      <label class="hotspot-option"><input type="radio" name="bukti-sutra"> Bukti A</label>
+      <label class="hotspot-option"><input type="radio" name="bukti-sutra"> Bukti B</label>
+      <label class="hotspot-option"><input type="radio" name="bukti-sutra"> Bukti C</label>
+    </div>
+    <textarea class="hotspot-input" placeholder="Tulis alasanmu di sini..."></textarea>
+    <button class="hotspot-submit">Kirim</button>
+  </div>
+
+  <nav class="bottom-nav">
+    <div class="nav-item"><a href="peta.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">🗺️<span>Peta Interaktif</span></a></div>
+    <div class="nav-item">📖<span>Panduan</span></div>
+    <div class="nav-item">📊<span>Progres</span></div>
+    <div class="nav-item">⚙️<span>Pengaturan</span></div>
+  </nav>
+
+  <script>
+    const buttons = document.querySelectorAll('.hotspot-btn');
+    const cards = document.querySelectorAll('.hotspot-card');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        cards.forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.target).classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+</html>

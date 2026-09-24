@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHRONOS-SPHERE — Galeri Karya</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+</head>
+<body class="page-peta">
+
+  <a href="index.html" class="back-link"><span class="back-icon">&larr;</span> Kembali ke Beranda</a>
+
+  <div class="page-header">
+    <h1 class="page-title">Galeri Karya</h1>
+    <p class="page-subtitle">Menampilkan hasil karya autentik murid dalam bentuk video, infografis, atau poster</p>
+  </div>
+
+  <div class="gallery-tabs">
+    <button class="gallery-tab active" data-type="semua">Semua</button>
+    <button class="gallery-tab" data-type="video">Video</button>
+    <button class="gallery-tab" data-type="infografis">Infografis</button>
+    <button class="gallery-tab" data-type="poster">Poster</button>
+  </div>
+
+  <div class="gallery-grid" id="galleryGrid">
+    <div class="gallery-card" data-type="video">
+      <div class="gallery-thumb">🎬<span class="play-icon">▶️</span></div>
+      <div class="gallery-body">
+        <h4>Warisan yang Menginspirasi</h4>
+        <div class="gallery-meta"><span>Kelompok 3</span><span>👁️ 12 &nbsp; ❤️ 1k</span></div>
+      </div>
+    </div>
+    <div class="gallery-card" data-type="infografis">
+      <div class="gallery-thumb">🖼️</div>
+      <div class="gallery-body">
+        <h4>Dari Masa Lalu untuk Masa Depan</h4>
+        <div class="gallery-meta"><span>Kelompok 1</span><span>👁️ 8 &nbsp; ❤️ 756</span></div>
+      </div>
+    </div>
+    <div class="gallery-card" data-type="poster">
+      <div class="gallery-thumb">🎨</div>
+      <div class="gallery-body">
+        <h4>Jaga Alam, Jaga Masa Depan</h4>
+        <div class="gallery-meta"><span>Kelompok 5</span><span>👁️ 15 &nbsp; ❤️ 1,2k</span></div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <div class="nav-item"><a href="peta.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">🗺️<span>Peta Interaktif</span></a></div>
+    <div class="nav-item">📖<span>Panduan</span></div>
+    <div class="nav-item">📊<span>Progres</span></div>
+    <div class="nav-item">⚙️<span>Pengaturan</span></div>
+  </nav>
+
+  <script>
+    const tabs = document.querySelectorAll('.gallery-tab');
+    const cards = document.querySelectorAll('.gallery-card');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const type = tab.dataset.type;
+        cards.forEach(card => {
+          card.classList.toggle('hidden', type !== 'semua' && card.dataset.type !== type);
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
