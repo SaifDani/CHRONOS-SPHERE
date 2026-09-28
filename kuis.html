@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHRONOS-SPHERE — Kuis Petualangan</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+</head>
+<body class="page-peta">
+
+  <a href="index.html" class="back-link"><span class="back-icon">&larr;</span> Kembali ke Beranda</a>
+
+  <div class="page-header">
+    <h1 class="page-title">Kuis Petualangan</h1>
+    <p class="page-subtitle">Uji pemahamanmu, kumpulkan poin, dan naik peringkat</p>
+  </div>
+
+  <main class="kuis-wrap">
+
+    <!-- ========== LAYAR 1: MULAI ========== -->
+    <section class="kuis-card" id="layarMulai">
+      <label class="kuis-label" for="inputNama">Nama / Kelompok</label>
+      <input class="kuis-input" id="inputNama" type="text" maxlength="24" placeholder="Contoh: Kelompok 3 (X-8)">
+
+      <div class="kuis-label">Pilih tantangan</div>
+      <div class="kuis-topik" id="daftarTopik"></div>
+
+      <div class="kuis-rules">
+        <b>Cara main:</b> tiap soal punya waktu 25 detik. Poin dasar tergantung level soal (10–25),
+        ditambah bonus kecepatan dan bonus jawaban benar beruntun.
+      </div>
+
+      <div class="kuis-label">🏆 Papan skor perangkat ini</div>
+      <ol class="kuis-skor" id="papanMulai"></ol>
+    </section>
+
+    <!-- ========== LAYAR 2: SOAL ========== -->
+    <section class="kuis-card" id="layarSoal" hidden>
+      <div class="kuis-stat">
+        <span id="infoNomor">Soal 1/10</span>
+        <span id="infoStreak">🔥 0</span>
+        <span id="infoPoin">⭐ 0</span>
+      </div>
+      <div class="kuis-timer"><div class="kuis-timer-fill" id="timerFill"></div></div>
+
+      <div class="kuis-meta">
+        <span class="solo-badge" id="badgeLevel"></span>
+        <span class="kuis-topik-tag" id="tagTopik"></span>
+      </div>
+      <h2 class="kuis-pertanyaan" id="teksSoal"></h2>
+      <div class="kuis-opsi-list" id="daftarOpsi"></div>
+
+      <div class="kuis-feedback" id="feedback" hidden>
+        <div class="kuis-feedback-judul" id="fbJudul"></div>
+        <div class="kuis-feedback-poin" id="fbPoin"></div>
+        <p id="fbPenjelasan"></p>
+        <button class="hotspot-submit" id="tombolLanjut">Lanjut</button>
+      </div>
+    </section>
+
+    <!-- ========== LAYAR 3: HASIL ========== -->
+    <section class="kuis-card" id="layarHasil" hidden>
+      <div class="kuis-hasil-atas">
+        <div class="kuis-gelar" id="hasilGelar"></div>
+        <div class="kuis-total" id="hasilTotal"></div>
+        <div class="kuis-total-sub" id="hasilSub"></div>
+      </div>
+
+      <div class="kuis-label">Ketepatan per topik</div>
+      <div id="barTopik"></div>
+
+      <div class="kuis-label">Ketepatan per level berpikir (SOLO)</div>
+      <div id="barLevel"></div>
+
+      <div class="kuis-label">💡 Saran untukmu</div>
+      <ul class="kuis-saran" id="daftarSaran"></ul>
+
+      <div class="kuis-label">🏆 Papan skor perangkat ini</div>
+      <ol class="kuis-skor" id="papanHasil"></ol>
+
+      <div class="kuis-aksi">
+        <button class="hotspot-submit" id="tombolUlang">Main lagi</button>
+        <a class="kuis-link-btn" href="tantangan.html">Lanjut ke Tantangan Masa Kini →</a>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <div class="nav-item"><a href="peta.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">🗺️<span>Peta Interaktif</span></a></div>
+    <div class="nav-item">📖<span>Panduan</span></div>
+    <div class="nav-item active">📊<span>Progres</span></div>
+    <div class="nav-item">⚙️<span>Pengaturan</span></div>
+  </nav>
+
+  <script>
+    /* ============================================================
+       BANK SOAL — tambah soal baru cukup dengan menambah satu blok.
+       t = topik (yunnan | taiwan | africa | nusantara | fosil)
+       l = level SOLO (uni | multi | rel | ext)
+       q = pertanyaan, o = 4 pilihan, a = nomor jawaban benar (mulai 0)
+       e = penjelasan yang muncul setelah menjawab
+       ============================================================ */
+    const SOAL = [
+      /* ---- OUT OF YUNNAN ---- */
+      { t:'yunnan', l:'uni', q:'Menurut teori Out of Yunnan, nenek moyang bangsa Indonesia berasal dari…',
+        o:['Yunnan, Tiongkok Selatan','Taiwan','Afrika Timur','Paparan Sunda'], a:0,
+        e:'Teori ini menyebut wilayah Yunnan di Tiongkok Selatan sebagai asal, lalu bergerak ke selatan lewat daratan Asia Tenggara.' },
+      { t:'yunnan', l:'multi', q:'Manakah yang BUKAN tokoh pendukung teori Out of Yunnan?',
+        o:['J.H.C. Kern','Robert von Heine-Geldern','Peter Bellwood','Mohammad Ali'], a:2,
+        e:'Peter Bellwood adalah tokoh teori Out of Taiwan. Pendukung Out of Yunnan antara lain Kern, Heine-Geldern, dan Mohammad Ali.' },
+      { t:'yunnan', l:'multi', q:'Gelombang Deutero-Melayu (Melayu Muda) membawa kebudayaan…',
+        o:['Neolitikum (batu baru)','Perunggu–besi','Paleolitikum','Megalitikum saja'], a:1,
+        e:'Proto-Melayu membawa budaya batu baru (Neolitikum), sedangkan Deutero-Melayu membawa budaya perunggu–besi.' },
+      { t:'yunnan', l:'rel', q:'Mengapa kapak persegi dan nekara perunggu Dong Son yang ditemukan di Nusantara dipakai sebagai bukti Out of Yunnan?',
+        o:['Karena bentuknya mirip temuan di daratan Asia, menandakan hubungan dan perpindahan budaya','Karena hanya dibuat di Nusantara','Karena usianya paling tua di dunia','Karena terbuat dari bahan yang sama dengan fosil'], a:0,
+        e:'Kemiripan artefak dengan temuan di daratan Asia menjadi petunjuk adanya perpindahan manusia dan budaya dari sana.' },
+
+      /* ---- OUT OF TAIWAN ---- */
+      { t:'taiwan', l:'uni', q:'Menurut teori Out of Taiwan, penutur Austronesia bergerak dari Taiwan lebih dulu ke…',
+        o:['Jawa','Filipina','Madagaskar','Australia'], a:1,
+        e:'Jalurnya: Taiwan → Filipina → Sulawesi dan Kalimantan → pulau-pulau Nusantara lainnya.' },
+      { t:'taiwan', l:'uni', q:'Siapa tokoh yang mengembangkan teori Out of Taiwan?',
+        o:['Peter Bellwood dan Robert Blust','Mohammad Yamin','Christopher Stringer','J.H.C. Kern'], a:0,
+        e:'Peter Bellwood (arkeolog) dan Robert Blust (ahli bahasa) adalah tokoh utama teori ini.' },
+      { t:'taiwan', l:'multi', q:'Bukti kebahasaan apa yang menunjuk Taiwan sebagai kawasan asal Austronesia?',
+        o:['Bahasa Taiwan asli paling beragam dalam rumpun Austronesia','Semua bahasa Nusantara identik dengan bahasa Taiwan','Bahasa Taiwan tidak punya kata untuk perahu','Hanya ada satu bahasa di Taiwan'], a:0,
+        e:'Keragaman terbesar biasanya menandakan kawasan asal yang paling tua (Blust).' },
+      { t:'taiwan', l:'ext', q:'Sebagian peneliti menilai penyebaran Austronesia tidak sesederhana satu jalur. Kesimpulan yang paling tepat?',
+        o:['Para pendatang bercampur dan bertukar budaya dengan penduduk yang sudah lebih dulu ada','Nusantara kosong sebelum pendatang tiba','Semua penduduk Nusantara berasal dari satu kelompok murni','Teori Out of Taiwan sudah pasti salah'], a:0,
+        e:'Penyebaran berlangsung dinamis: ada percampuran dan pertukaran budaya, bukan perpindahan tunggal yang sederhana.' },
+
+      /* ---- OUT OF AFRICA ---- */
+      { t:'africa', l:'uni', q:'Teori Out of Africa menyatakan Homo sapiens berevolusi di…',
+        o:['Asia Timur','Afrika','Eropa','Australia'], a:1,
+        e:'Manusia modern berevolusi di Afrika (± 300.000 tahun lalu) lalu bermigrasi keluar.' },
+      { t:'africa', l:'multi', q:'Fosil Homo sapiens tertua ditemukan di…',
+        o:['Sangiran, Jawa','Jebel Irhoud, Maroko','Wajak, Tulungagung','Yunnan, Tiongkok'], a:1,
+        e:'Fosil Homo sapiens tertua ditemukan di Jebel Irhoud, Maroko.' },
+      { t:'africa', l:'rel', q:'Mengapa keragaman genetik terbesar pada penduduk Afrika dianggap sebagai tanda populasi paling tua?',
+        o:['Populasi yang lebih lama punya waktu lebih panjang untuk mengumpulkan variasi genetik','Karena Afrika paling luas','Karena penduduk Afrika paling banyak','Karena DNA-nya tidak pernah berubah'], a:0,
+        e:'Semakin lama sebuah populasi ada, semakin banyak variasi genetik yang terkumpul sehingga keragamannya lebih besar.' },
+      { t:'africa', l:'ext', q:'Bagaimana hubungan teori Out of Africa dengan teori Out of Taiwan?',
+        o:['Saling bertentangan sepenuhnya','Out of Africa menjelaskan asal Homo sapiens secara umum, Out of Taiwan menjelaskan asal penutur Austronesia, sehingga bisa saling melengkapi','Keduanya menjelaskan hal yang persis sama','Out of Taiwan membuktikan Out of Africa salah'], a:1,
+        e:'Kedua teori menjawab pertanyaan pada skala yang berbeda, sehingga dapat saling melengkapi.' },
+
+      /* ---- TEORI NUSANTARA ---- */
+      { t:'nusantara', l:'uni', q:'Siapa tokoh yang menekankan bahwa bangsa Indonesia berasal dari Nusantara sendiri?',
+        o:['Mohammad Yamin','Peter Bellwood','Rebecca Cann','Robert von Heine-Geldern'], a:0,
+        e:'Mohammad Yamin menekankan kekayaan temuan fosil dan peninggalan budaya tertua di Indonesia.' },
+      { t:'nusantara', l:'multi', q:'Apa yang dimaksud Paparan Sunda pada masa glasial?',
+        o:['Laut yang sangat dalam','Daratan luas yang menyatu ketika permukaan laut rendah','Gunung berapi aktif','Sungai terpanjang di Jawa'], a:1,
+        e:'Saat permukaan laut rendah, sebagian Nusantara menyatu sebagai daratan Paparan Sunda sehingga manusia mudah berpindah.' },
+      { t:'nusantara', l:'ext', q:'Mengapa banyaknya fosil di Nusantara belum tentu membuktikan bahwa mereka leluhur langsung bangsa Indonesia sekarang?',
+        o:['Karena fosil tidak bisa diteliti','Karena sebagian fosil, seperti Homo erectus, termasuk garis keturunan berbeda dari manusia modern','Karena semua fosil berasal dari luar negeri','Karena fosil itu palsu'], a:1,
+        e:'Temuan fosil menunjukkan manusia purba pernah hidup di sini, tetapi belum otomatis menunjukkan garis leluhur langsung manusia modern.' },
+
+      /* ---- SITUS FOSIL ---- */
+      { t:'fosil', l:'uni', q:'Manusia Wajak ditemukan di daerah…',
+        o:['Tulungagung','Bandung','Medan','Makassar'], a:0,
+        e:'Manusia Wajak ditemukan di Campurdarat, Tulungagung, dan merupakan fosil manusia modern awal di Nusantara.' },
+      { t:'fosil', l:'uni', q:'Situs Sangiran terletak di…',
+        o:['Jawa Tengah','Sumatra Barat','Bali','Papua'], a:0,
+        e:'Sangiran di Jawa Tengah terkenal sebagai situs penemuan fosil manusia purba.' },
+      { t:'fosil', l:'rel', q:'Fosil Homo erectus di Sangiran dan Manusia Wajak (Homo sapiens awal) sama-sama ada di Jawa. Apa hubungan keduanya?',
+        o:['Keduanya spesies yang sama dan hidup di masa yang sama','Keduanya menunjukkan Nusantara dihuni manusia dari kelompok dan masa yang berbeda','Keduanya tidak berhubungan dengan migrasi','Keduanya berasal dari Yunnan'], a:1,
+        e:'Homo erectus datang jauh lebih dulu, sedangkan Homo sapiens awal seperti Manusia Wajak muncul belakangan.' },
+      { t:'fosil', l:'ext', q:'Kamu menemukan fosil manusia purba di Nusantara. Pernyataan mana yang paling kuat dan hati-hati?',
+        o:['Fosil ini pasti leluhur semua orang Indonesia sekarang','Fosil ini membuktikan manusia purba pernah hidup di sini, tetapi belum otomatis membuktikan leluhur langsung bangsa Indonesia sekarang','Fosil ini tidak berarti apa-apa','Fosil ini bukti bahwa semua teori asal-usul salah'], a:1,
+        e:'Ilmuwan menarik kesimpulan sesuai kekuatan bukti: fosil menunjukkan keberadaan, bukan otomatis garis keturunan.' }
+    ];
+
+    const TOPIK = {
+      yunnan:    { nama:'Out of Yunnan',   icon:'🏔️', link:'teori.html?teori=yunnan' },
+      taiwan:    { nama:'Out of Taiwan',   icon:'🏝️', link:'teori.html?teori=taiwan' },
+      africa:    { nama:'Out of Africa',   icon:'🌍', link:'teori.html?teori=africa' },
+      nusantara: { nama:'Teori Nusantara', icon:'🌴', link:'teori.html?teori=nusantara' },
+      fosil:     { nama:'Situs Fosil',     icon:'🦴', link:'peta.html' }
+    };
+    const LEVEL = {
+      uni:   { nama:'Unistructural',     poin:10, cls:'solo-uni' },
+      multi: { nama:'Multistructural',   poin:15, cls:'solo-multi' },
+      rel:   { nama:'Relational',        poin:20, cls:'solo-relational' },
+      ext:   { nama:'Extended Abstract', poin:25, cls:'solo-extended' }
+    };
+
+    const WAKTU = 25;          // detik per soal
+    const JUMLAH_CAMPURAN = 10;
+    const KUNCI = 'chronos_kuis_v1';
+
+    /* ---------- util ---------- */
+    const $ = id => document.getElementById(id);
+    function el(tag, cls, text) {
+      const e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text !== undefined) e.textContent = text;
+      return e;
+    }
+    function acak(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    /* ---------- penyimpanan lokal (aman kalau storage diblokir) ---------- */
+    function muat() {
+      try {
+        const d = JSON.parse(localStorage.getItem(KUNCI));
+        if (d && Array.isArray(d.skor)) return d;
+      } catch (e) {}
+      return { nama: '', skor: [] };
+    }
+    function simpan(d) {
+      try { localStorage.setItem(KUNCI, JSON.stringify(d)); } catch (e) {}
+    }
+    let data = muat();
+
+    /* ---------- tampilan layar ---------- */
+    function tampilLayar(id) {
+      ['layarMulai', 'layarSoal', 'layarHasil'].forEach(x => { $(x).hidden = (x !== id); });
+      window.scrollTo(0, 0);
+    }
+
+    function isiPapan(olId) {
+      const ol = $(olId);
+      ol.textContent = '';
+      if (!data.skor.length) {
+        ol.appendChild(el('li', 'kuis-skor-kosong', 'Belum ada skor. Jadilah yang pertama!'));
+        return;
+      }
+      data.skor.forEach((s, i) => {
+        const li = el('li');
+        li.appendChild(el('span', 'kuis-skor-nama', (i + 1) + '. ' + s.nama));
+        li.appendChild(el('span', 'kuis-skor-topik', s.topik));
+        li.appendChild(el('span', 'kuis-skor-poin', s.poin + ' poin'));
+        ol.appendChild(li);
+      });
+    }
+
+    function bangunTopik() {
+      const w = $('daftarTopik');
+      w.textContent = '';
+      const semua = el('button', 'kuis-topik-btn kuis-topik-utama');
+      semua.appendChild(el('span', 'kuis-topik-ico', '🎲'));
+      semua.appendChild(el('span', null, 'Campuran (' + JUMLAH_CAMPURAN + ' soal)'));
+      semua.addEventListener('click', () => mulai('semua'));
+      w.appendChild(semua);
+      Object.keys(TOPIK).forEach(k => {
+        const jml = SOAL.filter(s => s.t === k).length;
+        const b = el('button', 'kuis-topik-btn');
+        b.appendChild(el('span', 'kuis-topik-ico', TOPIK[k].icon));
+        b.appendChild(el('span', null, TOPIK[k].nama + ' (' + jml + ')'));
+        b.addEventListener('click', () => mulai(k));
+        w.appendChild(b);
+      });
+    }
+
+    /* ---------- state permainan ---------- */
+    let sesi = null, timer = null, terkunci = false;
+
+    function mulai(topik) {
+      const nama = $('inputNama').value.trim() || 'Pemain';
+      data.nama = nama;
+      simpan(data);
+
+      let pool = topik === 'semua' ? acak(SOAL).slice(0, JUMLAH_CAMPURAN)
+                                   : acak(SOAL.filter(s => s.t === topik));
+      sesi = {
+        topik: topik,
+        label: topik === 'semua' ? 'Campuran' : TOPIK[topik].nama,
+        soal: pool, i: 0, poin: 0, streak: 0, benar: 0, log: []
+      };
+      tampilLayar('layarSoal');
+      tampilSoal();
+    }
+
+    function tampilSoal() {
+      const s = sesi.soal[sesi.i];
+      terkunci = false;
+      $('feedback').hidden = true;
+      $('infoNomor').textContent = 'Soal ' + (sesi.i + 1) + '/' + sesi.soal.length;
+      $('infoStreak').textContent = '🔥 ' + sesi.streak;
+      $('infoPoin').textContent = '⭐ ' + sesi.poin;
+
+      const lv = LEVEL[s.l];
+      const badge = $('badgeLevel');
+      badge.className = 'solo-badge ' + lv.cls;
+      badge.textContent = lv.nama + ' · ' + lv.poin + ' poin';
+      $('tagTopik').textContent = TOPIK[s.t].icon + ' ' + TOPIK[s.t].nama;
+      $('teksSoal').textContent = s.q;
+
+      const daftar = $('daftarOpsi');
+      daftar.textContent = '';
+      acak(s.o.map((teks, idx) => ({ teks: teks, benar: idx === s.a }))).forEach(op => {
+        const b = el('button', 'kuis-opsi', op.teks);
+        b.dataset.benar = op.benar ? '1' : '0';
+        b.addEventListener('click', () => jawab(b));
+        daftar.appendChild(b);
+      });
+      mulaiTimer();
+    }
+
+    function mulaiTimer() {
+      clearInterval(timer);
+      const t0 = Date.now();
+      sesi.sisa = WAKTU;
+      setBar();
+      timer = setInterval(() => {
+        sesi.sisa = Math.max(0, WAKTU - (Date.now() - t0) / 1000);
+        setBar();
+        if (sesi.sisa <= 0) { clearInterval(timer); jawab(null); }
+      }, 100);
+    }
+    function setBar() {
+      const f = $('timerFill');
+      const p = (sesi.sisa / WAKTU) * 100;
+      f.style.width = p + '%';
+      f.classList.toggle('kritis', sesi.sisa <= 8);
+    }
+
+    function jawab(tombol) {
+      if (terkunci) return;
+      terkunci = true;
+      clearInterval(timer);
+
+      const s = sesi.soal[sesi.i];
+      const lv = LEVEL[s.l];
+      const benar = !!tombol && tombol.dataset.benar === '1';
+      let tambah = 0, rincian = '';
+
+      document.querySelectorAll('.kuis-opsi').forEach(b => {
+        b.disabled = true;
+        if (b.dataset.benar === '1') b.classList.add('benar');
+      });
+
+      if (benar) {
+        sesi.streak++;
+        sesi.benar++;
+        const bonusCepat = Math.round((sesi.sisa / WAKTU) * 5);
+        const bonusStreak = sesi.streak >= 3 ? 5 : 0;
+        tambah = lv.poin + bonusCepat + bonusStreak;
+        rincian = '+' + tambah + ' poin (dasar ' + lv.poin + ', cepat +' + bonusCepat +
+                  (bonusStreak ? ', beruntun +' + bonusStreak : '') + ')';
+        $('fbJudul').textContent = '✅ Benar!';
+        $('fbJudul').className = 'kuis-feedback-judul ok';
+      } else {
+        if (tombol) tombol.classList.add('salah');
+        sesi.streak = 0;
+        rincian = '+0 poin';
+        $('fbJudul').textContent = tombol ? '❌ Belum tepat' : '⏰ Waktu habis';
+        $('fbJudul').className = 'kuis-feedback-judul no';
+      }
+      sesi.poin += tambah;
+      sesi.log.push({ t: s.t, l: s.l, ok: benar });
+
+      $('infoStreak').textContent = '🔥 ' + sesi.streak;
+      $('infoPoin').textContent = '⭐ ' + sesi.poin;
+      $('fbPoin').textContent = rincian;
+      $('fbPenjelasan').textContent = s.e;
+      $('tombolLanjut').textContent = (sesi.i === sesi.soal.length - 1) ? 'Lihat hasil' : 'Lanjut';
+      $('feedback').hidden = false;
+      $('feedback').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    $('tombolLanjut').addEventListener('click', () => {
+      if (sesi.i >= sesi.soal.length - 1) { selesai(); return; }
+      sesi.i++;
+      tampilSoal();
+    });
+
+    /* ---------- hasil, ringkasan & saran ---------- */
+    function hitung(kunciFn) {
+      const m = {};
+      sesi.log.forEach(r => {
+        const k = kunciFn(r);
+        m[k] = m[k] || { n: 0, ok: 0 };
+        m[k].n++;
+        if (r.ok) m[k].ok++;
+      });
+      return m;
+    }
+
+    function gambarBar(wadahId, peta, namaFn) {
+      const w = $(wadahId);
+      w.textContent = '';
+      Object.keys(peta).forEach(k => {
+        const d = peta[k];
+        const pct = Math.round((d.ok / d.n) * 100);
+        const baris = el('div', 'kuis-bar-row');
+        const kepala = el('div', 'kuis-bar-kepala');
+        kepala.appendChild(el('span', null, namaFn(k)));
+        kepala.appendChild(el('span', null, d.ok + '/' + d.n + ' · ' + pct + '%'));
+        const trek = el('div', 'kuis-bar-trek');
+        const isi = el('div', 'kuis-bar-isi');
+        isi.style.width = pct + '%';
+        isi.classList.add(pct >= 75 ? 'tinggi' : pct >= 50 ? 'sedang' : 'rendah');
+        trek.appendChild(isi);
+        baris.appendChild(kepala);
+        baris.appendChild(trek);
+        w.appendChild(baris);
+      });
+    }
+
+    function selesai() {
+      clearInterval(timer);
+      const total = sesi.soal.length;
+      const akurasi = Math.round((sesi.benar / total) * 100);
+
+      // simpan ke papan skor lokal (5 terbaik)
+      data.skor.push({ nama: data.nama || 'Pemain', poin: sesi.poin, topik: sesi.label });
+      data.skor.sort((a, b) => b.poin - a.poin);
+      data.skor = data.skor.slice(0, 5);
+      simpan(data);
+
+      let gelar = 'Pemula Sejarah 🌱';
+      if (akurasi >= 90) gelar = 'Penjelajah Sejarah 🏅';
+      else if (akurasi >= 70) gelar = 'Pemburu Bukti 🔎';
+      else if (akurasi >= 50) gelar = 'Penjelajah Muda 🧭';
+
+      $('hasilGelar').textContent = gelar;
+      $('hasilTotal').textContent = sesi.poin + ' poin';
+      $('hasilSub').textContent = sesi.benar + ' dari ' + total + ' soal benar (' + akurasi + '%) · ' + sesi.label;
+
+      const perTopik = hitung(r => r.t);
+      const perLevel = hitung(r => r.l);
+      gambarBar('barTopik', perTopik, k => TOPIK[k].icon + ' ' + TOPIK[k].nama);
+      gambarBar('barLevel', perLevel, k => LEVEL[k].nama);
+
+      // saran otomatis
+      const ul = $('daftarSaran');
+      ul.textContent = '';
+      let adaSaran = false;
+      Object.keys(perTopik).forEach(k => {
+        const d = perTopik[k];
+        if (d.ok / d.n < 0.6) {
+          adaSaran = true;
+          const li = el('li');
+          li.appendChild(document.createTextNode('Kamu masih sering keliru di ' + TOPIK[k].nama + '. Baca lagi materinya: '));
+          const a = el('a', null, k === 'fosil' ? 'jelajahi situs di peta' : 'buka halaman teori');
+          a.href = TOPIK[k].link;
+          li.appendChild(a);
+          ul.appendChild(li);
+        }
+      });
+      ['rel', 'ext'].forEach(k => {
+        const d = perLevel[k];
+        if (d && d.ok / d.n < 0.5) {
+          adaSaran = true;
+          ul.appendChild(el('li', null, k === 'rel'
+            ? 'Soal level Relational masih sulit. Latih menghubungkan beberapa fakta (lokasi, kebutuhan hidup, teknologi) menjadi satu penjelasan.'
+            : 'Soal level Extended Abstract masih sulit. Latih menimbang bukti dan menarik kesimpulan yang hati-hati, jangan langsung yakin.'));
+        }
+      });
+      if (!adaSaran) {
+        ul.appendChild(el('li', null, akurasi === 100
+          ? 'Sempurna! Coba tantangan topik lain, atau lanjut ke Tantangan Masa Kini untuk menerapkan pengetahuanmu.'
+          : 'Hasil yang bagus! Coba mode Campuran lagi untuk mengejar skor lebih tinggi.'));
+      }
+
+      isiPapan('papanHasil');
+      tampilLayar('layarHasil');
+    }
+
+    $('tombolUlang').addEventListener('click', () => {
+      isiPapan('papanMulai');
+      tampilLayar('layarMulai');
+    });
+
+    /* ---------- init ---------- */
+    $('inputNama').value = data.nama || '';
+    bangunTopik();
+    isiPapan('papanMulai');
+  </script>
+
+</body>
+</html>
