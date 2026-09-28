@@ -35,6 +35,10 @@
 
       <div class="kuis-label">🏆 Papan skor perangkat ini</div>
       <ol class="kuis-skor" id="papanMulai"></ol>
+
+      <div class="kuis-label">🌐 Papan skor bersama (Top 10)</div>
+      <p class="kuis-total-sub" id="infoGlobalMulai" aria-live="polite"></p>
+      <ol class="kuis-skor" id="papanGlobalMulai"></ol>
     </section>
 
     <!-- ========== LAYAR 2: SOAL ========== -->
@@ -80,6 +84,10 @@
 
       <div class="kuis-label">🏆 Papan skor perangkat ini</div>
       <ol class="kuis-skor" id="papanHasil"></ol>
+
+      <div class="kuis-label">🌐 Papan skor bersama (Top 10)</div>
+      <p class="kuis-total-sub" id="infoGlobalHasil" aria-live="polite"></p>
+      <ol class="kuis-skor" id="papanGlobalHasil"></ol>
 
       <div class="kuis-aksi">
         <button class="hotspot-submit" id="tombolUlang">Main lagi</button>
@@ -190,6 +198,52 @@
     const WAKTU = 25;          // detik per soal
     const JUMLAH_CAMPURAN = 10;
     const KUNCI = 'chronos_kuis_v1';
+
+    /* ---------- PAPAN SKOR BERSAMA (Google Apps Script) ----------
+       Tempel URL Web App (berakhiran /exec) di antara tanda kutip.
+       Kalau dikosongkan, kuis tetap jalan dengan papan skor lokal saja. */
+    const URL_SKOR = 'https://script.google.com/macros/s/AKfycbx0U0iV280vs7M_yxxcd6gqxmzNwcKXmNofRDc_C-9bDvC9ewUIxPB51kHiosIDfu64/exec';
+
+    async function kirimSkor(r) {
+      if (!URL_SKOR) return false;
+      try {
+        // text/plain supaya browser tidak minta preflight CORS (Apps Script tidak menjawabnya)
+        const res = await fetch(URL_SKOR, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(r)
+        });
+        const j = await res.json();
+        return !!j.ok;
+      } catch (e) { return false; }
+    }
+
+    async function muatPapanGlobal(olId, infoId, awalan) {
+      const ol = document.getElementById(olId);
+      const info = document.getElementById(infoId);
+      ol.textContent = '';
+      if (!URL_SKOR) { info.textContent = 'Papan skor bersama belum diaktifkan.'; return; }
+      info.textContent = 'Memuat papan skor…';
+      try {
+        const res = await fetch(URL_SKOR);
+        const j = await res.json();
+        if (!j.ok) throw new Error('gagal');
+        info.textContent = awalan || '';
+        if (!j.skor.length) {
+          ol.appendChild(el('li', 'kuis-skor-kosong', 'Belum ada skor. Jadilah yang pertama!'));
+          return;
+        }
+        j.skor.forEach((s, i) => {
+          const li = el('li');
+          li.appendChild(el('span', 'kuis-skor-nama', (i + 1) + '. ' + s.nama));
+          li.appendChild(el('span', 'kuis-skor-topik', s.topik));
+          li.appendChild(el('span', 'kuis-skor-poin', s.poin + ' poin'));
+          ol.appendChild(li);
+        });
+      } catch (e) {
+        info.textContent = (awalan || '') + 'Papan skor bersama belum bisa dimuat. Coba lagi nanti.';
+      }
+    }
 
     /* ---------- util ---------- */
     const $ = id => document.getElementById(id);
@@ -465,10 +519,16 @@
 
       isiPapan('papanHasil');
       tampilLayar('layarHasil');
+
+      // kirim ke papan skor bersama, lalu muat ulang Top 10
+      $('infoGlobalHasil').textContent = URL_SKOR ? 'Mengirim skor…' : '';
+      kirimSkor({ nama: data.nama || 'Pemain', poin: sesi.poin, topik: sesi.label, benar: sesi.benar, total: total })
+        .then(ok => muatPapanGlobal('papanGlobalHasil', 'infoGlobalHasil', ok || !URL_SKOR ? '' : 'Skor kamu belum terkirim. '));
     }
 
     $('tombolUlang').addEventListener('click', () => {
       isiPapan('papanMulai');
+      muatPapanGlobal('papanGlobalMulai', 'infoGlobalMulai');
       tampilLayar('layarMulai');
     });
 
@@ -476,6 +536,7 @@
     $('inputNama').value = data.nama || '';
     bangunTopik();
     isiPapan('papanMulai');
+    muatPapanGlobal('papanGlobalMulai', 'infoGlobalMulai');
   </script>
 
 </body>
