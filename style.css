@@ -73,17 +73,22 @@ body::before{
   display:flex;
   flex-direction:column;
   line-height:1.2;
+  text-decoration:none;
+  transition:opacity .15s ease;
 }
+.school-text:hover{ opacity:.8; }
 .school-name{
   font-size:.68rem;
   font-weight:700;
   letter-spacing:.03em;
   color:#fff;
+  text-decoration:none;
   text-shadow:0 1px 4px rgba(0,0,0,.5);
 }
 .school-region{
   font-size:.6rem;
   color:#b9c4e0;
+  text-decoration:none;
 }
 
 .hero{
@@ -166,21 +171,25 @@ body::before{
   white-space:nowrap;
 }
 
-/* Mulai Misi — cyan-teal */
-.btn-mulai-misi{ background:linear-gradient(90deg,#3dbef5,#32d2aa); }
-.btn-mulai-misi .icon-circle{ color:#1a9fc9; }
-
 /* Peta Eksplorasi — biru */
 .btn-peta-eksplorasi{ background:linear-gradient(90deg,#2f7ce8,#4a9cf5); }
 .btn-peta-eksplorasi .icon-circle{ color:#2f7ce8; }
 
-/* Jalur Sutra — emas/pasir (nuansa gurun & karavan) */
-.btn-jalur-sutra{ background:linear-gradient(90deg,#c98a2b,#e0b24a); }
-.btn-jalur-sutra .icon-circle{ color:#c98a2b; }
+/* Out of Yunnan — oranye kemerahan */
+.btn-teori-yunnan{ background:linear-gradient(90deg,#d9552b,#f0805a); }
+.btn-teori-yunnan .icon-circle{ color:#d9552b; }
 
-/* Jalur Migrasi — hijau (nuansa perjalanan lintas benua) */
-.btn-jalur-migrasi{ background:linear-gradient(90deg,#3f8f4f,#6fbf73); }
-.btn-jalur-migrasi .icon-circle{ color:#3f8f4f; }
+/* Out of Taiwan — teal */
+.btn-teori-taiwan{ background:linear-gradient(90deg,#1fa39b,#4fd1c5); }
+.btn-teori-taiwan .icon-circle{ color:#1fa39b; }
+
+/* Out of Africa — emas */
+.btn-teori-africa{ background:linear-gradient(90deg,#c98a2b,#e0b24a); }
+.btn-teori-africa .icon-circle{ color:#c98a2b; }
+
+/* Teori Nusantara — hijau */
+.btn-teori-nusantara{ background:linear-gradient(90deg,#3f8f4f,#6fbf73); }
+.btn-teori-nusantara .icon-circle{ color:#3f8f4f; }
 
 /* Tantangan Masa Kini — pink/merah */
 .btn-tantangan-masa-kini{ background:linear-gradient(90deg,#e0435f,#ef6f8c); }
@@ -198,6 +207,7 @@ body.page-peta{
   overflow-y:auto;
   padding:1.6rem 1rem 3rem;
 }
+body.page-peta > *{ position:relative; z-index:1; }
 
 .back-link{
   display:inline-flex;
@@ -258,6 +268,7 @@ body.page-peta{
 }
 
 .map-frame{
+  position:relative;
   max-width:900px;
   margin:0 auto 1.6rem;
   aspect-ratio:16/9;
@@ -279,6 +290,74 @@ body.page-peta{
   padding:1rem;
 }
 
+/* Gambar peta ilustrasi */
+.map-image{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+/* Pin lokasi fosil yang bisa diklik di atas peta */
+.map-pin{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  background:none;
+  border:0;
+  padding:0;
+  font:inherit;
+  color:inherit;
+  cursor:pointer;
+  z-index:2;
+  text-decoration:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.pin-fosil{ --pin-a:#c98a2b; --pin-b:#e0b24a; --pin-glow:rgba(224,178,74,.55); --pin-glow0:rgba(224,178,74,0); }
+
+.pin-dot{
+  width:2rem;
+  height:2rem;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.05rem;
+  border:2px solid #fff;
+  background:linear-gradient(135deg,var(--pin-a),var(--pin-b));
+  box-shadow:0 3px 10px rgba(0,0,0,.4);
+  animation:pin-pulse 2.2s infinite;
+  transition:transform .15s ease;
+}
+@keyframes pin-pulse{
+  0%{ box-shadow:0 0 0 0 var(--pin-glow); }
+  70%{ box-shadow:0 0 0 14px var(--pin-glow0); }
+  100%{ box-shadow:0 0 0 0 var(--pin-glow0); }
+}
+
+/* Label selalu tampil supaya jelas juga di HP (tidak ada hover) */
+.pin-tooltip{
+  margin-top:.3rem;
+  font-size:.62rem;
+  font-weight:700;
+  color:#fff;
+  background:rgba(0,0,0,.65);
+  padding:.15rem .5rem;
+  border-radius:999px;
+  white-space:nowrap;
+  pointer-events:none;
+}
+.map-pin:hover .pin-dot,
+.map-pin:focus-visible .pin-dot{ transform:scale(1.18); }
+.map-pin:focus-visible{ outline:2px solid #fff; outline-offset:4px; border-radius:12px; }
+
+@media (max-width:520px){
+  .pin-dot{ width:1.5rem; height:1.5rem; font-size:.8rem; }
+  .pin-tooltip{ font-size:.55rem; padding:.12rem .4rem; }
+}
+
 .location-cards{
   max-width:900px;
   margin:0 auto 2rem;
@@ -286,6 +365,23 @@ body.page-peta{
   grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));
   gap:1rem;
 }
+/* Kartu 4 teori: selalu 2 x 2 (di HP maupun layar lebar) */
+.teori-cards-title{
+  max-width:760px;
+  margin:0 auto .8rem;
+  text-align:center;
+  font-family:'Cinzel','Cinzel Decorative',Georgia,serif;
+  font-size:1rem;
+  color:#fff;
+}
+.teori-cards{
+  max-width:760px;
+  margin:0 auto 2rem;
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:1rem;
+}
+a.card{ text-decoration:none; color:inherit; }
 .card{
   background:rgba(255,255,255,.05);
   border:1px solid rgba(255,255,255,.12);
@@ -294,6 +390,12 @@ body.page-peta{
   display:flex;
   flex-direction:column;
 }
+.card{
+  cursor:pointer;
+  transition:transform .15s ease, border-color .15s ease;
+}
+.card:hover{ transform:translateY(-3px); border-color:rgba(255,255,255,.35); }
+.card:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
 .card-thumb{
   height:110px;
   display:flex;
@@ -301,8 +403,11 @@ body.page-peta{
   justify-content:center;
   font-size:2.4rem;
 }
-.thumb-jalur-sutra{ background:linear-gradient(135deg,#c98a2b,#3a2a12); }
-.thumb-jalur-migrasi{ background:linear-gradient(135deg,#3f8f4f,#12291a); }
+.thumb-yunnan{ background:linear-gradient(135deg,#d9552b,#3a1a10); }
+.thumb-taiwan{ background:linear-gradient(135deg,#1fa39b,#0f2b2a); }
+.thumb-africa{ background:linear-gradient(135deg,#c98a2b,#3a2a12); }
+.thumb-nusantara{ background:linear-gradient(135deg,#3f8f4f,#12291a); }
+.thumb-fosil{ background:linear-gradient(135deg,#c98a2b,#3a2a12); }
 .card-body{
   padding:.9rem 1rem 1.1rem;
   flex:1;
@@ -336,8 +441,11 @@ body.page-peta{
   transition:transform .15s ease;
 }
 .card-btn:hover{ transform:scale(1.04); }
-.btn-jalur-sutra-card{ background:linear-gradient(90deg,#c98a2b,#e0b24a); }
-.btn-jalur-migrasi-card{ background:linear-gradient(90deg,#3f8f4f,#6fbf73); }
+.btn-yunnan-card{ background:linear-gradient(90deg,#d9552b,#f0805a); }
+.btn-taiwan-card{ background:linear-gradient(90deg,#1fa39b,#4fd1c5); }
+.btn-africa-card{ background:linear-gradient(90deg,#c98a2b,#e0b24a); }
+.btn-nusantara-card{ background:linear-gradient(90deg,#3f8f4f,#6fbf73); }
+.btn-fosil-card{ background:linear-gradient(90deg,#c98a2b,#e0b24a); }
 
 .bottom-nav{
   max-width:500px;
@@ -694,3 +802,179 @@ body.page-peta{
   display:flex;
   justify-content:space-between;
 }
+
+/* ============================================
+   HALAMAN PENJELASAN TEORI (teori.html)
+   ============================================ */
+.teori-page{
+  --acc-a:#3dbef5;
+  --acc-b:#32d2aa;
+  width:100%;
+  max-width:760px;
+  margin:0 auto 2rem;
+  box-sizing:border-box;
+  color:#dfe6ff;
+}
+
+.teori-hero{
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  padding:1.2rem 1.3rem;
+  margin-bottom:1rem;
+  border-radius:18px;
+  background:linear-gradient(135deg,var(--acc-a),var(--acc-b));
+  box-shadow:0 8px 24px rgba(0,0,0,.35);
+}
+.teori-icon{
+  flex-shrink:0;
+  width:4rem;
+  height:4rem;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:2rem;
+  background:rgba(255,255,255,.92);
+  box-shadow:0 4px 14px rgba(0,0,0,.3);
+}
+.teori-kicker{
+  font-size:.62rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.8);
+}
+.teori-hero h1{
+  margin:.15rem 0;
+  font-family:'Cinzel','Cinzel Decorative',Georgia,serif;
+  font-size:clamp(1.4rem,5vw,2rem);
+  color:#fff;
+  text-shadow:0 2px 8px rgba(0,0,0,.35);
+}
+.teori-sub{ font-size:.82rem; color:rgba(255,255,255,.92); }
+
+.teori-meta{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:.7rem;
+  margin-bottom:1rem;
+}
+@media (max-width:520px){
+  .teori-meta{ grid-template-columns:1fr; }
+}
+.teori-chip{
+  padding:.65rem .8rem;
+  border-radius:12px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
+  font-size:.8rem;
+  line-height:1.45;
+}
+.teori-chip b{
+  display:block;
+  margin-bottom:.2rem;
+  font-size:.64rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--acc-b);
+}
+
+.teori-section{
+  margin-bottom:1rem;
+  padding:1rem 1.1rem 1.1rem;
+  border-radius:14px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);
+}
+.teori-section h4{
+  margin:0 0 .65rem;
+  padding-left:.55rem;
+  border-left:3px solid var(--acc-b);
+  font-size:.85rem;
+  letter-spacing:.03em;
+  color:#fff;
+}
+.teori-ringkasan{ margin:0; font-size:.9rem; line-height:1.7; }
+
+/* Tempat infografik */
+.infographic-slot{
+  margin:0;
+  min-height:240px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:12px;
+  overflow:hidden;
+  border:2px dashed rgba(255,255,255,.25);
+  background:rgba(255,255,255,.04);
+}
+.infographic-slot.has-img{
+  display:block;
+  min-height:0;
+  border-style:solid;
+  border-color:rgba(255,255,255,.15);
+  background:none;
+}
+.infographic-img{ display:block; width:100%; height:auto; }
+.infographic-empty{
+  padding:1.6rem 1rem;
+  text-align:center;
+  color:#8b95bd;
+  font-size:.8rem;
+  line-height:1.7;
+}
+.infographic-empty .ie-icon{ display:block; font-size:2.4rem; margin-bottom:.3rem; }
+.infographic-empty strong{ color:#dfe6ff; }
+.infographic-empty code{
+  padding:.1rem .4rem;
+  border-radius:6px;
+  background:rgba(255,255,255,.08);
+  color:#dfe6ff;
+  font-size:.74rem;
+}
+
+.jalur-chips{ display:flex; flex-wrap:wrap; align-items:center; gap:.4rem; }
+.jalur-chip{
+  padding:.3rem .75rem;
+  border-radius:999px;
+  font-size:.76rem;
+  font-weight:700;
+  color:#fff;
+  background:linear-gradient(90deg,var(--acc-a),var(--acc-b));
+}
+.jalur-arrow{ color:#8b95bd; font-size:.85rem; }
+
+.teori-bukti{ margin:0; padding-left:1.15rem; font-size:.86rem; line-height:1.6; }
+.teori-bukti li{ margin-bottom:.45rem; }
+.teori-bukti li:last-child{ margin-bottom:0; }
+
+.teori-catatan{
+  margin-bottom:1.2rem;
+  padding:.85rem 1rem;
+  border-radius:12px;
+  background:rgba(255,255,255,.06);
+  border-left:3px solid var(--acc-b);
+  font-size:.84rem;
+  line-height:1.6;
+}
+.teori-catatan b{ display:block; margin-bottom:.25rem; color:#fff; }
+.teori-catatan p{ margin:0; color:#c8d1ec; }
+
+/* Tombol teori sebelumnya / berikutnya */
+.teori-pager{
+  display:flex;
+  justify-content:space-between;
+  gap:.7rem;
+}
+.teori-pager a{
+  text-decoration:none;
+  padding:.55rem 1rem;
+  border-radius:999px;
+  font-size:.78rem;
+  font-weight:700;
+  color:#fff;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.2);
+  transition:transform .15s ease, background .15s ease;
+}
+.teori-pager a:hover{ background:rgba(255,255,255,.2); transform:translateY(-2px); }

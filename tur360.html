@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHRONOS-SPHERE — Tur 360°</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+</head>
+<body class="page-peta">
+
+  <a href="peta.html" class="back-link"><span class="back-icon">&larr;</span> Kembali ke Peta</a>
+
+  <div class="page-header">
+    <h1 class="page-title" id="lokasiNama">Situs Fosil</h1>
+    <p class="page-subtitle" id="lokasiSub">Tur panorama 360° lokasi penemuan fosil</p>
+  </div>
+
+  <div class="tour-frame" id="tourFrame">
+    <div class="tour-placeholder" id="tourPlaceholder">🦴<br>Panorama 360° belum dipasang</div>
+  </div>
+
+  <div class="thumb-strip">
+    <div class="thumb-chip"><span class="thumb-icon">🏛️</span>Area Situs</div>
+    <div class="thumb-chip"><span class="thumb-icon">🏺</span>Museum</div>
+    <div class="thumb-chip"><span class="thumb-icon">⛏️</span>Penggalian</div>
+    <div class="thumb-chip"><span class="thumb-icon">🦴</span>Fosil</div>
+    <div class="thumb-chip"><span class="thumb-icon">🌄</span>Pemandangan</div>
+  </div>
+
+  <div class="hotspot-list" id="hotspotList">
+    <button class="hotspot-btn active" data-target="hm1"><span class="hotspot-num">01</span>Temukan Bukti</button>
+    <button class="hotspot-btn" data-target="hm2"><span class="hotspot-num">02</span>Baca Ruang</button>
+    <button class="hotspot-btn" data-target="hm3"><span class="hotspot-num">03</span>Hubungkan</button>
+    <button class="hotspot-btn" data-target="hm4"><span class="hotspot-num">04</span>Uji Bukti</button>
+  </div>
+
+  <div class="hotspot-card active" id="hm1">
+    <div class="hotspot-card-head">
+      <h3>Temukan Bukti</h3>
+      <span class="solo-badge solo-uni">Unistructural</span>
+    </div>
+    <p>Apa bukti kehidupan manusia purba yang kamu temukan di lingkungan ini? Sebutkan satu bukti dan informasi apa yang dapat diperoleh dari bukti tersebut.</p>
+    <textarea class="hotspot-input" placeholder="Tulis jawabanmu di sini..."></textarea>
+    <button class="hotspot-submit">Kirim</button>
+  </div>
+
+  <div class="hotspot-card" id="hm2">
+    <div class="hotspot-card-head">
+      <h3>Baca Ruang</h3>
+      <span class="solo-badge solo-multi">Multistructural</span>
+    </div>
+    <p>Bagaimana kondisi geografis lokasi ini dapat membantu kita memahami kehidupan manusia purba pada masa lampau?</p>
+    <textarea class="hotspot-input" placeholder="Tulis jawabanmu di sini..."></textarea>
+    <button class="hotspot-submit">Kirim</button>
+  </div>
+
+  <div class="hotspot-card" id="hm3">
+    <div class="hotspot-card-head">
+      <h3>Hubungkan</h3>
+      <span class="solo-badge solo-relational">Relational</span>
+    </div>
+    <p>Perhatikan posisi geografis, kebutuhan hidup, dan teknologi alat batu. Bagaimana ketiga unsur tersebut saling berhubungan dalam mendorong migrasi manusia purba?</p>
+    <div class="hotspot-options">
+      <span class="hotspot-option">Geografis</span>
+      <span class="hotspot-option">Kebutuhan</span>
+      <span class="hotspot-option">Teknologi</span>
+    </div>
+    <textarea class="hotspot-input" placeholder="Tulis jawabanmu di sini..."></textarea>
+    <button class="hotspot-submit">Kirim</button>
+  </div>
+
+  <div class="hotspot-card" id="hm4">
+    <div class="hotspot-card-head">
+      <h3>Uji Bukti</h3>
+      <span class="solo-badge solo-extended">Extended Abstract</span>
+    </div>
+    <p>Jangan langsung percaya! Pilih bukti paling kuat untuk mendukung kesimpulanmu tentang jalur migrasi manusia purba. Apa alasannya?</p>
+    <div class="hotspot-options">
+      <label class="hotspot-option"><input type="radio" name="bukti-360"> Bukti A</label>
+      <label class="hotspot-option"><input type="radio" name="bukti-360"> Bukti B</label>
+      <label class="hotspot-option"><input type="radio" name="bukti-360"> Bukti C</label>
+    </div>
+    <textarea class="hotspot-input" placeholder="Tulis alasanmu di sini..."></textarea>
+    <button class="hotspot-submit">Kirim</button>
+  </div>
+
+  <nav class="bottom-nav">
+    <div class="nav-item"><a href="peta.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">🗺️<span>Peta Interaktif</span></a></div>
+    <div class="nav-item">📖<span>Panduan</span></div>
+    <div class="nav-item">📊<span>Progres</span></div>
+    <div class="nav-item">⚙️<span>Pengaturan</span></div>
+  </nav>
+
+  <script>
+    /* ============================================================
+       DATA LOKASI — satu file ini dipakai untuk semua lokasi fosil.
+       Akses lewat tur360.html?lokasi=sangiran  (atau wajak, dst).
+       "embed" = link embed panorama 360° (Google Earth dsb).
+       Tambah lokasi baru: cukup tambah satu blok di bawah.
+       ============================================================ */
+    const LOKASI = {
+      sangiran: {
+        icon: '🦴',
+        nama: 'Situs Sangiran',
+        sub: 'Menelusuri jejak manusia purba di Jawa Tengah',
+        embed: ''   // <- tempel link embed panorama 360° Sangiran di sini
+      },
+      wajak: {
+        icon: '🦴',
+        nama: 'Situs Wajak',
+        sub: 'Tempat ditemukannya Manusia Wajak di Campurdarat, Tulungagung',
+        embed: ''   // <- tempel link embed panorama 360° Wajak di sini
+      }
+    };
+
+    const kunci = LOKASI[new URLSearchParams(location.search).get('lokasi')]
+      ? new URLSearchParams(location.search).get('lokasi')
+      : Object.keys(LOKASI)[0];
+    const L = LOKASI[kunci];
+
+    document.title = 'CHRONOS-SPHERE — ' + L.nama;
+    document.getElementById('lokasiNama').textContent = L.nama;
+    document.getElementById('lokasiSub').textContent = L.sub;
+
+    const tourFrame = document.getElementById('tourFrame');
+    if (L.embed) {
+      const f = document.createElement('iframe');
+      f.src = L.embed;
+      f.title = 'Tur 360° ' + L.nama;
+      f.loading = 'lazy';
+      f.allowFullscreen = true;
+      f.style.cssText = 'width:100%;height:100%;border:0;';
+      tourFrame.textContent = '';
+      tourFrame.appendChild(f);
+    } else {
+      const ph = document.getElementById('tourPlaceholder');
+      ph.textContent = L.icon;
+      ph.appendChild(document.createElement('br'));
+      ph.appendChild(document.createTextNode('Tempel link embed panorama 360° ' + L.nama + ' di data LOKASI'));
+    }
+
+    const buttons = document.querySelectorAll('.hotspot-btn');
+    const cards = document.querySelectorAll('.hotspot-card');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        cards.forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.target).classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+</html>

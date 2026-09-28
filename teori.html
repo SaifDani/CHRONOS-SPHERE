@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHRONOS-SPHERE — Teori Asal-Usul</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+</head>
+<body class="page-peta">
+
+  <a href="peta.html" class="back-link"><span class="back-icon">&larr;</span> Kembali ke Peta</a>
+
+  <!-- Satu halaman untuk keempat teori. Isinya diisi otomatis dari data TEORI di bawah,
+       dibuka lewat teori.html?teori=yunnan | taiwan | africa | nusantara -->
+  <main class="teori-page" id="teoriPage">
+
+    <header class="teori-hero">
+      <span class="teori-icon" id="teoriIcon"></span>
+      <div>
+        <div class="teori-kicker">Teori Asal-Usul Nenek Moyang</div>
+        <h1 id="teoriJudul"></h1>
+        <div class="teori-sub" id="teoriSub"></div>
+      </div>
+    </header>
+
+    <div class="teori-meta">
+      <div class="teori-chip"><b>👤 Tokoh</b><span id="teoriTokoh"></span></div>
+      <div class="teori-chip"><b>⏳ Periode</b><span id="teoriPeriode"></span></div>
+    </div>
+
+    <section class="teori-section">
+      <h4>Penjelasan</h4>
+      <p class="teori-ringkasan" id="teoriRingkasan"></p>
+    </section>
+
+    <section class="teori-section">
+      <h4>Infografik</h4>
+      <figure class="infographic-slot" id="teoriInfografik"></figure>
+    </section>
+
+    <section class="teori-section">
+      <h4>Jalur persebaran</h4>
+      <div class="jalur-chips" id="teoriJalur"></div>
+    </section>
+
+    <section class="teori-section">
+      <h4>Dasar &amp; bukti</h4>
+      <ul class="teori-bukti" id="teoriBukti"></ul>
+    </section>
+
+    <div class="teori-catatan">
+      <b>🔍 Catatan kritis</b>
+      <p id="teoriCatatan"></p>
+    </div>
+
+    <nav class="teori-pager" id="teoriPager" aria-label="Teori lainnya"></nav>
+  </main>
+
+  <nav class="bottom-nav">
+    <div class="nav-item"><a href="peta.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">🗺️<span>Peta Interaktif</span></a></div>
+    <div class="nav-item">📖<span>Panduan</span></div>
+    <div class="nav-item">📊<span>Progres</span></div>
+    <div class="nav-item">⚙️<span>Pengaturan</span></div>
+  </nav>
+
+  <script>
+    /* ============================================================
+       ISI TEORI — edit teks di sini kalau mau mengubah penjelasan.
+       "infografik" = lokasi file gambar infografik. Cukup taruh
+       file dengan nama itu di folder "infografik", otomatis tampil.
+       ============================================================ */
+    const TEORI = {
+      yunnan: {
+        icon: '🏔️',
+        judul: 'Out of Yunnan',
+        sub: 'Nenek moyang berasal dari Yunnan, Tiongkok Selatan',
+        tokoh: 'J.H.C. Kern, Robert von Heine-Geldern, Mohammad Ali',
+        periode: '± 2000–500 SM, dalam dua gelombang',
+        warna: ['#d9552b', '#f0805a'],
+        ringkasan: 'Menurut teori ini, nenek moyang bangsa Indonesia berasal dari wilayah Yunnan di Tiongkok Selatan. Mereka bergerak ke selatan melalui daratan Asia Tenggara menuju kepulauan Nusantara, kemungkinan karena terdesak bangsa lain atau mencari lahan yang lebih subur. Perpindahan terjadi dalam dua gelombang: Proto-Melayu (Melayu Tua) yang membawa budaya batu baru (Neolitikum), lalu Deutero-Melayu (Melayu Muda) yang membawa budaya perunggu–besi.',
+        jalur: ['Yunnan', 'Indocina', 'Semenanjung Malaya', 'Nusantara'],
+        bukti: [
+          'Kapak persegi dan kapak lonjong di Nusantara mirip dengan temuan di daratan Asia (Heine-Geldern).',
+          'Kesamaan rumpun bahasa antara penduduk Nusantara dan Asia Daratan (Kern).',
+          'Nekara perunggu dan kapak corong dari budaya Dong Son di Vietnam juga ditemukan di Nusantara.',
+          'Sungai-sungai besar seperti Mekong dan Salween diduga menjadi jalur perjalanan.'
+        ],
+        catatan: 'Penelitian arkeologi, bahasa, dan genetika yang lebih baru banyak menunjuk Taiwan, bukan Yunnan, sebagai titik awal penutur Austronesia. Bandingkan dengan teori Out of Taiwan.',
+        infografik: 'infografik/out-of-yunnan.png'
+      },
+      taiwan: {
+        icon: '🏝️',
+        judul: 'Out of Taiwan',
+        sub: 'Asal-usul penutur Austronesia dari Taiwan',
+        tokoh: 'Peter Bellwood, Robert Blust',
+        periode: '± 5.000–4.000 tahun lalu',
+        warna: ['#1fa39b', '#4fd1c5'],
+        ringkasan: 'Teori ini menyatakan bahwa penutur bahasa Austronesia, yang menjadi nenek moyang sebagian besar penduduk Nusantara, berasal dari Taiwan. Mereka adalah petani sekaligus pelaut yang berlayar ke Filipina, kemudian menyebar ke Sulawesi, Kalimantan, dan pulau-pulau Nusantara lainnya, bahkan terus ke Pasifik dan Madagaskar.',
+        jalur: ['Taiwan', 'Filipina', 'Sulawesi & Kalimantan', 'Nusantara', 'Pasifik'],
+        bukti: [
+          'Bahasa-bahasa asli Taiwan (Formosa) paling beragam dalam rumpun Austronesia, tanda kawasan asal yang tertua (Blust).',
+          'Tembikar dan beliung batu bergaya serupa tersebar dari Taiwan ke Filipina lalu ke Nusantara.',
+          'Rekonstruksi kosakata purba Austronesia memuat kata untuk padi, jewawut, dan perahu, menandakan budaya bertani dan berlayar.',
+          'Analisis DNA memperkuat hubungan antara penduduk Nusantara dan populasi Taiwan.'
+        ],
+        catatan: 'Sebagian peneliti menilai penyebaran Austronesia tidak sesederhana satu jalur: para pendatang bertemu, bercampur, dan bertukar budaya dengan penduduk yang sudah lebih dulu tinggal di Nusantara.',
+        infografik: 'infografik/out-of-taiwan.png'
+      },
+      africa: {
+        icon: '🌍',
+        judul: 'Out of Africa',
+        sub: 'Asal-usul manusia modern (Homo sapiens) dari Afrika',
+        tokoh: 'Christopher Stringer, Rebecca Cann, Allan Wilson',
+        periode: 'Muncul ± 300.000 tahun lalu; keluar Afrika ± 70.000–50.000 tahun lalu',
+        warna: ['#c98a2b', '#e0b24a'],
+        ringkasan: 'Teori ini menyatakan bahwa manusia modern (Homo sapiens) berevolusi di Afrika, lalu bermigrasi keluar melalui Timur Tengah dan menyusuri pesisir Asia Selatan serta Asia Tenggara hingga mencapai kepulauan Nusantara dan Australia. Jauh sebelumnya, Homo erectus lebih dulu keluar dari Afrika dan fosilnya ditemukan di Jawa, misalnya di Sangiran.',
+        jalur: ['Afrika', 'Timur Tengah', 'Asia Selatan', 'Asia Tenggara', 'Nusantara & Australia'],
+        bukti: [
+          'Fosil Homo sapiens tertua ditemukan di Afrika, misalnya di Jebel Irhoud (Maroko).',
+          'DNA mitokondria menunjukkan keragaman genetik terbesar pada penduduk Afrika, tanda populasi yang paling tua.',
+          'Fosil manusia modern awal di Nusantara, seperti Manusia Wajak yang ditemukan di Tulungagung, sejalan dengan jalur migrasi ini.'
+        ],
+        catatan: 'Teori ini menjelaskan asal Homo sapiens secara umum, sedangkan asal penutur Austronesia (nenek moyang sebagian besar bangsa Indonesia kini) dijelaskan teori lain. Keduanya bisa saling melengkapi.',
+        infografik: 'infografik/out-of-africa.png'
+      },
+      nusantara: {
+        icon: '🌴',
+        judul: 'Teori Nusantara',
+        sub: 'Nenek moyang berasal dari kepulauan Nusantara sendiri',
+        tokoh: 'Mohammad Yamin, J. Crawfurd, K. Himly, Gorys Keraf',
+        periode: 'Fosil manusia purba Nusantara berusia hingga ± 1,5 juta tahun',
+        warna: ['#3f8f4f', '#6fbf73'],
+        ringkasan: 'Teori ini berpendapat bahwa nenek moyang bangsa Indonesia berasal dari Nusantara sendiri. Kepulauan ini, yang pada masa glasial sebagian menyatu sebagai daratan Paparan Sunda, dianggap sebagai tempat berkembangnya manusia dan budaya Austronesia yang kemudian menyebar ke wilayah lain.',
+        jalur: ['Nusantara (Paparan Sunda)', 'Asia Tenggara', 'Wilayah sekitarnya'],
+        bukti: [
+          'Nusantara menyimpan banyak fosil manusia purba, seperti Meganthropus, Pithecanthropus, dan Manusia Wajak (Tulungagung).',
+          'Mohammad Yamin menekankan kekayaan temuan fosil dan peninggalan budaya tertua di Indonesia.',
+          'Sebagian ahli bahasa, seperti Gorys Keraf, menduga rumpun bahasa Austronesia berkembang dari Nusantara.',
+          'Paparan Sunda yang luas saat permukaan laut rendah memudahkan manusia berpindah dan berkembang di kawasan ini.'
+        ],
+        catatan: 'Banyaknya fosil di Nusantara belum tentu membuktikan bahwa mereka adalah leluhur langsung bangsa Indonesia sekarang. Sebagian fosil, seperti Homo erectus, termasuk garis keturunan yang berbeda dari manusia modern.',
+        infografik: 'infografik/teori-nusantara.png'
+      }
+    };
+
+    const URUTAN = ['yunnan', 'taiwan', 'africa', 'nusantara'];
+
+    function el(tag, cls, text) {
+      const e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text !== undefined) e.textContent = text;
+      return e;
+    }
+
+    const param = new URLSearchParams(location.search).get('teori');
+    const key = TEORI[param] ? param : URUTAN[0];
+    const t = TEORI[key];
+
+    document.title = 'CHRONOS-SPHERE — ' + t.judul;
+
+    const page = document.getElementById('teoriPage');
+    page.style.setProperty('--acc-a', t.warna[0]);
+    page.style.setProperty('--acc-b', t.warna[1]);
+
+    document.getElementById('teoriIcon').textContent = t.icon;
+    document.getElementById('teoriJudul').textContent = t.judul;
+    document.getElementById('teoriSub').textContent = t.sub;
+    document.getElementById('teoriTokoh').textContent = t.tokoh;
+    document.getElementById('teoriPeriode').textContent = t.periode;
+    document.getElementById('teoriRingkasan').textContent = t.ringkasan;
+    document.getElementById('teoriCatatan').textContent = t.catatan;
+
+    // Jalur persebaran
+    const jalur = document.getElementById('teoriJalur');
+    t.jalur.forEach((stop, i) => {
+      if (i > 0) jalur.appendChild(el('span', 'jalur-arrow', '→'));
+      jalur.appendChild(el('span', 'jalur-chip', stop));
+    });
+
+    // Dasar & bukti
+    const bukti = document.getElementById('teoriBukti');
+    t.bukti.forEach(b => bukti.appendChild(el('li', null, b)));
+
+    // Infografik: placeholder dulu, diganti gambar kalau filenya ada
+    const slot = document.getElementById('teoriInfografik');
+    const empty = el('div', 'infographic-empty');
+    empty.appendChild(el('span', 'ie-icon', '🖼️'));
+    empty.appendChild(el('strong', null, 'Tempat infografik'));
+    const hint = el('div', null, 'Simpan gambar di ');
+    hint.appendChild(el('code', null, t.infografik));
+    empty.appendChild(hint);
+    slot.appendChild(empty);
+
+    const img = new Image();
+    img.onload = () => {
+      slot.textContent = '';
+      slot.classList.add('has-img');
+      img.className = 'infographic-img';
+      img.alt = 'Infografik ' + t.judul;
+      slot.appendChild(img);
+    };
+    img.src = t.infografik;
+
+    // Tombol sebelumnya / berikutnya
+    const pager = document.getElementById('teoriPager');
+    const idx = URUTAN.indexOf(key);
+    if (idx > 0) {
+      const p = el('a', null, '← ' + TEORI[URUTAN[idx - 1]].judul);
+      p.href = 'teori.html?teori=' + URUTAN[idx - 1];
+      pager.appendChild(p);
+    } else {
+      pager.appendChild(el('span'));
+    }
+    if (idx < URUTAN.length - 1) {
+      const n = el('a', null, TEORI[URUTAN[idx + 1]].judul + ' →');
+      n.href = 'teori.html?teori=' + URUTAN[idx + 1];
+      pager.appendChild(n);
+    }
+  </script>
+
+</body>
+</html>
