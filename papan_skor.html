@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHRONOS-SPHERE — Papan Skor</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="skor.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+</head>
+<body class="page-peta">
+
+  <a href="kuis.html" class="back-link"><span class="back-icon">&larr;</span> Kembali ke Kuis</a>
+
+  <div class="page-header">
+    <h1 class="page-title">Papan Skor</h1>
+    <p class="page-subtitle" id="subJudul">10 penjelajah terbaik dari semua pemain</p>
+  </div>
+
+  <main class="ps-wrap">
+    <div class="ps-tabs" id="tabMateri"></div>
+
+    <form class="ps-cari" id="formCari">
+      <input id="inputNama" type="text" maxlength="24" aria-label="Nama atau kelompok" placeholder="Nama / Kelompok kamu">
+      <button type="submit">Cek peringkat</button>
+    </form>
+
+    <div class="ps-saya" id="kartuSaya" hidden></div>
+    <p class="ps-status" id="status" aria-live="polite"></p>
+
+    <ol class="ps-podium" id="podium"></ol>
+    <ol class="ps-list" id="daftar" start="4"></ol>
+
+    <div class="ps-aksi">
+      <button class="ps-refresh" id="tombolMuat" type="button">🔄 Muat ulang</button>
+      <a class="kuis-link-btn" href="kuis.html" style="padding:.7rem 1.2rem;">Main kuis →</a>
+    </div>
+  </main>
+
+  <div class="ps-confetti" id="confeti" aria-hidden="true"></div>
+
+  <nav class="bottom-nav">
+    <div class="nav-item"><a href="peta.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">🗺️<span>Peta Interaktif</span></a></div>
+    <div class="nav-item">📖<span>Panduan</span></div>
+    <div class="nav-item active">📊<span>Progres</span></div>
+    <div class="nav-item">⚙️<span>Pengaturan</span></div>
+  </nav>
+
+  <script>
+    /* Tempel URL Web App yang SAMA dengan yang di kuis.html (berakhiran /exec) */
+    const URL_SKOR = 'https://script.google.com/macros/s/AKfycbx0U0iV280vs7M_yxxcd6gqxmzNwcKXmNofRDc_C-9bDvC9ewUIxPB51kHiosIDfu64/exec';
+    const KUNCI = 'chronos_kuis_v1';   // sama dengan kuis.html, untuk mengisi nama otomatis
+
+    const $ = id => document.getElementById(id);
+    function el(tag, cls, text) {
+      const e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text !== undefined) e.textContent = text;
+      return e;
+    }
+    const MEDALI = ['🥇', '🥈', '🥉'];
+
+    // Samakan persis dengan TOPIK.nama & label 'Campuran' di kuis.html
+    const MATERI = [
+      { key: '',                nama: 'Semua',           icon: '🌐' },
+      { key: 'Out of Yunnan',   nama: 'Out of Yunnan',   icon: '🏔️' },
+      { key: 'Out of Taiwan',   nama: 'Out of Taiwan',   icon: '🏝️' },
+      { key: 'Out of Africa',   nama: 'Out of Africa',   icon: '🌍' },
+      { key: 'Teori Nusantara', nama: 'Teori Nusantara', icon: '🌴' },
+      { key: 'Situs Fosil',     nama: 'Situs Fosil',     icon: '🦴' },
+      { key: 'Campuran',        nama: 'Campuran',        icon: '🎲' }
+    ];
+    let materiAktif = MATERI[0].key;
+
+    function bangunTab() {
+      const wrap = $('tabMateri');
+      wrap.textContent = '';
+      MATERI.forEach(m => {
+        const b = el('button', 'ps-tab' + (m.key === materiAktif ? ' active' : ''));
+        b.type = 'button';
+        b.appendChild(el('span', null, m.icon));
+        b.appendChild(el('span', null, m.nama));
+        b.addEventListener('click', () => {
+          if (materiAktif === m.key) return;
+          materiAktif = m.key;
+          bangunTab();
+          muat();
+        });
+        wrap.appendChild(b);
+      });
+    }
+    const NAMA_URUT = ['Juara 1', 'Juara 2', 'Juara 3'];
+
+    const WARNA_CONFETI = ['#f4d64d', '#b25df0', '#4fd1c5', '#f08a24', '#6fbf73', '#ff6b81'];
+
+    function tembakConfeti() {
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const wadah = $('confeti');
+      const jumlah = 70;
+      for (let i = 0; i < jumlah; i++) {
+        const p = document.createElement('span');
+        p.className = 'ps-confetti-piece';
+        p.style.setProperty('--x', (Math.random() * 100) + 'vw');
+        p.style.setProperty('--dx', ((Math.random() * 40) - 20) + 'vw');
+        p.style.setProperty('--w', (5 + Math.random() * 5) + 'px');
+        p.style.setProperty('--h', (8 + Math.random() * 8) + 'px');
+        p.style.setProperty('--c', WARNA_CONFETI[i % WARNA_CONFETI.length]);
+        p.style.setProperty('--dur', (1.6 + Math.random() * 1.2) + 's');
+        p.style.setProperty('--delay', (Math.random() * 0.35) + 's');
+        p.style.setProperty('--rot', (Math.random() > 0.5 ? 1 : -1) * (360 + Math.random() * 360) + 'deg');
+        wadah.appendChild(p);
+        setTimeout(() => p.remove(), 3200);
+      }
+    }
+
+    try { $('inputNama').value = (JSON.parse(localStorage.getItem(KUNCI)) || {}).nama || ''; } catch (e) {}
+
+    async function muat() {
+      const nama = $('inputNama').value.trim().slice(0, 24);
+      $('podium').textContent = '';
+      $('daftar').textContent = '';
+      $('kartuSaya').hidden = true;
+      if (!URL_SKOR) { $('status').textContent = 'Papan skor bersama belum diaktifkan.'; return; }
+      $('status').textContent = 'Memuat papan skor…';
+      try {
+        const q = [];
+        if (nama) q.push('nama=' + encodeURIComponent(nama));
+        if (materiAktif) q.push('topik=' + encodeURIComponent(materiAktif));
+        const res = await fetch(URL_SKOR + (q.length ? '?' + q.join('&') : ''));
+        const j = await res.json();
+        if (!j.ok) throw new Error('gagal');
+        gambar(j, nama.toLowerCase());
+      } catch (e) {
+        $('status').textContent = 'Papan skor belum bisa dimuat. Coba lagi nanti.';
+      }
+    }
+
+    function gambar(j, namaKecil) {
+      const skor = j.skor || [];
+      const m = MATERI.find(x => x.key === materiAktif);
+      $('subJudul').textContent = materiAktif ? ('10 penjelajah terbaik — ' + m.nama) : '10 penjelajah terbaik dari semua pemain';
+      $('status').textContent = skor.length ? (j.jumlah ? j.jumlah + ' pemain sudah ikut bermain.' : '') : '';
+      if (!skor.length) {
+        $('daftar').appendChild(el('li', 'ps-kosong', 'Belum ada skor. Jadilah yang pertama!'));
+        return;
+      }
+      if (j.peringkat && j.jumlah) {
+        const k = $('kartuSaya');
+        k.textContent = '';
+        k.appendChild(document.createTextNode('Peringkatmu'));
+        k.appendChild(el('b', null, '#' + j.peringkat));
+        k.appendChild(document.createTextNode('dari ' + j.jumlah + ' pemain'));
+        k.hidden = false;
+        if (j.peringkat <= 3) tembakConfeti();
+      }
+      skor.slice(0, 3).forEach((s, i) => {
+        const li = el('li', 'ps-pod p' + (i + 1));
+        li.setAttribute('data-urut', String(i + 1));
+        if (s.nama.toLowerCase() === namaKecil) li.classList.add('me');
+        li.appendChild(el('span', 'medal', MEDALI[i]));
+        li.appendChild(el('span', 'urut', NAMA_URUT[i]));
+        li.appendChild(el('span', 'nama', s.nama));
+        li.appendChild(el('span', 'poin', s.poin + ' poin'));
+        li.appendChild(el('span', 'topik', s.topik));
+        $('podium').appendChild(li);
+      });
+      skor.slice(3).forEach((s, i) => {
+        const li = el('li');
+        if (s.nama.toLowerCase() === namaKecil) li.classList.add('me');
+        li.appendChild(el('span', 'ps-urut', String(i + 4)));
+        li.appendChild(el('span', 'ps-nama', s.nama));
+        li.appendChild(el('span', 'ps-topik', s.topik));
+        li.appendChild(el('span', 'ps-poin', s.poin + ' poin'));
+        $('daftar').appendChild(li);
+      });
+    }
+
+    bangunTab();
+    $('formCari').addEventListener('submit', e => { e.preventDefault(); muat(); });
+    $('tombolMuat').addEventListener('click', muat);
+    muat();
+  </script>
+
+</body>
+</html>
