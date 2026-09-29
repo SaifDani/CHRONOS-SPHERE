@@ -68,6 +68,7 @@
 
     <!-- ========== LAYAR 3: HASIL ========== -->
     <section class="kuis-card" id="layarHasil" hidden>
+      <div class="ps-badge-juara" id="badgeJuara" hidden></div>
       <div class="kuis-hasil-atas">
         <div class="kuis-gelar" id="hasilGelar"></div>
         <div class="kuis-total" id="hasilTotal"></div>
@@ -221,6 +222,55 @@
         const j = await res.json();
         return !!j.ok;
       } catch (e) { return false; }
+    }
+
+    const WARNA_CONFETI = ['#f4d64d', '#b25df0', '#4fd1c5', '#f08a24', '#6fbf73', '#ff6b81'];
+    const gerakDikurangi = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function tembakConfeti() {
+      const wadah = $('confeti');
+      if (!wadah) return;
+      const jumlah = 70;
+      for (let i = 0; i < jumlah; i++) {
+        const p = document.createElement('span');
+        p.className = 'ps-confetti-piece';
+        p.style.setProperty('--x', (Math.random() * 100) + 'vw');
+        p.style.setProperty('--dx', ((Math.random() * 40) - 20) + 'vw');
+        p.style.setProperty('--w', (5 + Math.random() * 5) + 'px');
+        p.style.setProperty('--h', (8 + Math.random() * 8) + 'px');
+        p.style.setProperty('--c', WARNA_CONFETI[i % WARNA_CONFETI.length]);
+        p.style.setProperty('--dur', (1.6 + Math.random() * 1.2) + 's');
+        p.style.setProperty('--delay', (Math.random() * 0.35) + 's');
+        p.style.setProperty('--rot', (Math.random() > 0.5 ? 1 : -1) * (360 + Math.random() * 360) + 'deg');
+        wadah.appendChild(p);
+        setTimeout(() => p.remove(), 3200);
+      }
+    }
+
+    const MEDALI_JUARA = { 1: '🥇 Juara 1', 2: '🥈 Juara 2', 3: '🥉 Juara 3' };
+
+    function rayakanPeringkat(peringkat, jumlah) {
+      const b = $('badgeJuara');
+      if (!b || !peringkat || peringkat > 3) { if (b) b.hidden = true; return; }
+      b.textContent = MEDALI_JUARA[peringkat] + ' dari ' + jumlah + ' pemain! 🎉';
+      b.hidden = false;
+      if (gerakDikurangi()) {
+        b.classList.add('diam');   // lencana tetap tampil, tanpa gerakan
+      } else {
+        b.classList.remove('diam');
+        tembakConfeti();
+      }
+    }
+
+    // Ambil peringkat pemain secara otomatis (tanpa perlu cari manual) begitu skor terkirim
+    async function cekPeringkatOtomatis(nama, topik) {
+      if (!URL_SKOR || !nama) return;
+      try {
+        const q = '?nama=' + encodeURIComponent(nama) + '&topik=' + encodeURIComponent(topik);
+        const res = await fetch(URL_SKOR + q);
+        const j = await res.json();
+        if (j.ok) rayakanPeringkat(j.peringkat, j.jumlah);
+      } catch (e) {}
     }
 
     async function muatPapanGlobal(olId, infoId, awalan) {
@@ -527,8 +577,12 @@
 
       // kirim ke papan skor bersama, lalu muat ulang Top 10
       $('infoGlobalHasil').textContent = URL_SKOR ? 'Mengirim skor…' : '';
+      $('badgeJuara').hidden = true;
       kirimSkor({ nama: data.nama || 'Pemain', poin: sesi.poin, topik: sesi.label, benar: sesi.benar, total: total })
-        .then(ok => muatPapanGlobal('papanGlobalHasil', 'infoGlobalHasil', ok || !URL_SKOR ? '' : 'Skor kamu belum terkirim. '));
+        .then(ok => {
+          muatPapanGlobal('papanGlobalHasil', 'infoGlobalHasil', ok || !URL_SKOR ? '' : 'Skor kamu belum terkirim. ');
+          if (ok) cekPeringkatOtomatis(data.nama || 'Pemain', sesi.label);
+        });
     }
 
     $('tombolUlang').addEventListener('click', () => {
@@ -543,6 +597,8 @@
     isiPapan('papanMulai');
     muatPapanGlobal('papanGlobalMulai', 'infoGlobalMulai');
   </script>
+
+  <div class="ps-confetti" id="confeti" aria-hidden="true"></div>
 
 </body>
 </html>

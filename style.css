@@ -175,21 +175,21 @@ body::before{
 .btn-peta-eksplorasi{ background:linear-gradient(90deg,#2f7ce8,#4a9cf5); }
 .btn-peta-eksplorasi .icon-circle{ color:#2f7ce8; }
 
-/* Out of Yunnan — oranye kemerahan */
+/* Out of Yunnan — oranye kemerahan 
 .btn-teori-yunnan{ background:linear-gradient(90deg,#d9552b,#f0805a); }
-.btn-teori-yunnan .icon-circle{ color:#d9552b; }
+.btn-teori-yunnan .icon-circle{ color:#d9552b; }*/
 
-/* Out of Taiwan — teal */
+/* Out of Taiwan — teal 
 .btn-teori-taiwan{ background:linear-gradient(90deg,#1fa39b,#4fd1c5); }
-.btn-teori-taiwan .icon-circle{ color:#1fa39b; }
+.btn-teori-taiwan .icon-circle{ color:#1fa39b; }*/
 
-/* Out of Africa — emas */
+/* Out of Africa — emas 
 .btn-teori-africa{ background:linear-gradient(90deg,#c98a2b,#e0b24a); }
-.btn-teori-africa .icon-circle{ color:#c98a2b; }
+.btn-teori-africa .icon-circle{ color:#c98a2b; }*/
 
-/* Teori Nusantara — hijau */
+/* Teori Nusantara — hijau 
 .btn-teori-nusantara{ background:linear-gradient(90deg,#3f8f4f,#6fbf73); }
-.btn-teori-nusantara .icon-circle{ color:#3f8f4f; }
+.btn-teori-nusantara .icon-circle{ color:#3f8f4f; }*/
 
 /* Tantangan Masa Kini — pink/merah */
 .btn-tantangan-masa-kini{ background:linear-gradient(90deg,#e0435f,#ef6f8c); }
@@ -1161,4 +1161,45 @@ a.card{ text-decoration:none; color:inherit; }
   color:#fff;
   background:rgba(255,255,255,.08);
   border:1px solid rgba(255,255,255,.18);
+}
+/* ============================================
+   BADGE PERINGKAT & CONFETTI (kuis.html)
+   ============================================ */
+.ps-confetti{
+  position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:999;
+}
+.ps-confetti-piece{
+  position:absolute; bottom:-5vh; left:var(--x);
+  width:var(--w); height:var(--h);
+  background:var(--c);
+  opacity:0;
+  border-radius:2px;
+  animation:psConfetiNaik var(--dur) cubic-bezier(.15,.65,.3,1) var(--delay) forwards;
+}
+@keyframes psConfetiNaik{
+  0%{   opacity:1; transform:translate(0,0) rotate(0deg); }
+  70%{  opacity:1; }
+  100%{ opacity:0; transform:translate(var(--dx),-105vh) rotate(var(--rot)); }
+}
+@media (prefers-reduced-motion:reduce){
+  .ps-confetti{ display:none; }
+}
+
+.ps-badge-juara{
+  text-align:center; font-weight:800; font-size:1rem; color:#3a2e00;
+  background:linear-gradient(90deg,#f4d64d,#ffe993);
+  border:1px solid rgba(244,214,77,.7);
+  border-radius:999px;
+  padding:.6rem 1rem;
+  margin-bottom:1rem;
+  box-shadow:0 8px 20px rgba(244,214,77,.35);
+}
+.ps-badge-juara[hidden]{ display:none; }
+@media (prefers-reduced-motion:no-preference){
+  .ps-badge-juara:not(.diam){ animation:psBadgeMuncul .5s ease both; }
+}
+.ps-badge-juara.diam{ animation:none; }
+@keyframes psBadgeMuncul{
+  from{ opacity:0; transform:translateY(-6px) scale(.96); }
+  to{ opacity:1; transform:none; }
 }

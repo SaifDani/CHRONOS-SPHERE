@@ -22,10 +22,7 @@
   <main class="ps-wrap">
     <div class="ps-tabs" id="tabMateri"></div>
 
-    <form class="ps-cari" id="formCari">
-      <input id="inputNama" type="text" maxlength="24" aria-label="Nama atau kelompok" placeholder="Nama / Kelompok kamu">
-      <button type="submit">Cek peringkat</button>
-    </form>
+    <div class="ps-identitas" id="identitas"></div>
 
     <div class="ps-saya" id="kartuSaya" hidden></div>
     <p class="ps-status" id="status" aria-live="polite"></p>
@@ -115,10 +112,23 @@
       }
     }
 
-    try { $('inputNama').value = (JSON.parse(localStorage.getItem(KUNCI)) || {}).nama || ''; } catch (e) {}
+    let namaSaya = '';
+    try { namaSaya = (JSON.parse(localStorage.getItem(KUNCI)) || {}).nama || ''; } catch (e) {}
+    namaSaya = namaSaya.trim().slice(0, 24);
+
+    function tampilkanIdentitas() {
+      const w = $('identitas');
+      w.textContent = '';
+      if (namaSaya) {
+        w.appendChild(document.createTextNode('Kamu masuk sebagai '));
+        w.appendChild(el('b', null, namaSaya));
+      } else {
+        w.appendChild(document.createTextNode('Main kuis dulu supaya peringkatmu bisa dicek di sini.'));
+      }
+    }
 
     async function muat() {
-      const nama = $('inputNama').value.trim().slice(0, 24);
+      const nama = namaSaya;
       $('podium').textContent = '';
       $('daftar').textContent = '';
       $('kartuSaya').hidden = true;
@@ -178,7 +188,7 @@
     }
 
     bangunTab();
-    $('formCari').addEventListener('submit', e => { e.preventDefault(); muat(); });
+    tampilkanIdentitas();
     $('tombolMuat').addEventListener('click', muat);
     muat();
   </script>
