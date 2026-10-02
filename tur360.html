@@ -8,6 +8,40 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Pannellum: library foto 360 open-source, jalan langsung di halaman (tanpa iframe pihak ketiga) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+
+    <style>
+      /* Titik hotspot custom — type:'custom' di Pannellum tidak menambahkan
+         ikon/tooltip bawaan apa pun, jadi style ini satu-satunya yang berlaku */
+      .psphere-hotspot{
+        box-sizing:border-box;
+        width:34px; height:34px;
+        border-radius:50%;
+        background:linear-gradient(135deg,#f4d64d,#e0b24a);
+        border:2px solid #fff;
+        box-shadow:0 0 0 4px rgba(244,214,77,.35), 0 4px 10px rgba(0,0,0,.4);
+        display:flex; align-items:center; justify-content:center;
+        font-weight:800; font-size:.8rem; color:#2a1f05;
+        cursor:pointer;
+        /* Pannellum menaruh pojok kiri-atas elemen ini tepat di titik pitch/yaw,
+           dan dia sendiri yang mengatur "transform" elemen ini lewat JS — jadi
+           transform CSS kita bisa ketimpa. Dipakai margin negatif (setengah dari
+           width/height sendiri) supaya TITIK TENGAH lingkaran yang pas di
+           koordinatnya, dengan cara yang tidak disentuh Pannellum sama sekali. */
+        margin-left:-17px;
+        margin-top:-17px;
+        transform-origin:center center;
+        animation:psphere-pulse 1.8s ease-in-out infinite;
+      }
+      @keyframes psphere-pulse{
+        0%,100%{ transform:scale(1); }
+        50%{ transform:scale(1.15); }
+      }
+      #tourFrame{ position:relative; }
+    </style>
 </head>
 <body class="page-peta">
 
@@ -19,7 +53,7 @@
   </div>
 
   <div class="tour-frame" id="tourFrame">
-    <div class="tour-placeholder" id="tourPlaceholder">🦴<br>Panorama 360° belum dipasang</div>
+    <div id="panorama" style="width:100%; height:100%;"></div>
   </div>
 
   <div class="thumb-strip">
@@ -89,30 +123,31 @@
 
   <nav class="bottom-nav">
     <div class="nav-item"><a href="peta.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">🗺️<span>Peta Interaktif</span></a></div>
-    <div class="nav-item">📖<span>Panduan</span></div>
-    <div class="nav-item">📊<span>Progres</span></div>
-    <div class="nav-item">⚙️<span>Pengaturan</span></div>
+    <div class="nav-item"><a href="panduan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">📖<span>Panduan</span></a></div>
+    <div class="nav-item"><a href="papan_skor.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">📊<span>Progres</span></a></div>
+    <div class="nav-item"><a href="pengaturan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">⚙️<span>Pengaturan</span></a></div>
   </nav>
 
   <script>
     /* ============================================================
-       DATA LOKASI — satu file ini dipakai untuk semua lokasi fosil.
-       Akses lewat tur360.html?lokasi=sangiran  (atau wajak, dst).
-       "embed" = link embed panorama 360° (Google Earth dsb).
-       Tambah lokasi baru: cukup tambah satu blok di bawah.
+       DATA LOKASI
+       "foto" = nama file foto 360 (equirectangular) kamu sendiri,
+       taruh file-nya di folder yang sama dengan tur360.html.
        ============================================================ */
     const LOKASI = {
       sangiran: {
         icon: '🦴',
         nama: 'Situs Sangiran',
         sub: 'Menelusuri jejak manusia purba di Jawa Tengah',
-        embed: ''   // <- tempel link embed panorama 360° Sangiran di sini
+        // Placeholder contoh dari Pannellum (equirectangular asli, CC-licensed) — ganti dengan foto Sangiran aslimu kalau sudah ada
+        foto: 'https://pannellum.org/images/alma.jpg'
       },
       wajak: {
         icon: '🦴',
         nama: 'Situs Wajak',
         sub: 'Tempat ditemukannya Manusia Wajak di Campurdarat, Tulungagung',
-        embed: ''   // <- tempel link embed panorama 360° Wajak di sini
+        // Placeholder contoh dari Pannellum (equirectangular asli, CC-licensed) — ganti dengan foto Wajak aslimu kalau sudah ada
+        foto: 'https://pannellum.org/images/alma.jpg'
       }
     };
 
@@ -125,31 +160,76 @@
     document.getElementById('lokasiNama').textContent = L.nama;
     document.getElementById('lokasiSub').textContent = L.sub;
 
-    const tourFrame = document.getElementById('tourFrame');
-    if (L.embed) {
-      const f = document.createElement('iframe');
-      f.src = L.embed;
-      f.title = 'Tur 360° ' + L.nama;
-      f.loading = 'lazy';
-      f.allowFullscreen = true;
-      f.style.cssText = 'width:100%;height:100%;border:0;';
-      tourFrame.textContent = '';
-      tourFrame.appendChild(f);
-    } else {
-      const ph = document.getElementById('tourPlaceholder');
-      ph.textContent = L.icon;
-      ph.appendChild(document.createElement('br'));
-      ph.appendChild(document.createTextNode('Tempel link embed panorama 360° ' + L.nama + ' di data LOKASI'));
-    }
-
     const buttons = document.querySelectorAll('.hotspot-btn');
     const cards = document.querySelectorAll('.hotspot-card');
-    buttons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        buttons.forEach(b => b.classList.remove('active'));
-        cards.forEach(c => c.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(btn.dataset.target).classList.add('active');
+
+    function bukaKartu(id) {
+      const tombol = document.querySelector(`.hotspot-btn[data-target="${id}"]`);
+      const kartu = document.getElementById(id);
+      if (!tombol || !kartu) return false;
+      buttons.forEach(b => b.classList.remove('active'));
+      cards.forEach(c => c.classList.remove('active'));
+      tombol.classList.add('active');
+      kartu.classList.add('active');
+      document.getElementById('hotspotList').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return true;
+    }
+    buttons.forEach(btn => btn.addEventListener('click', () => bukaKartu(btn.dataset.target)));
+
+    /* ============================================================
+       POSISI 4 HOTSPOT di foto 360 ini.
+       "pitch" = atas/bawah (0 = lurus depan, + = ke atas, - = ke bawah)
+       "yaw"   = kiri/kanan (0 = arah depan awal foto, bisa -180 s/d 180)
+
+       Cara cari angka yang pas: buka halaman ini, panorama akan
+       mencetak posisi tiap klik ke Console browser (klik kanan ->
+       Inspect -> tab Console). Klik di titik yang kamu mau jadi
+       hotspot, lihat angka pitch/yaw yang muncul, salin ke sini.
+       ============================================================ */
+    const TITIK_HOTSPOT = [
+      { id: 'hm1', label: '01', pitch: 0, yaw: 0    },  // depan
+      { id: 'hm2', label: '02', pitch: 0, yaw: 90   },  // kanan
+      { id: 'hm3', label: '03', pitch: 0, yaw: 180  },  // belakang
+      { id: 'hm4', label: '04', pitch: 0, yaw: -90  }   // kiri
+    ];
+
+    const hotSpots = TITIK_HOTSPOT.map(t => ({
+      pitch: t.pitch,
+      yaw: t.yaw,
+      type: 'custom',
+      cssClass: 'psphere-hotspot',
+      createTooltipFunc: function (div) {
+        // "div" di sini adalah elemen hotspot itu sendiri (bukan tooltip terpisah).
+        // Kosongkan dulu isi bawaan Pannellum, baru isi label angka kita sendiri.
+        div.innerHTML = '';
+        div.textContent = t.label;
+        div.addEventListener('click', function () { bukaKartu(t.id); });
+      }
+    }));
+
+    // Simpan viewer-nya di variabel ini — JANGAN panggil pannellum.viewer('panorama', ...)
+    // lagi di tempat lain, karena tiap dipanggil itu selalu BIKIN viewer baru dan
+    // menimpa yang lama (ini penyebab kotak hitam & 360-nya macet saat digeser).
+    //
+    // "hotSpotDebug: true" itu fitur BAWAAN Pannellum: tiap kamu klik di foto,
+    // otomatis muncul tulisan "Pitch: ... Yaw: ..." di Console browser (klik
+    // kanan -> Inspect -> tab Console). Pakai ini buat nyari koordinat hotspot,
+    // lalu set balik ke false (atau hapus barisnya) kalau sudah selesai.
+    //
+    // PENTING: baru dibuat setelah window 'load' (bukan langsung saat skrip
+    // jalan). #panorama ukurannya 100%/100% mengikuti .tour-frame yang pakai
+    // aspect-ratio — ukuran itu baru pasti setelah SEMUA elemen & font selesai
+    // dimuat. Kalau viewer dibuat lebih awal, Pannellum sempat mengukur ukuran
+    // yang belum stabil, dan semua hotspot jadi salah hitung posisi (nyangkut
+    // di pojok kiri atas).
+    let viewer;
+    window.addEventListener('load', function () {
+      viewer = pannellum.viewer('panorama', {
+        type: 'equirectangular',
+        panorama: L.foto,
+        autoLoad: true,
+        hotSpotDebug: true,
+        hotSpots: hotSpots
       });
     });
   </script>

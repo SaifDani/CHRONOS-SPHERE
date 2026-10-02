@@ -34,23 +34,46 @@
       </div>
     </div>
 
-    <textarea class="hotspot-input" placeholder="Tulis ide/solusimu di sini sebelum mengunggah karya..."></textarea>
-    <button class="upload-btn">Unggah Karya</button>
+    <textarea class="hotspot-input" id="ideSolusi" placeholder="Tulis ide/solusimu di sini sebelum mengunggah karya..."></textarea>
+    <button class="upload-btn" id="tombolUnggah">Unggah Karya</button>
+    <p class="upload-hint" id="unggahHint" hidden>Form unggah karya belum dipasang. Lihat komentar di kode untuk cara memasangnya.</p>
   </div>
 
   <nav class="bottom-nav">
     <div class="nav-item"><a href="peta.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">🗺️<span>Peta Interaktif</span></a></div>
-    <div class="nav-item">📖<span>Panduan</span></div>
-    <div class="nav-item">📊<span>Progres</span></div>
-    <div class="nav-item">⚙️<span>Pengaturan</span></div>
+    <div class="nav-item"><a href="panduan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">📖<span>Panduan</span></a></div>
+    <div class="nav-item"><a href="papan_skor.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">📊<span>Progres</span></a></div>
+    <div class="nav-item"><a href="pengaturan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">⚙️<span>Pengaturan</span></a></div>
   </nav>
 
   <script>
+    let formatDipilih = 'video';
     document.querySelectorAll('.format-chip').forEach(chip => {
       chip.addEventListener('click', () => {
         document.querySelectorAll('.format-chip').forEach(c => c.classList.remove('selected'));
         chip.classList.add('selected');
+        formatDipilih = chip.dataset.format;
       });
+    });
+
+    /* ============================================================
+       FORM UNGGAH KARYA
+       Buat Google Form dengan pertanyaan: Nama Kelompok, Judul Karya,
+       Format (Video/Infografis/Poster), dan Upload File.
+       Tempel link "Kirim" (bukan link edit) form itu di antara
+       tanda kutip di bawah ini. Kosongkan untuk menonaktifkan tombol.
+       ============================================================ */
+    const URL_FORM_UNGGAH = 'https://docs.google.com/forms/d/e/1FAIpQLSd85E9nvM5ceK2u2-1VuzVudAQdwj0uDR3GFBYoprTkcPn5zA/viewform?usp=publish-editor';
+
+    document.getElementById('tombolUnggah').addEventListener('click', () => {
+      if (!URL_FORM_UNGGAH) {
+        document.getElementById('unggahHint').hidden = false;
+        return;
+      }
+      const ide = document.getElementById('ideSolusi').value.trim();
+      // Simpan sementara biar siswa nggak kehilangan idenya kalau mau ditempel manual di form
+      try { sessionStorage.setItem('chronos_ide_terakhir', ide); } catch (e) {}
+      window.open(URL_FORM_UNGGAH, '_blank', 'noopener');
     });
   </script>
 

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHRONOS-SPHERE — Pengaturan</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+</head>
+<body class="page-peta">
+
+  <a href="index.html" class="back-link"><span class="back-icon">&larr;</span> Kembali ke Beranda</a>
+
+  <div class="page-header">
+    <h1 class="page-title">Pengaturan</h1>
+    <p class="page-subtitle">Kelola nama dan data permainanmu di perangkat ini</p>
+  </div>
+
+  <div class="challenge-card" style="max-width:480px;">
+    <h3>Nama Pemain</h3>
+    <p>Nama ini dipakai saat main Kuis Petualangan dan muncul di Papan Skor.</p>
+    <div class="kuis-label">Nama saat ini</div>
+    <input class="kuis-input" id="inputNamaBaru" type="text" maxlength="24" placeholder="Contoh: Kelompok 3 (X-8)">
+    <button class="hotspot-submit" id="tombolSimpanNama" style="margin-top:.8rem;">Simpan nama</button>
+    <p class="upload-hint" id="hintNama" hidden></p>
+  </div>
+
+  <div class="challenge-card" style="max-width:480px; margin-top:1rem;">
+    <h3>Skor Lokal</h3>
+    <p id="ringkasanSkor">Memuat…</p>
+    <button class="hotspot-submit" id="tombolHapusSkor" style="background:linear-gradient(90deg,#e0435f,#ef6f8c);">Hapus skor lokal di perangkat ini</button>
+    <p class="upload-hint" id="hintSkor" hidden></p>
+  </div>
+
+  <div class="challenge-card" style="max-width:480px; margin-top:1rem;">
+    <h3>Draf Ide Tantangan</h3>
+    <p id="ringkasanIde">Memuat…</p>
+    <button class="hotspot-submit" id="tombolHapusIde" style="background:linear-gradient(90deg,#e0435f,#ef6f8c);">Hapus draf ide tersimpan</button>
+  </div>
+
+  <div class="challenge-card" style="max-width:480px; margin-top:1rem;">
+    <h3>Tentang</h3>
+    <p>CHRONOS-SPHERE — SMA Negeri 1 Kedungwaru, Kabupaten Tulungagung.<br>Semua data (nama, skor, draf ide) disimpan langsung di browser perangkat ini, bukan di server — jadi kalau ganti HP/laptop atau membersihkan data browser, data lokal ini akan hilang. Skor yang sudah terkirim ke Papan Skor bersama tetap aman tersimpan di Google Sheets.</p>
+  </div>
+
+  <nav class="bottom-nav">
+    <div class="nav-item"><a href="peta.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">🗺️<span>Peta Interaktif</span></a></div>
+    <div class="nav-item"><a href="panduan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">📖<span>Panduan</span></a></div>
+    <div class="nav-item"><a href="papan_skor.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">📊<span>Progres</span></a></div>
+    <div class="nav-item active">⚙️<span>Pengaturan</span></div>
+  </nav>
+
+  <script>
+    const KUNCI_KUIS = 'chronos_kuis_v1';
+    const KUNCI_IDE = 'chronos_ide_terakhir';
+    const $ = id => document.getElementById(id);
+
+    function muatData() {
+      let d = { nama: '', skor: [] };
+      try { d = JSON.parse(localStorage.getItem(KUNCI_KUIS)) || d; } catch (e) {}
+      return d;
+    }
+    function simpanData(d) {
+      try { localStorage.setItem(KUNCI_KUIS, JSON.stringify(d)); return true; } catch (e) { return false; }
+    }
+
+    // --- Nama ---
+    let data = muatData();
+    $('inputNamaBaru').value = data.nama || '';
+    $('tombolSimpanNama').addEventListener('click', () => {
+      data.nama = $('inputNamaBaru').value.trim().slice(0, 24);
+      const ok = simpanData(data);
+      const hint = $('hintNama');
+      hint.hidden = false;
+      hint.textContent = ok ? 'Nama tersimpan. Dipakai lain kali kamu main kuis.' : 'Gagal menyimpan — penyimpanan browser mungkin diblokir.';
+    });
+
+    // --- Skor ---
+    function tampilkanRingkasanSkor() {
+      const n = (data.skor || []).length;
+      $('ringkasanSkor').textContent = n
+        ? ('Ada ' + n + ' catatan skor terbaik tersimpan di perangkat ini (terpisah dari Papan Skor bersama).')
+        : 'Belum ada skor tersimpan di perangkat ini.';
+    }
+    tampilkanRingkasanSkor();
+    $('tombolHapusSkor').addEventListener('click', () => {
+      data.skor = [];
+      simpanData(data);
+      tampilkanRingkasanSkor();
+      const hint = $('hintSkor');
+      hint.hidden = false;
+      hint.textContent = 'Skor lokal sudah dihapus. Skor di Papan Skor bersama (Google Sheets) tidak ikut terhapus.';
+    });
+
+    // --- Draf ide ---
+    function adaIde() {
+      try { return !!(sessionStorage.getItem(KUNCI_IDE) || '').trim(); } catch (e) { return false; }
+    }
+    function tampilkanRingkasanIde() {
+      $('ringkasanIde').textContent = adaIde()
+        ? 'Ada draf ide tersimpan sementara dari halaman Tantangan Masa Kini.'
+        : 'Tidak ada draf ide tersimpan saat ini.';
+    }
+    tampilkanRingkasanIde();
+    $('tombolHapusIde').addEventListener('click', () => {
+      try { sessionStorage.removeItem(KUNCI_IDE); } catch (e) {}
+      tampilkanRingkasanIde();
+    });
+  </script>
+
+</body>
+</html>

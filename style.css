@@ -465,9 +465,20 @@ a.card{ text-decoration:none; color:inherit; }
   gap:.25rem;
   font-size:1.1rem;
   color:#8b95bd;
+  border-radius:10px;
+  padding:.2rem 0;
+  transition:color .2s ease, transform .15s ease, background .2s ease;
 }
-.nav-item span{ font-size:.62rem; font-weight:600; }
+.nav-item span{ font-size:.62rem; font-weight:600; transition:inherit; }
 .nav-item.active{ color:#dc9d27; }
+.nav-item:has(a){ cursor:pointer; }
+.nav-item:has(a):hover{
+  color:#f4d64d;
+  background:rgba(255,255,255,.06);
+  transform:translateY(-3px);
+}
+.nav-item:has(a):hover span{ transform:scale(1.08); }
+.nav-item:has(a):active{ transform:translateY(-1px) scale(.93); }
 /* ============================================
    HALAMAN LOKASI / VIRTUAL TOUR (jalur-sutra.html, jalur-migrasi.html)
    ============================================ */
@@ -724,6 +735,16 @@ a.card{ text-decoration:none; color:inherit; }
   transition:transform .15s ease;
 }
 .upload-btn:hover{ transform:scale(1.03); }
+.upload-hint{
+  margin:.6rem 0 0;
+  font-size:.7rem;
+  color:#e6b45c;
+  background:rgba(230,180,92,.1);
+  border:1px solid rgba(230,180,92,.3);
+  border-radius:8px;
+  padding:.5rem .7rem;
+}
+.upload-hint[hidden]{ display:none; }
 
 /* ============================================
    HALAMAN GALERI KARYA (galeri.html)

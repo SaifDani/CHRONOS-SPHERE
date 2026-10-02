@@ -25,50 +25,71 @@
     <button class="gallery-tab" data-type="poster">Poster</button>
   </div>
 
-  <div class="gallery-grid" id="galleryGrid">
-    <div class="gallery-card" data-type="video">
-      <div class="gallery-thumb">🎬<span class="play-icon">▶️</span></div>
-      <div class="gallery-body">
-        <h4>Warisan A Day Of my Life</h4>
-        <div class="gallery-meta"><span>Kelompok 3</span><span>👁️ 112M &nbsp; ❤️ 123k</span></div>
-      </div>
-    </div>
-    <div class="gallery-card" data-type="infografis">
-      <div class="gallery-thumb">🖼️</div>
-      <div class="gallery-body">
-        <h4>Dari Masa Lalu untuk Masa Depan</h4>
-        <div class="gallery-meta"><span>Kelompok 1</span><span>👁️ 8k &nbsp; ❤️ 756</span></div>
-      </div>
-    </div>
-    <div class="gallery-card" data-type="poster">
-      <div class="gallery-thumb">🎨</div>
-      <div class="gallery-body">
-        <h4>Jaga Alam, Jaga Masa Depan</h4>
-        <div class="gallery-meta"><span>Kelompok 5</span><span>👁️ 15k &nbsp; ❤️ 1,2k</span></div>
-      </div>
-    </div>
-  </div>
+  <div class="gallery-grid" id="galleryGrid"></div>
+  <p class="gallery-kosong" id="galleryKosong" hidden>Belum ada karya untuk kategori ini.</p>
 
   <nav class="bottom-nav">
     <div class="nav-item"><a href="peta.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">🗺️<span>Peta Interaktif</span></a></div>
-    <div class="nav-item">📖<span>Panduan</span></div>
-    <div class="nav-item">📊<span>Progres</span></div>
-    <div class="nav-item">⚙️<span>Pengaturan</span></div>
+    <div class="nav-item"><a href="panduan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">📖<span>Panduan</span></a></div>
+    <div class="nav-item"><a href="papan_skor.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">📊<span>Progres</span></a></div>
+    <div class="nav-item"><a href="pengaturan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">⚙️<span>Pengaturan</span></a></div>
   </nav>
 
   <script>
-    const tabs = document.querySelectorAll('.gallery-tab');
-    const cards = document.querySelectorAll('.gallery-card');
-    tabs.forEach(tab => {
+    /* ============================================================
+       DAFTAR KARYA — tambah karya baru cukup salin satu blok di
+       bawah ini. "type" harus salah satu dari: video, infografis, poster.
+       Ganti isi contoh di bawah dengan karya asli kelompok kamu.
+       ============================================================ */
+    const KARYA = [
+      { type: 'video',      judul: 'Contoh judul video',      kelompok: 'Kelompok 1', ikon: '🎬' },
+      { type: 'infografis', judul: 'Contoh judul infografis',  kelompok: 'Kelompok 2', ikon: '🖼️' },
+      { type: 'poster',     judul: 'Contoh judul poster',      kelompok: 'Kelompok 3', ikon: '🎨' }
+    ];
+
+    function el(tag, cls, text) {
+      const e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text !== undefined) e.textContent = text;
+      return e;
+    }
+
+    function bangunKartu(k) {
+      const card = el('div', 'gallery-card');
+      card.dataset.type = k.type;
+      const thumb = el('div', 'gallery-thumb', k.ikon);
+      if (k.type === 'video') thumb.appendChild(el('span', 'play-icon', '▶️'));
+      card.appendChild(thumb);
+      const body = el('div', 'gallery-body');
+      body.appendChild(el('h4', null, k.judul));
+      body.appendChild(el('div', 'gallery-meta', k.kelompok));
+      card.appendChild(body);
+      return card;
+    }
+
+    const grid = document.getElementById('galleryGrid');
+    const kosong = document.getElementById('galleryKosong');
+    KARYA.forEach(k => grid.appendChild(bangunKartu(k)));
+
+    function terapkanFilter(type) {
+      let terlihat = 0;
+      document.querySelectorAll('.gallery-card').forEach(card => {
+        const tampil = type === 'semua' || card.dataset.type === type;
+        card.classList.toggle('hidden', !tampil);
+        if (tampil) terlihat++;
+      });
+      kosong.hidden = terlihat > 0;
+    }
+
+    document.querySelectorAll('.gallery-tab').forEach(tab => {
       tab.addEventListener('click', () => {
-        tabs.forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.gallery-tab').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
-        const type = tab.dataset.type;
-        cards.forEach(card => {
-          card.classList.toggle('hidden', type !== 'semua' && card.dataset.type !== type);
-        });
+        terapkanFilter(tab.dataset.type);
       });
     });
+
+    terapkanFilter('semua');
   </script>
 
 </body>
