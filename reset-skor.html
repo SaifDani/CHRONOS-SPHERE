@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHRONOS-SPHERE — Reset Papan Skor (Admin)</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+    <style>
+      /* Halaman ini sengaja TIDAK ditautkan dari menu/navigasi manapun —
+         cuma buat gurunya sendiri, bukan buat murid. Kalau mau lebih aman
+         lagi, hapus saja file ini dari server begitu lombanya selesai. */
+      .reset-wrap{
+        max-width:420px;
+        margin:0 auto 2rem;
+        padding:1.4rem;
+        border-radius:16px;
+        background:rgba(255,255,255,.05);
+        border:1px solid rgba(255,255,255,.14);
+      }
+      .reset-peringatan{
+        display:flex;
+        gap:.6rem;
+        padding:.8rem .9rem;
+        margin-bottom:1.1rem;
+        border-radius:12px;
+        background:rgba(224,67,95,.12);
+        border:1px solid rgba(224,67,95,.4);
+        font-size:.82rem;
+        line-height:1.6;
+        color:#ffd9e0;
+      }
+      .reset-label{
+        display:block;
+        margin-bottom:.4rem;
+        font-size:.76rem;
+        letter-spacing:.04em;
+        text-transform:uppercase;
+        color:#8b95bd;
+      }
+      .reset-input{
+        width:100%;
+        box-sizing:border-box;
+        padding:.75rem .9rem;
+        margin-bottom:1rem;
+        border-radius:10px;
+        border:1px solid rgba(255,255,255,.2);
+        background:rgba(255,255,255,.06);
+        color:#fff;
+        font-size:.95rem;
+      }
+      .reset-input:focus{ outline:2px solid #e0435f; outline-offset:1px; }
+      .reset-btn{
+        all:unset;
+        box-sizing:border-box;
+        display:block;
+        width:100%;
+        text-align:center;
+        cursor:pointer;
+        padding:.8rem;
+        border-radius:999px;
+        font-size:.9rem;
+        font-weight:800;
+        color:#fff;
+        background:linear-gradient(90deg,#e0435f,#ef6f8c);
+        transition:transform .15s ease, opacity .15s ease;
+      }
+      .reset-btn:hover{ transform:translateY(-2px); }
+      .reset-btn:disabled{ opacity:.55; cursor:default; transform:none; }
+      .reset-status{
+        min-height:1.4em;
+        margin-top:1rem;
+        text-align:center;
+        font-size:.85rem;
+      }
+      .reset-status.ok{ color:#6fbf73; }
+      .reset-status.gagal{ color:#ef6f8c; }
+    </style>
+</head>
+<body class="page-peta">
+
+  <a href="index.html" class="back-link"><span class="back-icon">&larr;</span> Kembali ke Beranda</a>
+
+  <div class="page-header">
+    <h1 class="page-title">Reset Papan Skor</h1>
+    <p class="page-subtitle">Khusus guru/admin — menghapus semua skor pemain</p>
+  </div>
+
+  <main class="reset-wrap">
+    <div class="reset-peringatan">
+      ⚠️ <span>Tindakan ini <b>menghapus permanen</b> semua skor yang pernah dikirim murid. Baris header di Google Sheet tidak ikut terhapus, tapi semua isi datanya hilang dan tidak bisa dikembalikan.</span>
+    </div>
+
+    <label class="reset-label" for="inputSandi">Kata sandi admin</label>
+    <input type="password" id="inputSandi" class="reset-input" placeholder="Masukkan kata sandi…" autocomplete="off">
+
+    <button type="button" class="reset-btn" id="tombolReset">🗑️ Hapus Semua Skor</button>
+
+    <p class="reset-status" id="statusReset" aria-live="polite"></p>
+  </main>
+
+  <nav class="bottom-nav">
+    <div class="nav-item"><a href="peta.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">🗺️<span>Peta Interaktif</span></a></div>
+    <div class="nav-item">📖<span>Panduan</span></div>
+    <div class="nav-item">📊<span>Progres</span></div>
+    <div class="nav-item">⚙️<span>Pengaturan</span></div>
+  </nav>
+
+  <script>
+    // HARUS SAMA PERSIS dengan URL_SKOR di kuis.html / papan_skor.html
+    const URL_SKOR = 'https://script.google.com/macros/s/AKfycbx0U0iV280vs7M_yxxcd6gqxmzNwcKXmNofRDc_C-9bDvC9ewUIxPB51kHiosIDfu64/exec';
+
+    const $ = id => document.getElementById(id);
+    const tombol = $('tombolReset');
+    const status = $('statusReset');
+    const inputSandi = $('inputSandi');
+
+    function tampilStatus(teks, kelas) {
+      status.textContent = teks;
+      status.className = 'reset-status' + (kelas ? ' ' + kelas : '');
+    }
+
+    tombol.addEventListener('click', async function () {
+      const kunci = inputSandi.value;
+      if (!kunci) {
+        tampilStatus('Isi kata sandi dulu.', 'gagal');
+        inputSandi.focus();
+        return;
+      }
+
+      const yakin = confirm(
+        'Yakin mau menghapus SEMUA skor pemain?\n\n' +
+        'Tindakan ini tidak bisa dibatalkan.'
+      );
+      if (!yakin) return;
+
+      tombol.disabled = true;
+      tampilStatus('Menghapus…');
+
+      try {
+        const res = await fetch(URL_SKOR, {
+          method: 'POST',
+          body: JSON.stringify({ aksi: 'reset', kunci: kunci })
+        });
+        const j = await res.json();
+        if (j.ok) {
+          tampilStatus('✓ ' + (j.pesan || 'Semua skor sudah dihapus.'), 'ok');
+          inputSandi.value = '';
+        } else {
+          tampilStatus('Gagal: ' + (j.error || 'terjadi kesalahan'), 'gagal');
+        }
+      } catch (e) {
+        tampilStatus('Tidak bisa terhubung ke papan skor. Periksa koneksi internet.', 'gagal');
+      } finally {
+        tombol.disabled = false;
+      }
+    });
+
+    inputSandi.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') tombol.click();
+    });
+  </script>
+
+</body>
+</html>

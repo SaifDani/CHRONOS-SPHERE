@@ -11,7 +11,7 @@
 </head>
 <body class="page-peta">
 
-  <a href="index.html" class="back-link" id="backLink"><span class="back-icon">&larr;</span> Kembali ke Beranda</a>
+  <a href="index.html" class="back-link"><span class="back-icon">&larr;</span> Kembali ke Beranda</a>
 
   <div class="page-header">
     <h1 class="page-title">Peta Eksplorasi</h1>
@@ -24,7 +24,7 @@
 
     <!-- Pin = lokasi penemuan fosil. Klik akan membuka tur 360° lokasi tsb (tur360.html).
          Geser posisi dengan mengubah top/left (dalam %). -->
-    <a href="tur360.html?lokasi=sangiran" class="map-pin pin-fosil" style="top:50%; left:50%;" aria-label="Situs Sangiran">
+    <a href="tur360.html?lokasi=sangiran" class="map-pin pin-fosil" style="top:60%; left:76%;" aria-label="Situs Sangiran">
       <span class="pin-dot">🦴</span>
       <span class="pin-tooltip">Sangiran</span>
     </a>
@@ -37,32 +37,40 @@
 
   <h2 class="teori-cards-title">Teori Asal-Usul Nenek Moyang</h2>
   <div class="teori-cards">
-    <a class="teori-mini" href="teori.html?teori=yunnan" style="--a:#d9552b; --b:#f0805a;">
-      <span class="teori-mini-icon">🏔️</span>
-      <h3>Out of Yunnan</h3>
-      <p>Dari Yunnan, Tiongkok Selatan.</p>
-      <span class="teori-mini-btn">Pelajari <span class="teori-mini-arrow">→</span></span>
+    <a class="card" href="teori.html?teori=yunnan">
+      <div class="card-thumb thumb-yunnan">🏔️</div>
+      <div class="card-body">
+        <h3>Out of Yunnan</h3>
+        <p>Nenek moyang berasal dari Yunnan, Tiongkok Selatan.</p>
+        <span class="card-btn btn-yunnan-card">Pelajari</span>
+      </div>
     </a>
 
-    <a class="teori-mini" href="teori.html?teori=taiwan" style="--a:#1fa39b; --b:#4fd1c5;">
-      <span class="teori-mini-icon">🏝️</span>
-      <h3>Out of Taiwan</h3>
-      <p>Penutur Austronesia berlayar dari Taiwan.</p>
-      <span class="teori-mini-btn">Pelajari <span class="teori-mini-arrow">→</span></span>
+    <a class="card" href="teori.html?teori=taiwan">
+      <div class="card-thumb thumb-taiwan">🏝️</div>
+      <div class="card-body">
+        <h3>Out of Taiwan</h3>
+        <p>Penutur Austronesia berlayar dari Taiwan ke Nusantara.</p>
+        <span class="card-btn btn-taiwan-card">Pelajari</span>
+      </div>
     </a>
 
-    <a class="teori-mini" href="teori.html?teori=africa" style="--a:#c98a2b; --b:#e0b24a;">
-      <span class="teori-mini-icon">🌍</span>
-      <h3>Out of Africa</h3>
-      <p>Manusia modern berasal dari Afrika.</p>
-      <span class="teori-mini-btn">Pelajari <span class="teori-mini-arrow">→</span></span>
+    <a class="card" href="teori.html?teori=africa">
+      <div class="card-thumb thumb-africa">🌍</div>
+      <div class="card-body">
+        <h3>Out of Africa</h3>
+        <p>Manusia modern berasal dari Afrika lalu menyebar ke seluruh dunia.</p>
+        <span class="card-btn btn-africa-card">Pelajari</span>
+      </div>
     </a>
 
-    <a class="teori-mini" href="teori.html?teori=nusantara" style="--a:#3f8f4f; --b:#6fbf73;">
-      <span class="teori-mini-icon">🌴</span>
-      <h3>Teori Nusantara</h3>
-      <p>Berkembang dari Nusantara sendiri.</p>
-      <span class="teori-mini-btn">Pelajari <span class="teori-mini-arrow">→</span></span>
+    <a class="card" href="teori.html?teori=nusantara">
+      <div class="card-thumb thumb-nusantara">🌴</div>
+      <div class="card-body">
+        <h3>Teori Nusantara</h3>
+        <p>Nenek moyang berasal dari kepulauan Nusantara sendiri.</p>
+        <span class="card-btn btn-nusantara-card">Pelajari</span>
+      </div>
     </a>
   </div>
 
@@ -73,19 +81,13 @@
     <div class="nav-item"><a href="pengaturan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">⚙️<span>Pengaturan</span></a></div>
   </nav>
 
+
+  <script src="app.js"></script>
   <script>
-    (function () {
-      var tombolKembali = document.getElementById('backLink');
-      if (!tombolKembali) return;
-      tombolKembali.addEventListener('click', function (e) {
-        if (window.history.length > 1) {
-          e.preventDefault();
-          window.history.back();
-        }
-        // Kalau tidak ada riwayat (misal dibuka langsung lewat link/bookmark),
-        // biarkan href bawaan di atas jadi tujuan default.
-      });
-    })();
+    window.Pemandu && window.Pemandu.set([
+      'Ini Peta Eksplorasi. Klik pin tulang untuk menjelajahi lokasi penemuan fosil, atau pilih salah satu teori asal-usul di bawah peta.',
+      'Ada dua situs di peta ini: Sangiran di Jawa Tengah dan Wajak di Tulungagung, kabupatenmu sendiri. Coba keduanya!'
+    ]);
   </script>
 
 </body>

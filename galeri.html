@@ -92,19 +92,13 @@
     terapkanFilter('semua');
   </script>
 
+
+  <script src="app.js"></script>
   <script>
-    (function () {
-      var tombolKembali = document.getElementById('backLink');
-      if (!tombolKembali) return;
-      tombolKembali.addEventListener('click', function (e) {
-        if (window.history.length > 1) {
-          e.preventDefault();
-          window.history.back();
-        }
-        // Kalau tidak ada riwayat (misal dibuka langsung lewat link/bookmark),
-        // biarkan href bawaan di atas jadi tujuan default.
-      });
-    })();
+    window.Pemandu && window.Pemandu.set([
+      'Ini Galeri Karya. Pakai tab di atas untuk memilih video, infografis, atau poster.',
+      'Lihat karya teman-temanmu, siapa tahu kamu dapat inspirasi untuk karyamu sendiri!'
+    ]);
   </script>
 
 </body>

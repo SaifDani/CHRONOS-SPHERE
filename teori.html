@@ -71,6 +71,8 @@
     <img id="lightboxImg" src="" alt="">
   </div>
 
+  <script src="app.js"></script>
+
   <script>
     /* ============================================================
        ISI TEORI — edit teks di sini kalau mau mengubah penjelasan.
@@ -94,7 +96,11 @@
           'Sungai-sungai besar seperti Mekong dan Salween diduga menjadi jalur perjalanan.'
         ],
         catatan: 'Penelitian arkeologi, bahasa, dan genetika yang lebih baru banyak menunjuk Taiwan, bukan Yunnan, sebagai titik awal penutur Austronesia. Bandingkan dengan teori Out of Taiwan.',
-        infografik: 'infografik/out-of-yunnan.jpg'
+        infografik: 'infografik/out-of-yunnan.jpg',
+        pemandu: [
+          'Teori Out of Yunnan: nenek moyang kita disebut datang dari Tiongkok Selatan dalam dua gelombang.',
+          'Jangan lupa baca catatan kritis di bagian bawah. Penelitian terbaru lebih banyak menunjuk ke Taiwan, lho.'
+        ]
       },
       taiwan: {
         icon: '🏝️',
@@ -112,7 +118,11 @@
           'Analisis DNA memperkuat hubungan antara penduduk Nusantara dan populasi Taiwan.'
         ],
         catatan: 'Sebagian peneliti menilai penyebaran Austronesia tidak sesederhana satu jalur: para pendatang bertemu, bercampur, dan bertukar budaya dengan penduduk yang sudah lebih dulu tinggal di Nusantara.',
-        infografik: 'infografik/out-of-taiwan.jpg'
+        infografik: 'infografik/out-of-taiwan.jpg',
+        pemandu: [
+          'Teori Out of Taiwan: penutur Austronesia berlayar dari Taiwan ke Filipina, lalu menyebar ke seluruh Nusantara.',
+          'Kuncinya ada di bahasa. Bahasa asli Taiwan paling beragam, dan itu petunjuk kawasan asal yang paling tua.'
+        ]
       },
       africa: {
         icon: '🌍',
@@ -129,7 +139,11 @@
           'Fosil manusia modern awal di Nusantara, seperti Manusia Wajak yang ditemukan di Tulungagung, sejalan dengan jalur migrasi ini.'
         ],
         catatan: 'Teori ini menjelaskan asal Homo sapiens secara umum, sedangkan asal penutur Austronesia (nenek moyang sebagian besar bangsa Indonesia kini) dijelaskan teori lain. Keduanya bisa saling melengkapi.',
-        infografik: 'infografik/out-of-africa.jpg'
+        infografik: 'infografik/out-of-africa.jpg',
+        pemandu: [
+          'Teori Out of Africa membahas asal manusia modern, Homo sapiens, yang berevolusi di Afrika.',
+          'Fosil Manusia Wajak dari Tulungagung ikut jadi bagian ceritanya. Seru, kan?'
+        ]
       },
       nusantara: {
         icon: '🌴',
@@ -147,7 +161,11 @@
           'Paparan Sunda yang luas saat permukaan laut rendah memudahkan manusia berpindah dan berkembang di kawasan ini.'
         ],
         catatan: 'Banyaknya fosil di Nusantara belum tentu membuktikan bahwa mereka adalah leluhur langsung bangsa Indonesia sekarang. Sebagian fosil, seperti Homo erectus, termasuk garis keturunan yang berbeda dari manusia modern.',
-        infografik: 'infografik/teori-nusantara.png'
+        infografik: 'infografik/teori-nusantara.png',
+        pemandu: [
+          'Teori Nusantara berpendapat nenek moyang kita berkembang di kepulauan sendiri, saat sebagian wilayahnya masih menyatu sebagai Paparan Sunda.',
+          'Hati-hati ya, banyak fosil belum tentu berarti leluhur langsung. Baca catatan kritisnya.'
+        ]
       }
     };
 
@@ -161,10 +179,12 @@
     }
 
     const param = new URLSearchParams(location.search).get('teori');
-    const key = TEORI[param] ? param : URUTAN[0];
+    // hasOwnProperty: supaya ?teori=toString dsb. tidak lolos dan bikin halaman error
+    const key = Object.prototype.hasOwnProperty.call(TEORI, param) ? param : URUTAN[0];
     const t = TEORI[key];
 
     document.title = 'CHRONOS-SPHERE — ' + t.judul;
+    window.Pemandu && window.Pemandu.set(t.pemandu);
 
     const page = document.getElementById('teoriPage');
     page.style.setProperty('--acc-a', t.warna[0]);
@@ -249,20 +269,6 @@
     }
   </script>
 
-  <script>
-    (function () {
-      var tombolKembali = document.getElementById('backLink');
-      if (!tombolKembali) return;
-      tombolKembali.addEventListener('click', function (e) {
-        if (window.history.length > 1) {
-          e.preventDefault();
-          window.history.back();
-        }
-        // Kalau tidak ada riwayat (misal dibuka langsung lewat link/bookmark),
-        // biarkan href bawaan di atas jadi tujuan default.
-      });
-    })();
-  </script>
 
 </body>
 </html>

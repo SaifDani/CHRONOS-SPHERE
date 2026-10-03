@@ -110,20 +110,8 @@
     });
   </script>
 
-  <script>
-    (function () {
-      var tombolKembali = document.getElementById('backLink');
-      if (!tombolKembali) return;
-      tombolKembali.addEventListener('click', function (e) {
-        if (window.history.length > 1) {
-          e.preventDefault();
-          window.history.back();
-        }
-        // Kalau tidak ada riwayat (misal dibuka langsung lewat link/bookmark),
-        // biarkan href bawaan di atas jadi tujuan default.
-      });
-    })();
-  </script>
+
+  <script src="app.js"></script>
 
 </body>
 </html>

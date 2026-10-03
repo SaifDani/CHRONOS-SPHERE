@@ -57,19 +57,13 @@
     <div class="nav-item"><a href="pengaturan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">⚙️<span>Pengaturan</span></a></div>
   </nav>
 
+
+  <script src="app.js"></script>
   <script>
-    (function () {
-      var tombolKembali = document.getElementById('backLink');
-      if (!tombolKembali) return;
-      tombolKembali.addEventListener('click', function (e) {
-        if (window.history.length > 1) {
-          e.preventDefault();
-          window.history.back();
-        }
-        // Kalau tidak ada riwayat (misal dibuka langsung lewat link/bookmark),
-        // biarkan href bawaan di atas jadi tujuan default.
-      });
-    })();
+    window.Pemandu && window.Pemandu.set([
+      'Ada empat teori tentang asal-usul nenek moyang kita. Pilih salah satu, lalu bandingkan buktinya.',
+      'Tipsnya, jangan buru-buru cari mana yang paling benar. Catat dulu bukti tiap teori, baru kamu timbang sendiri.'
+    ]);
   </script>
 
 </body>

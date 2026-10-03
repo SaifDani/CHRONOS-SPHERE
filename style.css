@@ -18,6 +18,7 @@ body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   background: radial-gradient(circle at 50% 40%, #427f9d, #0c083b 70%);
   background-attachment:fixed;
+  color:#dfe6ff;           /* teks yang tidak diberi warna khusus tetap terbaca di latar gelap */
 }
 
 body::before{
@@ -175,10 +176,6 @@ body::before{
 .btn-peta-eksplorasi{ background:linear-gradient(90deg,#2f7ce8,#4a9cf5); }
 .btn-peta-eksplorasi .icon-circle{ color:#2f7ce8; }
 
-/* Teori Asal-Usul — amber ke koral, nuansa purbakala */
-.btn-teori-menu{ background:linear-gradient(90deg,#c98a2b,#f0805a); }
-.btn-teori-menu .icon-circle{ color:#c98a2b; }
-
 /* Out of Yunnan — oranye kemerahan 
 .btn-teori-yunnan{ background:linear-gradient(90deg,#d9552b,#f0805a); }
 .btn-teori-yunnan .icon-circle{ color:#d9552b; }*/
@@ -212,6 +209,12 @@ body.page-peta{
   padding:1.6rem 1rem 3rem;
 }
 body.page-peta > *{ position:relative; z-index:1; }
+/* Elemen yang HARUS tetap "fixed". Tanpa aturan ini, "body.page-peta > *" di atas
+   (spesifisitas lebih tinggi) menimpa position:fixed milik pemandu, confetti, dan
+   lightbox sehingga ketiganya tidak muncul di tempat yang benar. */
+body.page-peta > .pemandu-wrap{ position:fixed; z-index:40; }
+body.page-peta > .ps-confetti{ position:fixed; z-index:999; }
+body.page-peta > .lightbox-overlay{ position:fixed; z-index:1000; }
 
 .back-link{
   display:inline-flex;
@@ -379,14 +382,12 @@ body.page-peta > *{ position:relative; z-index:1; }
   color:#fff;
 }
 .teori-cards{
-  max-width:680px;
+  max-width:760px;
   margin:0 auto 2rem;
   display:grid;
   grid-template-columns:repeat(2, 1fr);
   gap:1rem;
 }
-
-/* Kartu generik polos (masih dipakai di tempat lain seperti challenge-card dsb) */
 a.card{ text-decoration:none; color:inherit; }
 .card{
   background:rgba(255,255,255,.05);
@@ -395,112 +396,63 @@ a.card{ text-decoration:none; color:inherit; }
   overflow:hidden;
   display:flex;
   flex-direction:column;
+}
+.card{
   cursor:pointer;
   transition:transform .15s ease, border-color .15s ease;
 }
 .card:hover{ transform:translateY(-3px); border-color:rgba(255,255,255,.35); }
 .card:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
-
-/* ============================================================
-   Kartu teori di peta.html — versi ringkas dari gaya "hub-card",
-   pakai var(--a)/(--b) yang di-set lewat style="--a:...;--b:...;"
-   langsung di tag <a>, sama kayak di menu-teori.html.
-   ============================================================ */
-a.teori-mini{ text-decoration:none; color:inherit; }
-.teori-mini{
-  position:relative;
+.card-thumb{
+  height:110px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:2.4rem;
+}
+.thumb-yunnan{ background:linear-gradient(135deg,#d9552b,#3a1a10); }
+.thumb-taiwan{ background:linear-gradient(135deg,#1fa39b,#0f2b2a); }
+.thumb-africa{ background:linear-gradient(135deg,#c98a2b,#3a2a12); }
+.thumb-nusantara{ background:linear-gradient(135deg,#3f8f4f,#12291a); }
+.thumb-fosil{ background:linear-gradient(135deg,#c98a2b,#3a2a12); }
+.card-body{
+  padding:.9rem 1rem 1.1rem;
+  flex:1;
   display:flex;
   flex-direction:column;
-  align-items:flex-start;
-  gap:.45rem;
-  padding:1.1rem 1rem 1rem;
-  border-radius:16px;
-  background:
-    linear-gradient(145deg, rgba(255,255,255,.07), rgba(255,255,255,.02)),
-    radial-gradient(circle at 15% 10%, color-mix(in srgb, var(--a) 24%, transparent), transparent 55%);
-  border:1px solid rgba(255,255,255,.14);
-  overflow:hidden;
-  isolation:isolate;
-  cursor:pointer;
-  transition:transform .25s cubic-bezier(.2,.8,.3,1.2), box-shadow .3s ease, border-color .3s ease;
 }
-.teori-mini::before{
-  content:'';
-  position:absolute; top:0; left:0; right:0; height:3px;
-  background:linear-gradient(90deg, var(--a), var(--b));
-}
-.teori-mini::after{
-  content:'';
-  position:absolute; inset:0;
-  background:linear-gradient(120deg, transparent 30%, rgba(255,255,255,.2) 48%, transparent 66%);
-  transform:translateX(-120%);
-  transition:transform .6s ease;
-  pointer-events:none;
-  z-index:2;
-}
-.teori-mini:hover{
-  transform:translateY(-4px) scale(1.015);
-  border-color:color-mix(in srgb, var(--a) 60%, white 10%);
-  box-shadow:0 12px 26px -8px color-mix(in srgb, var(--a) 55%, transparent), 0 3px 10px rgba(0,0,0,.3);
-}
-.teori-mini:hover::after{ transform:translateX(120%); }
-.teori-mini:active{ transform:translateY(-1px) scale(.99); }
-.teori-mini:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
-
-.teori-mini-icon{
-  position:relative; z-index:1;
-  display:flex; align-items:center; justify-content:center;
-  width:2.7rem; height:2.7rem;
-  border-radius:50%;
-  font-size:1.25rem;
-  background:linear-gradient(135deg, var(--a), var(--b));
-  box-shadow:0 0 0 4px color-mix(in srgb, var(--a) 18%, transparent), 0 5px 12px -3px color-mix(in srgb, var(--a) 70%, transparent);
-  transition:transform .3s ease;
-}
-.teori-mini:hover .teori-mini-icon{ transform:scale(1.1) rotate(-6deg); }
-
-.teori-mini h3{
-  position:relative; z-index:1;
-  margin:0;
+.card-body h3{
+  margin:0 0 .3rem;
   font-family:'Cinzel','Cinzel Decorative',Georgia,serif;
-  font-size:.92rem;
+  font-size:1rem;
   color:#fff;
 }
-.teori-mini p{
-  position:relative; z-index:1;
-  margin:0;
-  font-size:.72rem;
-  line-height:1.45;
-  color:#c9d1ee;
+.card-body p{
+  margin:0 0 .8rem;
+  font-size:.8rem;
+  color:#b9c4e0;
+  flex:1;
 }
-.teori-mini-btn{
-  position:relative; z-index:1;
-  margin-top:.2rem;
-  display:inline-flex;
-  align-items:center;
-  gap:.3rem;
-  font-size:.68rem;
-  font-weight:800;
-  letter-spacing:.02em;
-  padding:.4rem .8rem;
+.card-btn{
+  all:unset;
+  box-sizing:border-box;
+  display:block;
+  width:100%;
+  cursor:pointer;
+  text-align:center;
+  padding:.5rem;
   border-radius:999px;
-  color:#1a1430;
-  background:linear-gradient(90deg, var(--a), var(--b));
+  font-size:.78rem;
+  font-weight:700;
+  color:#fff;
+  transition:transform .15s ease;
 }
-.teori-mini-arrow{ transition:transform .25s ease; display:inline-block; }
-.teori-mini:hover .teori-mini-arrow{ transform:translateX(3px); }
-
-@media (prefers-reduced-motion: reduce){
-  .teori-mini, .teori-mini::after, .teori-mini-icon, .teori-mini-arrow{ transition:none; }
-}
-@media (max-width:480px){
-  .teori-cards{ gap:.6rem; }
-  .teori-mini{ padding:.85rem .7rem .8rem; }
-  .teori-mini-icon{ width:2.2rem; height:2.2rem; font-size:1rem; }
-  .teori-mini h3{ font-size:.8rem; }
-  .teori-mini p{ font-size:.64rem; }
-  .teori-mini-btn{ font-size:.6rem; padding:.3rem .6rem; }
-}
+.card-btn:hover{ transform:scale(1.04); }
+.btn-yunnan-card{ background:linear-gradient(90deg,#d9552b,#f0805a); }
+.btn-taiwan-card{ background:linear-gradient(90deg,#1fa39b,#4fd1c5); }
+.btn-africa-card{ background:linear-gradient(90deg,#c98a2b,#e0b24a); }
+.btn-nusantara-card{ background:linear-gradient(90deg,#3f8f4f,#6fbf73); }
+.btn-fosil-card{ background:linear-gradient(90deg,#c98a2b,#e0b24a); }
 
 .bottom-nav{
   max-width:500px;
@@ -520,20 +472,9 @@ a.teori-mini{ text-decoration:none; color:inherit; }
   gap:.25rem;
   font-size:1.1rem;
   color:#8b95bd;
-  border-radius:10px;
-  padding:.2rem 0;
-  transition:color .2s ease, transform .15s ease, background .2s ease;
 }
-.nav-item span{ font-size:.62rem; font-weight:600; transition:inherit; }
+.nav-item span{ font-size:.62rem; font-weight:600; }
 .nav-item.active{ color:#dc9d27; }
-.nav-item:has(a){ cursor:pointer; }
-.nav-item:has(a):hover{
-  color:#f4d64d;
-  background:rgba(255,255,255,.06);
-  transform:translateY(-3px);
-}
-.nav-item:has(a):hover span{ transform:scale(1.08); }
-.nav-item:has(a):active{ transform:translateY(-1px) scale(.93); }
 /* ============================================
    HALAMAN LOKASI / VIRTUAL TOUR (jalur-sutra.html, jalur-migrasi.html)
    ============================================ */
@@ -878,14 +819,6 @@ a.teori-mini{ text-decoration:none; color:inherit; }
   display:flex;
   justify-content:space-between;
 }
-.gallery-kosong{
-  text-align:center;
-  color:#dce3ff;
-  padding:1.5rem 0;
-  max-width:900px;
-  margin:0 auto;
-}
-.gallery-kosong[hidden]{ display:none; }
 
 /* ============================================
    HALAMAN PENJELASAN TEORI (teori.html)
@@ -999,46 +932,7 @@ a.teori-mini{ text-decoration:none; color:inherit; }
   border-color:rgba(255,255,255,.15);
   background:none;
 }
-.infographic-img{ display:block; width:100%; height:auto; cursor:zoom-in; }
-
-/* ============================================================
-   LIGHTBOX — tampilan full-layar saat infografik diklik
-   ============================================================ */
-body.page-peta > .lightbox-overlay,
-.lightbox-overlay{
-  position:fixed !important; inset:0; z-index:1000 !important;
-  background:rgba(5,5,15,.92);
-  display:flex; align-items:center; justify-content:center;
-  padding:2rem 1rem;
-  opacity:0; visibility:hidden;
-  transition:opacity .25s ease, visibility 0s linear .25s;
-}
-body.page-peta > .lightbox-overlay.open,
-.lightbox-overlay.open{
-  opacity:1; visibility:visible;
-  transition:opacity .25s ease, visibility 0s linear 0s;
-}
-.lightbox-overlay img{
-  max-width:100%; max-height:100%;
-  border-radius:10px;
-  box-shadow:0 20px 60px rgba(0,0,0,.6);
-  cursor:zoom-out;
-  transform:scale(.92);
-  transition:transform .25s ease;
-}
-.lightbox-overlay.open img{ transform:scale(1); }
-.lightbox-close{
-  position:absolute; top:1.1rem; right:1.1rem;
-  width:2.4rem; height:2.4rem;
-  border-radius:50%;
-  background:rgba(255,255,255,.12);
-  border:1px solid rgba(255,255,255,.25);
-  color:#fff;
-  font-size:1.2rem;
-  display:flex; align-items:center; justify-content:center;
-  cursor:pointer;
-}
-.lightbox-close:hover{ background:rgba(255,255,255,.22); }
+.infographic-img{ display:block; width:100%; height:auto; }
 .infographic-empty{
   padding:1.6rem 1rem;
   text-align:center;
@@ -1327,107 +1221,229 @@ body.page-peta > .lightbox-overlay.open,
   to{ opacity:1; transform:none; }
 }
 /* ============================================
-   HUB TEORI ASAL-USUL (teori-menu.html)
+   KARAKTER PEMANDU (muncul di semua halaman)
    ============================================ */
+.pemandu-wrap{
+  position:fixed;
+  right:1rem;
+  bottom:6.5rem;           /* di atas bottom-nav supaya tidak numpuk */
+  z-index:40;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:.6rem;
+  max-width:min(76vw, 300px);
+  pointer-events:none;     /* biar area kosong di sekitar bubble tidak menghalangi klik konten */
+}
+.pemandu-wrap > *{ pointer-events:auto; }
+
+.pemandu-bubble{
+  position:relative;
+  padding:.7rem .9rem;
+  border-radius:16px;
+  background:rgba(255,255,255,.96);
+  color:#241a52;
+  font-size:.8rem;
+  line-height:1.55;
+  box-shadow:0 10px 26px rgba(0,0,0,.4);
+  cursor:pointer;
+  overflow-wrap:anywhere;
+  animation:pemandu-muncul .3s ease both;
+}
+.pemandu-bubble[hidden]{ display:none; }
+/* Ekor bubble menunjuk ke karakter di bawahnya */
+.pemandu-bubble::after{
+  content:"";
+  position:absolute;
+  right:24px;
+  bottom:-8px;
+  border-left:8px solid transparent;
+  border-right:8px solid transparent;
+  border-top:9px solid rgba(255,255,255,.96);
+}
+@keyframes pemandu-muncul{
+  from{ opacity:0; transform:translateY(8px); }
+  to{ opacity:1; transform:none; }
+}
+
+.pemandu-avatar-btn{
+  all:unset;
+  box-sizing:border-box;
+  cursor:pointer;
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  overflow:hidden;
+  flex-shrink:0;
+  position:relative;
+  border:3px solid rgba(255,255,255,.9);
+  background:linear-gradient(135deg,#3dbef5,#32d2aa);
+  box-shadow:0 8px 20px rgba(0,0,0,.45);
+  transition:transform .15s ease;
+}
+.pemandu-avatar-btn:hover{ transform:scale(1.06); }
+.pemandu-avatar-btn:active{ transform:scale(.95); }
+.pemandu-avatar-btn:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
+.pemandu-avatar-btn img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.pemandu-avatar-placeholder{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.7rem;
+  background:linear-gradient(135deg,#3dbef5,#32d2aa);
+}
+
+/* Cincin berdenyut saat karakter lagi "bicara" */
+.pemandu-avatar-btn.bicara{ animation:pemandu-bicara 1s ease-in-out infinite; }
+@keyframes pemandu-bicara{
+  0%,100%{ box-shadow:0 8px 20px rgba(0,0,0,.45), 0 0 0 0 rgba(61,190,245,.55); }
+  50%{ box-shadow:0 8px 20px rgba(0,0,0,.45), 0 0 0 12px rgba(61,190,245,0); }
+}
+
+@media (max-width:420px){
+  .pemandu-wrap{ bottom:6rem; right:.7rem; }
+  .pemandu-avatar-btn{ width:52px; height:52px; }
+  .pemandu-bubble{ font-size:.75rem; padding:.6rem .8rem; }
+  .pemandu-bubble::after{ right:18px; }
+}
+@media (prefers-reduced-motion:reduce){
+  .pemandu-avatar-btn.bicara, .pemandu-bubble{ animation:none; }
+}
+/* Halaman tanpa bottom-nav (index): karakter boleh lebih ke bawah */
+body:not(.page-peta) .pemandu-wrap{ bottom:1rem; }
+
+/* ============================================
+   STYLE YANG SEBELUMNYA BELUM ADA
+   (dipakai di index.html, menu-teori.html, teori.html, galeri.html)
+   ============================================ */
+
+/* Tombol "Teori Asal-Usul" di beranda */
+.btn-teori-menu{ background:linear-gradient(90deg,#1fa39b,#4fd1c5); }
+.btn-teori-menu .icon-circle{ color:#1fa39b; }
+
+/* Kartu pilihan teori (menu-teori.html) */
 .hub-grid{
-  max-width:680px;
+  max-width:760px;
   margin:0 auto 2rem;
   display:grid;
   grid-template-columns:repeat(2, 1fr);
-  gap:1.1rem;
+  gap:1rem;
 }
-@media (max-width:480px){
-  .hub-grid{ gap:.6rem; }
-  .hub-card{ padding:1rem .8rem 1rem; }
-  .hub-icon{ width:2.6rem; height:2.6rem; font-size:1.2rem; }
-  .hub-card h3{ font-size:.88rem; }
-  .hub-card p{ font-size:.68rem; line-height:1.4; }
-  .hub-btn{ font-size:.64rem; padding:.35rem .6rem; }
+@media (max-width:520px){
+  .hub-grid{ grid-template-columns:1fr; }
 }
 .hub-card{
-  position:relative;
+  --a:#3dbef5;
+  --b:#32d2aa;
   display:flex;
   flex-direction:column;
-  align-items:flex-start;
-  gap:.6rem;
-  padding:1.6rem 1.4rem 1.5rem;
-  border-radius:20px;
+  gap:.45rem;
+  padding:1.1rem 1.1rem 1.2rem;
+  border-radius:16px;
   text-decoration:none;
   color:#fff;
-  background:
-    linear-gradient(145deg, rgba(255,255,255,.07), rgba(255,255,255,.02)),
-    radial-gradient(circle at 15% 15%, color-mix(in srgb, var(--a) 22%, transparent), transparent 55%);
+  background:rgba(255,255,255,.06);
   border:1px solid rgba(255,255,255,.14);
-  overflow:hidden;
-  isolation:isolate;
-  cursor:pointer;
-  transition:transform .25s cubic-bezier(.2,.8,.3,1.2), box-shadow .3s ease, border-color .3s ease;
+  border-top:4px solid var(--a);
+  transition:transform .15s ease, border-color .15s ease, box-shadow .15s ease;
 }
-.hub-card::before{
-  /* garis tipis gradasi di tepi atas, warna sesuai teorinya */
-  content:'';
-  position:absolute; top:0; left:0; right:0; height:3px;
-  background:linear-gradient(90deg, var(--a), var(--b));
-}
-.hub-card::after{
-  /* efek kilau yang menyapu saat hover */
-  content:'';
-  position:absolute; inset:0;
-  background:linear-gradient(120deg, transparent 30%, rgba(255,255,255,.22) 48%, transparent 66%);
-  transform:translateX(-120%);
-  transition:transform .7s ease;
-  pointer-events:none;
-  z-index:2;
-}
-.hub-card:hover{
-  transform:translateY(-6px) scale(1.015);
-  border-color:color-mix(in srgb, var(--a) 60%, white 10%);
-  box-shadow:0 16px 34px -10px color-mix(in srgb, var(--a) 55%, transparent), 0 4px 14px rgba(0,0,0,.35);
-}
-.hub-card:hover::after{ transform:translateX(120%); }
-.hub-card:active{ transform:translateY(-2px) scale(.99); }
+.hub-card:hover{ transform:translateY(-3px); box-shadow:0 10px 24px rgba(0,0,0,.35); }
 .hub-card:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
-
 .hub-icon{
-  position:relative;
-  display:flex; align-items:center; justify-content:center;
-  width:3.4rem; height:3.4rem;
+  width:3rem;
+  height:3rem;
   border-radius:50%;
-  font-size:1.6rem;
-  background:linear-gradient(135deg, var(--a), var(--b));
-  box-shadow:0 0 0 5px color-mix(in srgb, var(--a) 18%, transparent), 0 6px 16px -4px color-mix(in srgb, var(--a) 70%, transparent);
-  transition:transform .3s ease;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.5rem;
+  background:linear-gradient(135deg,var(--a),var(--b));
+  box-shadow:0 4px 12px rgba(0,0,0,.3);
 }
-.hub-card:hover .hub-icon{ transform:scale(1.1) rotate(-6deg); }
-
 .hub-card h3{
-  margin:0;
+  margin:.2rem 0 0;
   font-family:'Cinzel','Cinzel Decorative',Georgia,serif;
-  font-size:1.08rem;
-  letter-spacing:.01em;
+  font-size:1.05rem;
+  color:#fff;
 }
 .hub-card p{
   margin:0;
+  flex:1;
   font-size:.8rem;
   line-height:1.55;
   color:#c9d1ee;
 }
 .hub-btn{
-  margin-top:.3rem;
-  display:inline-flex;
+  display:flex;
   align-items:center;
-  gap:.35rem;
-  font-size:.74rem;
-  font-weight:800;
-  letter-spacing:.02em;
-  padding:.45rem .9rem;
+  justify-content:center;
+  gap:.4rem;
+  margin-top:.5rem;
+  padding:.5rem;
   border-radius:999px;
-  color:#1a1430;
-  background:linear-gradient(90deg, var(--a), var(--b));
+  font-size:.78rem;
+  font-weight:700;
+  color:#fff;
+  background:linear-gradient(90deg,var(--a),var(--b));
 }
-.hub-arrow{ transition:transform .25s ease; display:inline-block; }
-.hub-card:hover .hub-arrow{ transform:translateX(4px); }
+.hub-arrow{ transition:transform .15s ease; }
+.hub-card:hover .hub-arrow{ transform:translateX(3px); }
 
-@media (prefers-reduced-motion: reduce){
-  .hub-card, .hub-card::after, .hub-icon, .hub-arrow{ transition:none; }
+/* Infografik di teori.html: layar penuh saat diklik (lightbox) */
+.infographic-slot.has-img .infographic-img{ cursor:zoom-in; }
+.lightbox-overlay{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:1rem;
+  box-sizing:border-box;
+  background:rgba(5,4,25,.93);
+  cursor:zoom-out;
 }
+.lightbox-overlay.open{ display:flex; }
+.lightbox-overlay img{
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  border-radius:8px;
+}
+.lightbox-close{
+  all:unset;
+  box-sizing:border-box;
+  position:absolute;
+  top:1rem;
+  right:1rem;
+  width:2.4rem;
+  height:2.4rem;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-size:1rem;
+  color:#fff;
+  background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.3);
+}
+.lightbox-close:hover{ background:rgba(255,255,255,.28); }
+.lightbox-close:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+
+/* Pesan "belum ada karya" di galeri */
+.gallery-kosong{
+  max-width:900px;
+  margin:0 auto 2rem;
+  text-align:center;
+  font-size:.85rem;
+  color:#b9c4e0;
+}
+.gallery-kosong[hidden]{ display:none; }

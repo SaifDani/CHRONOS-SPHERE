@@ -128,6 +128,8 @@
     <div class="nav-item"><a href="pengaturan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">⚙️<span>Pengaturan</span></a></div>
   </nav>
 
+  <script src="app.js"></script>
+
   <script>
     /* ============================================================
        DATA LOKASI
@@ -139,6 +141,10 @@
         icon: '🦴',
         nama: 'Situs Sangiran',
         sub: 'Menelusuri jejak manusia purba di Jawa Tengah',
+        pemandu: [
+          'Selamat datang di Sangiran, Jawa Tengah. Di sini banyak fosil manusia purba ditemukan. Geser fotonya dan cari titik kuning berkedip!',
+          'Klik titik kuning untuk membuka pertanyaan. Mulai dari nomor 01 ya.'
+        ],
         // Placeholder contoh dari Pannellum (equirectangular asli, CC-licensed) — ganti dengan foto Sangiran aslimu kalau sudah ada
         foto: 'https://pannellum.org/images/alma.jpg'
       },
@@ -146,22 +152,36 @@
         icon: '🦴',
         nama: 'Situs Wajak',
         sub: 'Tempat ditemukannya Manusia Wajak di Campurdarat, Tulungagung',
+        pemandu: [
+          'Ini Situs Wajak di Campurdarat, Tulungagung, tempat Manusia Wajak ditemukan. Geser fotonya dan cari titik kuning berkedip!',
+          'Klik titik kuning untuk membuka pertanyaan. Mulai dari nomor 01 ya.'
+        ],
         // Placeholder contoh dari Pannellum (equirectangular asli, CC-licensed) — ganti dengan foto Wajak aslimu kalau sudah ada
         foto: 'https://pannellum.org/images/alma.jpg'
       }
     };
 
-    const kunci = LOKASI[new URLSearchParams(location.search).get('lokasi')]
-      ? new URLSearchParams(location.search).get('lokasi')
+    const parameterLokasi = new URLSearchParams(location.search).get('lokasi');
+    const kunci = Object.prototype.hasOwnProperty.call(LOKASI, parameterLokasi)
+      ? parameterLokasi
       : Object.keys(LOKASI)[0];
     const L = LOKASI[kunci];
 
     document.title = 'CHRONOS-SPHERE — ' + L.nama;
     document.getElementById('lokasiNama').textContent = L.nama;
     document.getElementById('lokasiSub').textContent = L.sub;
+    window.Pemandu && window.Pemandu.set(L.pemandu);
 
     const buttons = document.querySelectorAll('.hotspot-btn');
     const cards = document.querySelectorAll('.hotspot-card');
+
+    // Petunjuk singkat dari pemandu tiap pertanyaan (tidak membocorkan jawaban)
+    const PETUNJUK = {
+      hm1: ['Pertanyaan 1: cari satu bukti di sekelilingmu, lalu pikirkan apa yang bisa kamu pelajari darinya.'],
+      hm2: ['Pertanyaan 2: perhatikan bentuk lahan, sumber air, dan lingkungan sekitar. Apa artinya bagi kehidupan manusia purba?'],
+      hm3: ['Pertanyaan 3: hubungkan tiga hal, yaitu letak geografis, kebutuhan hidup, dan teknologi alat batu.'],
+      hm4: ['Pertanyaan 4: jangan buru-buru percaya. Pilih bukti yang paling kuat, lalu jelaskan alasanmu.']
+    };
 
     function bukaKartu(id) {
       const tombol = document.querySelector(`.hotspot-btn[data-target="${id}"]`);
@@ -172,6 +192,7 @@
       tombol.classList.add('active');
       kartu.classList.add('active');
       document.getElementById('hotspotList').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (window.Pemandu && PETUNJUK[id]) window.Pemandu.set(PETUNJUK[id]);
       return true;
     }
     buttons.forEach(btn => btn.addEventListener('click', () => bukaKartu(btn.dataset.target)));
@@ -224,30 +245,27 @@
     // di pojok kiri atas).
     let viewer;
     window.addEventListener('load', function () {
+      // Kalau library Pannellum gagal dimuat (internet putus / CDN diblokir),
+      // tampilkan pesan, bukan error kosong.
+      if (typeof pannellum === 'undefined') {
+        const box = document.getElementById('panorama');
+        box.textContent = '';
+        const pesan = document.createElement('div');
+        pesan.className = 'tour-placeholder';
+        pesan.textContent = 'Panorama 360° belum bisa dimuat. Periksa koneksi internet, lalu muat ulang halaman ini.';
+        box.appendChild(pesan);
+        return;
+      }
       viewer = pannellum.viewer('panorama', {
         type: 'equirectangular',
         panorama: L.foto,
         autoLoad: true,
-        hotSpotDebug: true,
+        hotSpotDebug: false,   // ganti true SEMENTARA kalau mau mencari koordinat hotspot
         hotSpots: hotSpots
       });
     });
   </script>
 
-  <script>
-    (function () {
-      var tombolKembali = document.getElementById('backLink');
-      if (!tombolKembali) return;
-      tombolKembali.addEventListener('click', function (e) {
-        if (window.history.length > 1) {
-          e.preventDefault();
-          window.history.back();
-        }
-        // Kalau tidak ada riwayat (misal dibuka langsung lewat link/bookmark),
-        // biarkan href bawaan di atas jadi tujuan default.
-      });
-    })();
-  </script>
 
 </body>
 </html>

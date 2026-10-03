@@ -45,10 +45,19 @@
     <div class="nav-item"><a href="pengaturan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">⚙️<span>Pengaturan</span></a></div>
   </nav>
 
+  <script src="app.js"></script>
+
   <script>
     /* Tempel URL Web App yang SAMA dengan yang di kuis.html (berakhiran /exec) */
     const URL_SKOR = 'https://script.google.com/macros/s/AKfycbx0U0iV280vs7M_yxxcd6gqxmzNwcKXmNofRDc_C-9bDvC9ewUIxPB51kHiosIDfu64/exec';
     const KUNCI = 'chronos_kuis_v1';   // sama dengan kuis.html, untuk mengisi nama otomatis
+
+    // Ambil JSON dengan batas waktu 12 detik (ambilJSON dari app.js).
+    // Kalau app.js gagal dimuat, tetap jalan dengan fetch biasa.
+    const ambil = (url, opsi) => window.ambilJSON
+      ? window.ambilJSON(url, opsi, 12000)
+      : fetch(url, opsi).then(r => r.json());
+
 
     const $ = id => document.getElementById(id);
     function el(tag, cls, text) {
@@ -127,7 +136,11 @@
       }
     }
 
+    // Penanda permintaan terbaru: kalau murid cepat ganti tab materi, hasil lama diabaikan
+    let permintaanKe = 0;
+
     async function muat() {
+      const saya = ++permintaanKe;
       const nama = namaSaya;
       $('podium').textContent = '';
       $('daftar').textContent = '';
@@ -138,11 +151,12 @@
         const q = [];
         if (nama) q.push('nama=' + encodeURIComponent(nama));
         if (materiAktif) q.push('topik=' + encodeURIComponent(materiAktif));
-        const res = await fetch(URL_SKOR + (q.length ? '?' + q.join('&') : ''));
-        const j = await res.json();
+        const j = await ambil(URL_SKOR + (q.length ? '?' + q.join('&') : ''));
+        if (saya !== permintaanKe) return;
         if (!j.ok) throw new Error('gagal');
         gambar(j, nama.toLowerCase());
       } catch (e) {
+        if (saya !== permintaanKe) return;
         $('status').textContent = 'Papan skor belum bisa dimuat. Coba lagi nanti.';
       }
     }
@@ -168,7 +182,7 @@
       skor.slice(0, 3).forEach((s, i) => {
         const li = el('li', 'ps-pod p' + (i + 1));
         li.setAttribute('data-urut', String(i + 1));
-        if (s.nama.toLowerCase() === namaKecil) li.classList.add('me');
+        if (String(s.nama).toLowerCase() === namaKecil) li.classList.add('me');
         li.appendChild(el('span', 'medal', MEDALI[i]));
         li.appendChild(el('span', 'urut', NAMA_URUT[i]));
         li.appendChild(el('span', 'nama', s.nama));
@@ -178,7 +192,7 @@
       });
       skor.slice(3).forEach((s, i) => {
         const li = el('li');
-        if (s.nama.toLowerCase() === namaKecil) li.classList.add('me');
+        if (String(s.nama).toLowerCase() === namaKecil) li.classList.add('me');
         li.appendChild(el('span', 'ps-urut', String(i + 4)));
         li.appendChild(el('span', 'ps-nama', s.nama));
         li.appendChild(el('span', 'ps-topik', s.topik));
@@ -191,22 +205,13 @@
     tampilkanIdentitas();
     $('tombolMuat').addEventListener('click', muat);
     muat();
+
+    window.Pemandu && window.Pemandu.set([
+      'Ini Papan Skor. Pilih tab materi untuk melihat penjelajah terbaik di tiap topik.',
+      'Mau naik peringkat? Main kuis lagi. Makin cepat kamu menjawab, makin besar bonusnya!'
+    ]);
   </script>
 
-  <script>
-    (function () {
-      var tombolKembali = document.getElementById('backLink');
-      if (!tombolKembali) return;
-      tombolKembali.addEventListener('click', function (e) {
-        if (window.history.length > 1) {
-          e.preventDefault();
-          window.history.back();
-        }
-        // Kalau tidak ada riwayat (misal dibuka langsung lewat link/bookmark),
-        // biarkan href bawaan di atas jadi tujuan default.
-      });
-    })();
-  </script>
 
 </body>
 </html>

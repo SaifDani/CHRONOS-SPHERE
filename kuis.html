@@ -103,9 +103,11 @@
   <nav class="bottom-nav">
     <div class="nav-item"><a href="peta.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">🗺️<span>Peta Interaktif</span></a></div>
     <div class="nav-item"><a href="panduan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">📖<span>Panduan</span></a></div>
-    <div class="nav-item active">📊<span>Progres</span></div>
+    <div class="nav-item active"><a href="papan_skor.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">📊<span>Progres</span></a></div>
     <div class="nav-item"><a href="pengaturan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">⚙️<span>Pengaturan</span></a></div>
   </nav>
+
+  <script src="app.js"></script>
 
   <script>
     /* ============================================================
@@ -201,6 +203,8 @@
       ext:   { nama:'Extended Abstract', poin:25, cls:'solo-extended' }
     };
 
+    const $ = id => document.getElementById(id);
+
     const WAKTU = 25;          // detik per soal
     const JUMLAH_CAMPURAN = 10;
     const KUNCI = 'chronos_kuis_v1';
@@ -210,16 +214,21 @@
        Kalau dikosongkan, kuis tetap jalan dengan papan skor lokal saja. */
     const URL_SKOR = 'https://script.google.com/macros/s/AKfycbx0U0iV280vs7M_yxxcd6gqxmzNwcKXmNofRDc_C-9bDvC9ewUIxPB51kHiosIDfu64/exec';
 
+    // Ambil JSON dengan batas waktu 12 detik (ambilJSON dari app.js).
+    // Kalau app.js gagal dimuat, tetap jalan dengan fetch biasa.
+    const ambil = (url, opsi) => window.ambilJSON
+      ? window.ambilJSON(url, opsi, 12000)
+      : fetch(url, opsi).then(r => r.json());
+
     async function kirimSkor(r) {
       if (!URL_SKOR) return false;
       try {
         // text/plain supaya browser tidak minta preflight CORS (Apps Script tidak menjawabnya)
-        const res = await fetch(URL_SKOR, {
+        const j = await ambil(URL_SKOR, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(r)
         });
-        const j = await res.json();
         return !!j.ok;
       } catch (e) { return false; }
     }
@@ -267,8 +276,7 @@
       if (!URL_SKOR || !nama) return;
       try {
         const q = '?nama=' + encodeURIComponent(nama) + '&topik=' + encodeURIComponent(topik);
-        const res = await fetch(URL_SKOR + q);
-        const j = await res.json();
+        const j = await ambil(URL_SKOR + q);
         if (j.ok) rayakanPeringkat(j.peringkat, j.jumlah);
       } catch (e) {}
     }
@@ -280,15 +288,15 @@
       if (!URL_SKOR) { info.textContent = 'Papan skor bersama belum diaktifkan.'; return; }
       info.textContent = 'Memuat papan skor…';
       try {
-        const res = await fetch(URL_SKOR);
-        const j = await res.json();
+        const j = await ambil(URL_SKOR);
         if (!j.ok) throw new Error('gagal');
+        const skor = j.skor || [];
         info.textContent = awalan || '';
-        if (!j.skor.length) {
+        if (!skor.length) {
           ol.appendChild(el('li', 'kuis-skor-kosong', 'Belum ada skor. Jadilah yang pertama!'));
           return;
         }
-        j.skor.forEach((s, i) => {
+        skor.forEach((s, i) => {
           const li = el('li');
           li.appendChild(el('span', 'kuis-skor-nama', (i + 1) + '. ' + s.nama));
           li.appendChild(el('span', 'kuis-skor-topik', s.topik));
@@ -301,7 +309,6 @@
     }
 
     /* ---------- util ---------- */
-    const $ = id => document.getElementById(id);
     function el(tag, cls, text) {
       const e = document.createElement(tag);
       if (cls) e.className = cls;
@@ -331,9 +338,42 @@
     let data = muat();
 
     /* ---------- tampilan layar ---------- */
+    /* ---------- karakter pemandu: kalimat per layar ---------- */
+    const TEKS_PEMANDU = {
+      layarMulai: [
+        'Siap menguji pemahamanmu? Isi nama atau kelompok, lalu pilih tantangan.',
+        'Mode Campuran paling seru, soalnya diambil acak dari semua topik.'
+      ],
+      // Di layar soal bubble tidak muncul sendiri supaya tidak menutupi soal.
+      layarSoal: [
+        'Tenang, baca soalnya pelan-pelan. Waktumu 25 detik, dan jawaban yang cepat dapat bonus!'
+      ],
+      layarHasil: [
+        'Kuis selesai! Lihat ringkasan dan saran belajarmu di bawah ya.'
+      ]
+    };
+    function teksHasil(akurasi) {
+      if (akurasi >= 90) return [
+        'Luar biasa! Kamu benar-benar penjelajah sejarah.',
+        'Coba topik lain, atau lanjut ke Tantangan Masa Kini untuk menerapkan pengetahuanmu.'
+      ];
+      if (akurasi >= 50) return [
+        'Lumayan! Sedikit lagi kamu jadi pemburu bukti sejati.',
+        'Lihat saran belajar di bawah, lalu main sekali lagi untuk mengejar skor tertinggi.'
+      ];
+      return [
+        'Jangan menyerah! Setiap penjelajah pasti pernah salah jalan.',
+        'Baca lagi halaman teorinya lewat saran di bawah, lalu coba main sekali lagi.'
+      ];
+    }
+    function pemanduBicara(teks, tampilkan) {
+      if (window.Pemandu) window.Pemandu.set(teks, { tampilkan: tampilkan });
+    }
+
     function tampilLayar(id) {
       ['layarMulai', 'layarSoal', 'layarHasil'].forEach(x => { $(x).hidden = (x !== id); });
       window.scrollTo(0, 0);
+      pemanduBicara(TEKS_PEMANDU[id], id !== 'layarSoal');
     }
 
     function isiPapan(olId) {
@@ -574,6 +614,7 @@
 
       isiPapan('papanHasil');
       tampilLayar('layarHasil');
+      pemanduBicara(teksHasil(akurasi), true);
 
       // kirim ke papan skor bersama, lalu muat ulang Top 10
       $('infoGlobalHasil').textContent = URL_SKOR ? 'Mengirim skor…' : '';
@@ -596,24 +637,11 @@
     bangunTopik();
     isiPapan('papanMulai');
     muatPapanGlobal('papanGlobalMulai', 'infoGlobalMulai');
+    pemanduBicara(TEKS_PEMANDU.layarMulai, true);
   </script>
 
   <div class="ps-confetti" id="confeti" aria-hidden="true"></div>
 
-  <script>
-    (function () {
-      var tombolKembali = document.getElementById('backLink');
-      if (!tombolKembali) return;
-      tombolKembali.addEventListener('click', function (e) {
-        if (window.history.length > 1) {
-          e.preventDefault();
-          window.history.back();
-        }
-        // Kalau tidak ada riwayat (misal dibuka langsung lewat link/bookmark),
-        // biarkan href bawaan di atas jadi tujuan default.
-      });
-    })();
-  </script>
 
 </body>
 </html>

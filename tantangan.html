@@ -65,6 +65,18 @@
        ============================================================ */
     const URL_FORM_UNGGAH = 'https://docs.google.com/forms/d/e/1FAIpQLSd85E9nvM5ceK2u2-1VuzVudAQdwj0uDR3GFBYoprTkcPn5zA/viewform?usp=publish-editor';
 
+    /* Draf ide tersimpan otomatis selama tab masih terbuka,
+       jadi tidak hilang kalau halaman ter-refresh. */
+    const KUNCI_IDE = 'chronos_ide_terakhir';
+    const kotakIde = document.getElementById('ideSolusi');
+    try {
+      const draf = sessionStorage.getItem(KUNCI_IDE);
+      if (draf && !kotakIde.value) kotakIde.value = draf;
+    } catch (e) {}
+    kotakIde.addEventListener('input', () => {
+      try { sessionStorage.setItem(KUNCI_IDE, kotakIde.value); } catch (e) {}
+    });
+
     document.getElementById('tombolUnggah').addEventListener('click', () => {
       if (!URL_FORM_UNGGAH) {
         document.getElementById('unggahHint').hidden = false;
@@ -72,24 +84,18 @@
       }
       const ide = document.getElementById('ideSolusi').value.trim();
       // Simpan sementara biar siswa nggak kehilangan idenya kalau mau ditempel manual di form
-      try { sessionStorage.setItem('chronos_ide_terakhir', ide); } catch (e) {}
+      try { sessionStorage.setItem(KUNCI_IDE, ide); } catch (e) {}
       window.open(URL_FORM_UNGGAH, '_blank', 'noopener');
     });
   </script>
 
+
+  <script src="app.js"></script>
   <script>
-    (function () {
-      var tombolKembali = document.getElementById('backLink');
-      if (!tombolKembali) return;
-      tombolKembali.addEventListener('click', function (e) {
-        if (window.history.length > 1) {
-          e.preventDefault();
-          window.history.back();
-        }
-        // Kalau tidak ada riwayat (misal dibuka langsung lewat link/bookmark),
-        // biarkan href bawaan di atas jadi tujuan default.
-      });
-    })();
+    window.Pemandu && window.Pemandu.set([
+      'Saatnya beraksi! Pikirkan satu masalah lingkungan di Tulungagung, lalu cari pelajaran dari masa lalu untuk menyelesaikannya.',
+      'Pilih format karyamu: video, infografis, atau poster. Tulis idemu dulu, baru unggah.'
+    ]);
   </script>
 
 </body>
