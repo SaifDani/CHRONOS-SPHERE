@@ -6,28 +6,46 @@
      3) ambilJSON(): fetch dengan batas waktu, supaya halaman tidak
         menggantung kalau internet/Apps Script lambat
 
-   CARA PAKAI karakter pemandu di sebuah halaman (taruh di akhir <body>):
+   CARA KERJA karakter pemandu:
+     - Saat halaman dibuka, bubble TIDAK muncul. Karakter menunggu dipencet.
+     - Pencet karakter  -> bubble muncul + kalimat dibacakan.
+     - Pencet lagi      -> kalimat berikutnya (kalau halaman punya lebih dari satu).
+     - Pencet saat suara sedang jalan -> suara berhenti.
+     - Ketuk bubble     -> bubble ditutup. Pencet karakter lagi kapan pun
+                           untuk memunculkannya kembali.
+     - Lama bubble tampil diatur di PENGATURAN BUBBLE di bawah.
+
+   CARA PAKAI di sebuah halaman (taruh di akhir <body>):
      <script src="app.js"></script>
      <script>
        window.Pemandu && Pemandu.set([
-         'Kalimat pertama (tampil otomatis, dibacakan saat karakter diklik).',
-         'Kalimat kedua (muncul kalau karakter diklik lagi).'
+         'Kalimat pertama.',
+         'Kalimat kedua (muncul kalau karakter dipencet lagi).'
        ]);
      </script>
-
-   Pemandu.set(teks, { tampilkan:false }) -> simpan teks tanpa memunculkan
-   bubble dulu (dipakai di layar soal kuis supaya tidak menutupi soal).
+   Memanggil Pemandu.set() lagi (misal saat layar berganti) mengganti
+   kalimatnya dan menutup bubble yang sedang terbuka.
    ============================================================ */
 (function () {
   'use strict';
 
   /* ---------------------------------------------------------
-     1) KARAKTER PEMANDU
+     PENGATURAN BUBBLE — silakan ubah angkanya di sini
      --------------------------------------------------------- */
   var GAMBAR_KARAKTER = 'karakter-pemandu.png';   // ganti kalau nama file karaktermu beda
-  var BUBBLE_AUTO_SEMBUNYI = 9000;   // ms: bubble hilang sendiri supaya tidak menutupi konten
-  var BUBBLE_SETELAH_BICARA = 3500;  // ms: bubble tetap tampil sebentar setelah suara selesai
 
+  // true  = bubble hilang sendiri setelah BUBBLE_DURASI
+  // false = bubble tetap tampil sampai pengguna mengetuknya untuk menutup
+  var BUBBLE_TUTUP_OTOMATIS = true;
+
+  // Lama bubble tampil dalam milidetik (8000 = 8 detik). Kalau kalimatnya panjang atau
+  // sedang dibacakan, bubble menunggu sampai suara selesai dulu. Dipakai hanya kalau
+  // BUBBLE_TUTUP_OTOMATIS = true.
+  var BUBBLE_DURASI = 8000;
+
+  /* ---------------------------------------------------------
+     1) KARAKTER PEMANDU
+     --------------------------------------------------------- */
   // Pelafalan khusus untuk suara (hanya dipakai saat dibacakan, teks di bubble tetap asli)
   var LAFAL = [
     [/CHRONOS-SPHERE/gi, 'Kronos Sfir'],
@@ -38,12 +56,13 @@
   ];
 
   var daftar = [];          // kalimat untuk halaman/layar saat ini
-  var idx = 0;              // kalimat yang sedang tampil
-  var sudahKlik = false;    // klik pertama = bacakan kalimat yang sedang tampil
+  var idx = 0;              // kalimat yang sedang/terakhir tampil
+  var sudahKlik = false;    // klik pertama = kalimat pertama; klik berikutnya = kalimat berikutnya
   var giliran = 0;          // penanda ucapan terbaru (supaya event ucapan lama diabaikan)
   var sedangBicara = false;
-  var pembungkus = null, bubble = null, tombol = null;
+  var pembungkus = null, bubble = null, teksEl = null, tombol = null;
   var timerSembunyi = null;
+  var mulaiTampil = 0;
   var suaraId = null;
 
   var synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
@@ -82,11 +101,23 @@
     bubble = document.createElement('div');
     bubble.className = 'pemandu-bubble';
     bubble.id = 'pemanduBubble';
-    bubble.hidden = true;
+    bubble.hidden = true;                       // menunggu karakter dipencet
     bubble.setAttribute('role', 'status');
     bubble.setAttribute('aria-live', 'polite');
     bubble.title = 'Ketuk untuk menutup';
-    bubble.addEventListener('click', sembunyikanBubble);
+    bubble.addEventListener('click', function () {
+      berhenti();
+      sembunyikanBubble();
+    });
+
+    teksEl = document.createElement('span');
+    teksEl.className = 'pemandu-bubble-teks';
+    var tutupEl = document.createElement('span');
+    tutupEl.className = 'pemandu-bubble-tutup';
+    tutupEl.textContent = '✕';
+    tutupEl.setAttribute('aria-hidden', 'true');
+    bubble.appendChild(teksEl);
+    bubble.appendChild(tutupEl);
 
     tombol = document.createElement('button');
     tombol.type = 'button';
@@ -114,7 +145,13 @@
 
   function jadwalSembunyi(ms) {
     clearTimeout(timerSembunyi);
+    if (!BUBBLE_TUTUP_OTOMATIS) return;         // mode "tetap tampil sampai ditutup pengguna"
     timerSembunyi = setTimeout(sembunyikanBubble, ms);
+  }
+
+  // Sisa waktu supaya total bubble tampil kira-kira BUBBLE_DURASI (minimal 1,5 detik)
+  function sisaWaktu() {
+    return Math.max(1500, BUBBLE_DURASI - (Date.now() - mulaiTampil));
   }
 
   function sembunyikanBubble() {
@@ -123,9 +160,10 @@
   }
 
   function tampilkanBubble(teks, ms) {
-    bubble.textContent = teks;
+    teksEl.textContent = teks;
     bubble.hidden = false;
-    jadwalSembunyi(ms || BUBBLE_AUTO_SEMBUNYI);
+    mulaiTampil = Date.now();
+    jadwalSembunyi(ms || BUBBLE_DURASI);
   }
 
   function berhenti() {
@@ -153,7 +191,7 @@
         if (saya !== giliran) return;
         sedangBicara = false;
         tombol.classList.remove('bicara');
-        jadwalSembunyi(BUBBLE_SETELAH_BICARA);
+        jadwalSembunyi(sisaWaktu());
       };
       u.onend = selesai;
       u.onerror = selesai;
@@ -172,10 +210,10 @@
   function saatKarakterDiklik() {
     if (!daftar.length) return;
 
-    // Klik saat sedang bicara = hentikan suara
+    // Klik saat sedang bicara = hentikan suara (bubble tetap tampil sesuai pengaturan)
     if (sedangBicara) {
       berhenti();
-      jadwalSembunyi(BUBBLE_SETELAH_BICARA);
+      jadwalSembunyi(sisaWaktu());
       return;
     }
 
@@ -183,25 +221,27 @@
     sudahKlik = true;
 
     var teks = daftar[idx];
-    // Perkiraan lama baca, jadi bubble tidak hilang di tengah suara
-    tampilkanBubble(teks, Math.max(BUBBLE_AUTO_SEMBUNYI, teks.length * 90 + 4000));
+    // Batas pengaman: kalau suara tidak pernah memberi tanda "selesai", bubble tetap hilang.
+    // Tanpa dukungan suara, beri waktu baca sesuai panjang kalimat.
+    var lama = Math.max(BUBBLE_DURASI, teks.length * (synth ? 90 : 60) + (synth ? 4000 : 0));
+    tampilkanBubble(teks, lama);
     bicara(teks);
   }
 
   window.Pemandu = {
-    set: function (teks, opsi) {
-      opsi = opsi || {};
+    // Ganti kalimat pemandu (dan tutup bubble yang sedang terbuka).
+    // Bubble baru muncul setelah pengguna memencet karakter.
+    set: function (teks) {
       var baru = (Array.isArray(teks) ? teks : [teks])
         .filter(function (t) { return t !== undefined && t !== null && String(t).trim() !== ''; })
         .map(String);
       if (!baru.length) return;
       bangun();
       berhenti();
+      sembunyikanBubble();
       daftar = baru;
       idx = 0;
       sudahKlik = false;
-      if (opsi.tampilkan === false) sembunyikanBubble();
-      else tampilkanBubble(daftar[0]);
     },
     diam: function () { berhenti(); sembunyikanBubble(); }
   };

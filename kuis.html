@@ -344,7 +344,6 @@
         'Siap menguji pemahamanmu? Isi nama atau kelompok, lalu pilih tantangan.',
         'Mode Campuran paling seru, soalnya diambil acak dari semua topik.'
       ],
-      // Di layar soal bubble tidak muncul sendiri supaya tidak menutupi soal.
       layarSoal: [
         'Tenang, baca soalnya pelan-pelan. Waktumu 25 detik, dan jawaban yang cepat dapat bonus!'
       ],
@@ -366,14 +365,14 @@
         'Baca lagi halaman teorinya lewat saran di bawah, lalu coba main sekali lagi.'
       ];
     }
-    function pemanduBicara(teks, tampilkan) {
-      if (window.Pemandu) window.Pemandu.set(teks, { tampilkan: tampilkan });
+    function pemanduBicara(teks) {
+      if (window.Pemandu) window.Pemandu.set(teks);
     }
 
     function tampilLayar(id) {
       ['layarMulai', 'layarSoal', 'layarHasil'].forEach(x => { $(x).hidden = (x !== id); });
       window.scrollTo(0, 0);
-      pemanduBicara(TEKS_PEMANDU[id], id !== 'layarSoal');
+      pemanduBicara(TEKS_PEMANDU[id]);
     }
 
     function isiPapan(olId) {
@@ -614,7 +613,7 @@
 
       isiPapan('papanHasil');
       tampilLayar('layarHasil');
-      pemanduBicara(teksHasil(akurasi), true);
+      pemanduBicara(teksHasil(akurasi));
 
       // kirim ke papan skor bersama, lalu muat ulang Top 10
       $('infoGlobalHasil').textContent = URL_SKOR ? 'Mengirim skor…' : '';
@@ -637,7 +636,7 @@
     bangunTopik();
     isiPapan('papanMulai');
     muatPapanGlobal('papanGlobalMulai', 'infoGlobalMulai');
-    pemanduBicara(TEKS_PEMANDU.layarMulai, true);
+    pemanduBicara(TEKS_PEMANDU.layarMulai);
   </script>
 
   <div class="ps-confetti" id="confeti" aria-hidden="true"></div>

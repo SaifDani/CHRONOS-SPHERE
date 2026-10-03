@@ -15,29 +15,91 @@
 
   <div class="page-header">
     <h1 class="page-title">Tantangan Masa Kini</h1>
-    <p class="page-subtitle">Terapkan hasil belajarmu untuk menyelesaikan masalah nyata di lingkungan sekitar</p>
+    <p class="page-subtitle">Dunia berubah. Bagaimana manusia beradaptasi? Pakai pelajaran dari masa lalu untuk menjawab masalah nyata di sekitarmu.</p>
   </div>
 
-  <div class="challenge-card">
-    <h3>Apa Solusi Kita?</h3>
-    <p>Buatlah ide atau solusi kreatif untuk mengatasi permasalahan lingkungan di Tulungagung berdasarkan pembelajaran dari masa lalu.</p>
+  <!-- PERTANYAAN PEMANTIK -->
+  <section class="tm-pemantik">
+    <span class="tm-label">🌐 Pertanyaan Pemantik</span>
+    <p class="tm-quote">&ldquo;Jika manusia masa lalu mampu beradaptasi terhadap perubahan lingkungan, bagaimana kita menghadapi tantangan dunia masa kini?&rdquo;</p>
+  </section>
 
-    <div class="format-chips">
-      <div class="format-chip selected" data-format="video">
-        <span class="format-icon">🎬</span>Video
-      </div>
-      <div class="format-chip" data-format="infografis">
-        <span class="format-icon">🖼️</span>Infografis
-      </div>
-      <div class="format-chip" data-format="poster">
-        <span class="format-icon">🎨</span>Poster
-      </div>
+  <!-- LANGKAH 1: PILIH MISI -->
+  <section class="tm-section">
+    <h2 class="tm-heading"><span class="tm-num">1</span> Pilih Misimu</h2>
+    <div class="tm-missions" id="daftarMisi"></div>
+    <div class="tm-detail" id="detailMisi" aria-live="polite"></div>
+  </section>
+
+  <!-- LANGKAH 2: JALUR BERPIKIR -->
+  <section class="tm-section">
+    <h2 class="tm-heading"><span class="tm-num">2</span> Jalur Berpikir CHRONOS</h2>
+    <p class="tm-intro">Dari masa lalu sampai aksi nyata. Isi tiap langkah dengan singkat; jawabanmu tersimpan otomatis selama tab terbuka.</p>
+
+    <div class="tm-identitas">
+      <input class="hotspot-input tm-input" id="namaKelompok" type="text" maxlength="24" placeholder="Nama / Kelompok" autocomplete="off">
+      <input class="hotspot-input tm-input" id="kelasSiswa" type="text" maxlength="12" placeholder="Kelas (mis. XI-2)" autocomplete="off">
     </div>
 
-    <textarea class="hotspot-input" id="ideSolusi" placeholder="Tulis ide/solusimu di sini sebelum mengunggah karya..."></textarea>
-    <button class="upload-btn" id="tombolUnggah">Unggah Karya</button>
-    <p class="upload-hint" id="unggahHint" hidden>Form unggah karya belum dipasang. Lihat komentar di kode untuk cara memasangnya.</p>
-  </div>
+    <div class="tm-progress" aria-label="Progres jalur berpikir">
+      <div class="tm-progress-bar"><div class="tm-progress-fill" id="progresIsi"></div></div>
+      <span class="tm-progress-text" id="progresTeks">0 / 5 langkah</span>
+    </div>
+
+    <ol class="tm-steps" id="daftarLangkah"></ol>
+
+    <div class="tm-aksi">
+      <button class="upload-btn tm-kirim" id="tombolKirim" type="button">Kirim Jawaban</button>
+      <button class="tm-hapus" id="tombolHapus" type="button">🗑️ Hapus Jawaban</button>
+    </div>
+    <p class="tm-pesan" id="kirimPesan" hidden></p>
+  </section>
+
+  <!-- LANGKAH 3: FORMAT + KOMPETENSI -->
+  <section class="tm-section">
+    <h2 class="tm-heading"><span class="tm-num">3</span> Wujudkan Karyamu</h2>
+
+    <div class="challenge-card">
+      <h3>Apa Solusi Kita?</h3>
+      <p>Ubah solusimu jadi karya yang bisa dilihat orang lain. Pilih formatnya, lalu unggah.</p>
+
+      <div class="format-chips">
+        <div class="format-chip selected" data-format="video">
+          <span class="format-icon">🎬</span>Video
+        </div>
+        <div class="format-chip" data-format="infografis">
+          <span class="format-icon">🖼️</span>Infografis
+        </div>
+        <div class="format-chip" data-format="poster">
+          <span class="format-icon">🎨</span>Poster
+        </div>
+      </div>
+
+      <button class="upload-btn" id="tombolUnggah">Salin Ide &amp; Unggah Karya</button>
+      <p class="tm-pesan" id="unggahPesan" hidden></p>
+      <p class="upload-hint" id="unggahHint" hidden>Form unggah karya belum dipasang. Lihat komentar di kode untuk cara memasangnya.</p>
+    </div>
+
+    <div class="tm-kompetensi">
+      <span class="tm-label">🧠 Kompetensi yang kamu latih</span>
+      <div class="tm-badges">
+        <span class="tm-badge"><b>Critical Thinking</b> menganalisis sebab-akibat</span>
+        <span class="tm-badge"><b>Historical Thinking</b> melihat perubahan &amp; keberlanjutan</span>
+        <span class="tm-badge"><b>Problem Solving</b> mencari alternatif solusi</span>
+        <span class="tm-badge"><b>Digital Literacy</b> mengevaluasi informasi digital</span>
+        <span class="tm-badge"><b>AI Literacy</b> memahami peluang &amp; risiko AI</span>
+        <span class="tm-badge"><b>Collaboration</b> bekerja dalam kelompok</span>
+        <span class="tm-badge"><b>Creativity</b> menghasilkan gagasan baru</span>
+        <span class="tm-badge"><b>Future Thinking</b> membangun kemungkinan masa depan</span>
+        <span class="tm-badge"><b>Decision Making</b> memutuskan berdasarkan bukti</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="tm-kunci">
+    <p>&ldquo;Memahami masa lalu, membaca tantangan masa kini, dan merancang masa depan.&rdquo;</p>
+    <span>History is not only about what happened—it is about how the past helps us navigate the future.</span>
+  </section>
 
   <nav class="bottom-nav">
     <div class="nav-item"><a href="peta.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">🗺️<span>Peta Interaktif</span></a></div>
@@ -47,7 +109,199 @@
   </nav>
 
   <script>
+    /* ============================================================
+       DATA MISI (isi diambil dari dokumen Tantangan Masa Kini)
+       Tiap misi: judul, ikon, warna, deskripsi, isu terkait,
+       koneksi sejarah, dan satu/lebih pertanyaan tantangan.
+       ============================================================ */
+    const MISI = [
+      {
+        id: 'save-the-earth', no: '01', ikon: '🌱', judul: 'Save the Earth',
+        a: '#3f8f4f', b: '#6fbf73',
+        desk: 'Analisis perubahan lingkungan dari masa lalu hingga sekarang.',
+        isu: ['Pemanasan global dan perubahan iklim', 'Kenaikan permukaan laut', 'Bencana alam dan perubahan pola cuaca', 'Kerusakan hutan dan hilangnya keanekaragaman hayati', 'Penyakit menular dan hubungan manusia–lingkungan–kesehatan'],
+        koneksi: 'Bagaimana manusia masa lalu beradaptasi dengan perubahan lingkungan?',
+        soal: [
+          'Jika kamu hidup 100 tahun mendatang, strategi apa yang akan kamu lakukan untuk menghadapi perubahan iklim?',
+          'Apa yang dapat kita pelajari dari respons masyarakat terhadap wabah pada masa lalu?'
+        ]
+      },
+      {
+        id: 'ai-revolution', no: '02', ikon: '🤖', judul: 'AI Revolution',
+        a: '#2f7ce8', b: '#4a9cf5',
+        desk: 'Analisis dampak AI terhadap kehidupan manusia.',
+        isu: ['Perkembangan AI dan otomatisasi', 'Perubahan jenis pekerjaan', 'Literasi digital dan AI', 'Etika penggunaan teknologi', 'Ketergantungan manusia terhadap teknologi'],
+        koneksi: 'Setiap lompatan teknologi, dari alat batu hingga internet, mengubah cara hidup manusia, dengan untung dan ruginya.',
+        soal: ['Apakah teknologi selalu membuat kehidupan manusia menjadi lebih baik? Buktikan dengan contoh dari masa lalu dan masa kini.']
+      },
+      {
+        id: 'truth-detector', no: '03', ikon: '📰', judul: 'Truth Detector',
+        a: '#c98a2b', b: '#e0b24a',
+        desk: 'Menguji kemampuan membedakan fakta, opini, dan misinformasi.',
+        isu: ['Informasi menyebar sangat cepat', 'Hoaks dan misinformasi', 'Manipulasi gambar/video dan deepfake', 'Kemampuan memverifikasi sumber'],
+        koneksi: 'Sejarawan menilai sumber sejarah. Generasi digital harus menilai sumber informasi.',
+        soal: ['Bagaimana cara membedakan informasi yang dapat dipercaya dengan informasi yang menyesatkan?']
+      },
+      {
+        id: 'culture-guardian', no: '04', ikon: '🏺', judul: 'Culture Guardian',
+        a: '#d9552b', b: '#f0805a',
+        desk: 'Merancang strategi pelestarian budaya lokal.',
+        isu: ['Pertukaran budaya semakin cepat', 'Budaya lokal menghadapi perubahan', 'Akulturasi dan asimilasi', 'Pelestarian warisan budaya', 'Identitas generasi muda'],
+        koneksi: 'Budaya selalu bertemu dan berubah lewat jalur dagang, migrasi, dan perjumpaan antarbangsa.',
+        soal: ['Bagaimana mempertahankan identitas budaya tanpa menolak perubahan?']
+      },
+      {
+        id: 'peace-builder', no: '05', ikon: '🕊️', judul: 'Peace Builder',
+        a: '#1fa39b', b: '#4fd1c5',
+        desk: 'Menganalisis konflik masa lalu dan merancang solusi perdamaian.',
+        isu: ['Konflik sosial', 'Persaingan kepentingan', 'Migrasi dan perpindahan penduduk', 'Toleransi dan keberagaman', 'Diplomasi dan kerja sama'],
+        koneksi: 'Sejarah mencatat kedua sisinya: konflik yang merusak dan kerja sama yang menyelamatkan.',
+        soal: ['Apa yang dapat dipelajari dari konflik masa lalu agar kesalahan yang sama tidak terulang?']
+      },
+      {
+        id: 'future-human', no: '06', ikon: '🚀', judul: 'Future Human',
+        a: '#8b3fd6', b: '#b25df0',
+        desk: 'Membayangkan kehidupan manusia 50–100 tahun mendatang berdasarkan bukti dan kecenderungan sejarah.',
+        isu: ['Pertumbuhan kota dan kepadatan penduduk', 'Kebutuhan pangan dan energi', 'Kesenjangan wilayah', 'Digitalisasi, otomatisasi, dan ekonomi kreatif', 'Keterampilan abad ke-21'],
+        koneksi: 'Kota, pekerjaan, dan cara hidup manusia selalu berubah mengikuti teknologi dan jumlah penduduk.',
+        soal: [
+          'Bagaimana manusia dapat membangun kota yang tetap nyaman, aman, dan berkelanjutan?',
+          'Keterampilan apa yang harus kamu miliki agar mampu beradaptasi dengan dunia kerja masa depan?'
+        ]
+      }
+    ];
+
+    /* Lima langkah jalur berpikir: Masa Lalu → Analisis → Masa Kini → Prediksi → Aksi */
+    const LANGKAH = [
+      { ikon: '🔎', judul: 'Masa Lalu', tanya: 'Apa yang terjadi?', ph: 'Ceritakan peristiwa atau pelajaran dari situs sejarah yang kamu jelajahi...' },
+      { ikon: '🧠', judul: 'Analisis', tanya: 'Mengapa hal itu terjadi?', ph: 'Jelaskan sebab dan akibatnya. Bagaimana manusia saat itu menanggapinya?' },
+      { ikon: '🌐', judul: 'Masa Kini', tanya: 'Apa tantangannya sekarang?', ph: 'Hubungkan dengan masalah nyata di sekitarmu, misalnya di Tulungagung...' },
+      { ikon: '🚀', judul: 'Prediksi', tanya: 'Apa kemungkinan yang terjadi?', ph: 'Kalau tidak ada yang berubah, apa yang bisa terjadi 10, 50, atau 100 tahun lagi?' },
+      { ikon: '💡', judul: 'Aksi', tanya: 'Apa solusi yang dapat kita tawarkan?', ph: 'Tulis ide/solusimu di sini sebelum mengunggah karya...' }
+    ];
+
+    /* ============================================================
+       STATE + PENYIMPANAN SEMENTARA (sessionStorage)
+       Tersimpan selama tab masih terbuka, jadi tidak hilang
+       kalau halaman ter-refresh.
+       ============================================================ */
+    const KUNCI_IDE = 'chronos_ide_terakhir';   // isi kotak Aksi (id="ideSolusi")
+    const KUNCI_TM  = 'chronos_tantangan_state';
+    const state = { misi: 0, soal: 0, nama: '', kelas: '', langkah: ['', '', '', '', ''] };
     let formatDipilih = 'video';
+
+    function simpan() {
+      try { sessionStorage.setItem(KUNCI_TM, JSON.stringify(state)); } catch (e) {}
+    }
+    try {
+      const raw = sessionStorage.getItem(KUNCI_TM);
+      if (raw) {
+        const s = JSON.parse(raw);
+        if (Number.isInteger(s.misi) && MISI[s.misi]) state.misi = s.misi;
+        if (Number.isInteger(s.soal)) state.soal = s.soal;
+        state.nama = String(s.nama || ''); state.kelas = String(s.kelas || '');
+        if (Array.isArray(s.langkah)) state.langkah = LANGKAH.map((_, i) => String(s.langkah[i] || ''));
+      }
+      const draf = sessionStorage.getItem(KUNCI_IDE);
+      if (draf && !state.langkah[4]) state.langkah[4] = draf;
+    } catch (e) {}
+
+    /* ============================================================
+       RENDER MISI
+       ============================================================ */
+    const elMisi = document.getElementById('daftarMisi');
+    const elDetail = document.getElementById('detailMisi');
+
+    function buatEl(tag, kelas, teks) {
+      const el = document.createElement(tag);
+      if (kelas) el.className = kelas;
+      if (teks !== undefined) el.textContent = teks;
+      return el;
+    }
+
+    function renderDaftarMisi() {
+      elMisi.textContent = '';
+      MISI.forEach((m, i) => {
+        const tombol = buatEl('button', 'tm-misi' + (i === state.misi ? ' aktif' : ''));
+        tombol.type = 'button';
+        tombol.style.setProperty('--a', m.a);
+        tombol.style.setProperty('--b', m.b);
+        tombol.setAttribute('aria-pressed', i === state.misi ? 'true' : 'false');
+        tombol.append(buatEl('span', 'tm-misi-no', m.no), buatEl('span', 'tm-misi-ikon', m.ikon), buatEl('span', 'tm-misi-nama', m.judul));
+        tombol.addEventListener('click', () => {
+          state.misi = i; state.soal = 0; simpan();
+          renderDaftarMisi(); renderDetail();
+        });
+        elMisi.appendChild(tombol);
+      });
+    }
+
+    function renderDetail() {
+      const m = MISI[state.misi];
+      if (state.soal >= m.soal.length) state.soal = 0;
+      elDetail.textContent = '';
+      elDetail.style.setProperty('--a', m.a);
+      elDetail.style.setProperty('--b', m.b);
+
+      elDetail.append(buatEl('h3', 'tm-detail-judul', m.ikon + ' ' + m.judul), buatEl('p', 'tm-detail-desk', m.desk));
+
+      const ul = buatEl('ul', 'tm-isu');
+      m.isu.forEach(t => ul.appendChild(buatEl('li', '', t)));
+      elDetail.appendChild(ul);
+
+      const kon = buatEl('div', 'tm-koneksi');
+      kon.append(buatEl('b', '', 'Koneksi sejarah: '), document.createTextNode(m.koneksi));
+      elDetail.appendChild(kon);
+
+      elDetail.appendChild(buatEl('span', 'tm-label', m.soal.length > 1 ? 'Pilih satu tantangan' : 'Tantanganmu'));
+      m.soal.forEach((s, i) => {
+        const k = buatEl('button', 'tm-soal' + (i === state.soal ? ' aktif' : ''), '“' + s + '”');
+        k.type = 'button';
+        k.setAttribute('aria-pressed', i === state.soal ? 'true' : 'false');
+        k.addEventListener('click', () => { state.soal = i; simpan(); renderDetail(); });
+        elDetail.appendChild(k);
+      });
+    }
+
+    /* ============================================================
+       RENDER LANGKAH + PROGRES
+       ============================================================ */
+    const elLangkah = document.getElementById('daftarLangkah');
+    const MIN_HURUF = 10;
+
+    function hitungProgres() {
+      const terisi = state.langkah.filter(t => t.trim().length >= MIN_HURUF).length;
+      document.getElementById('progresIsi').style.width = (terisi / LANGKAH.length * 100) + '%';
+      document.getElementById('progresTeks').textContent = terisi + ' / ' + LANGKAH.length + ' langkah' + (terisi === LANGKAH.length ? ' ✨' : '');
+      document.querySelectorAll('.tm-step').forEach((li, i) => {
+        li.classList.toggle('selesai', state.langkah[i].trim().length >= MIN_HURUF);
+      });
+    }
+
+    LANGKAH.forEach((l, i) => {
+      const li = buatEl('li', 'tm-step');
+      const kepala = buatEl('div', 'tm-step-kepala');
+      kepala.append(buatEl('span', 'tm-step-ikon', l.ikon), buatEl('span', 'tm-step-judul', l.judul), buatEl('span', 'tm-step-tanya', l.tanya));
+
+      const kotak = document.createElement('textarea');
+      kotak.className = 'hotspot-input tm-step-isi';
+      kotak.placeholder = l.ph;
+      kotak.setAttribute('aria-label', l.judul + ': ' + l.tanya);
+      kotak.value = state.langkah[i];
+      if (i === 4) kotak.id = 'ideSolusi';
+      kotak.addEventListener('input', () => {
+        state.langkah[i] = kotak.value;
+        if (i === 4) { try { sessionStorage.setItem(KUNCI_IDE, kotak.value); } catch (e) {} }
+        simpan(); hitungProgres();
+      });
+
+      li.append(kepala, kotak);
+      elLangkah.appendChild(li);
+    });
+
+    /* ============================================================
+       PILIH FORMAT
+       ============================================================ */
     document.querySelectorAll('.format-chip').forEach(chip => {
       chip.addEventListener('click', () => {
         document.querySelectorAll('.format-chip').forEach(c => c.classList.remove('selected'));
@@ -65,35 +319,135 @@
        ============================================================ */
     const URL_FORM_UNGGAH = 'https://docs.google.com/forms/d/e/1FAIpQLSd85E9nvM5ceK2u2-1VuzVudAQdwj0uDR3GFBYoprTkcPn5zA/viewform?usp=publish-editor';
 
-    /* Draf ide tersimpan otomatis selama tab masih terbuka,
-       jadi tidak hilang kalau halaman ter-refresh. */
-    const KUNCI_IDE = 'chronos_ide_terakhir';
-    const kotakIde = document.getElementById('ideSolusi');
-    try {
-      const draf = sessionStorage.getItem(KUNCI_IDE);
-      if (draf && !kotakIde.value) kotakIde.value = draf;
-    } catch (e) {}
-    kotakIde.addEventListener('input', () => {
-      try { sessionStorage.setItem(KUNCI_IDE, kotakIde.value); } catch (e) {}
-    });
+    const elPesan = document.getElementById('unggahPesan');
+    function tampilPesan(teks) {
+      elPesan.textContent = teks;
+      elPesan.hidden = false;
+    }
+
+    /* Rangkuman semua langkah, siap ditempel ke Google Form */
+    function susunRangkuman() {
+      const m = MISI[state.misi];
+      const baris = [
+        'NAMA/KELOMPOK: ' + (state.nama.trim() || '-') + ' (' + (state.kelas.trim() || '-') + ')',
+        'MISI: ' + m.no + ' — ' + m.judul,
+        'TANTANGAN: ' + m.soal[state.soal],
+        'FORMAT KARYA: ' + formatDipilih
+      ];
+      LANGKAH.forEach((l, i) => {
+        const isi = state.langkah[i].trim();
+        if (isi) baris.push('', l.judul.toUpperCase() + ' (' + l.tanya + ')', isi);
+      });
+      return baris.join('\n');
+    }
 
     document.getElementById('tombolUnggah').addEventListener('click', () => {
       if (!URL_FORM_UNGGAH) {
         document.getElementById('unggahHint').hidden = false;
         return;
       }
-      const ide = document.getElementById('ideSolusi').value.trim();
-      // Simpan sementara biar siswa nggak kehilangan idenya kalau mau ditempel manual di form
-      try { sessionStorage.setItem(KUNCI_IDE, ide); } catch (e) {}
-      window.open(URL_FORM_UNGGAH, '_blank', 'noopener');
-    });
-  </script>
+      if (state.langkah[4].trim().length < MIN_HURUF) {
+        tampilPesan('Isi dulu langkah 💡 Aksi: tulis ide/solusimu sebelum mengunggah karya.');
+        document.getElementById('ideSolusi').focus();
+        return;
+      }
+      const teks = susunRangkuman();
+      try { sessionStorage.setItem(KUNCI_IDE, state.langkah[4].trim()); } catch (e) {}
 
+      // Buka form dulu (sinkron) supaya tidak diblokir pop-up blocker
+      window.open(URL_FORM_UNGGAH, '_blank', 'noopener');
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(teks).then(
+          () => tampilPesan('Rangkuman ide sudah disalin. Tinggal tempel (paste) di form.'),
+          () => tampilPesan('Form dibuka. Rangkuman gagal disalin otomatis; ide kamu tetap tersimpan di halaman ini.')
+        );
+      } else {
+        tampilPesan('Form dibuka. Salin ide dari kotak Aksi untuk ditempel di form.');
+      }
+    });
+
+    /* ============================================================
+       KIRIM JAWABAN KE GOOGLE SHEETS (tab "Tantangan")
+       Tempel URL Web App Apps Script (yang berakhiran /exec) di
+       bawah ini. Pakai URL yang SAMA dengan yang dipakai kuis/papan skor.
+       ============================================================ */
+    const URL_APPS_SCRIPT = '';
+
+    const elNama = document.getElementById('namaKelompok');
+    const elKelas = document.getElementById('kelasSiswa');
+    const tombolKirim = document.getElementById('tombolKirim');
+    const elKirimPesan = document.getElementById('kirimPesan');
+    elNama.value = state.nama;
+    elKelas.value = state.kelas;
+
+    function pesanKirim(teks, galat) {
+      elKirimPesan.textContent = teks;
+      elKirimPesan.classList.toggle('galat', !!galat);
+      elKirimPesan.hidden = false;
+    }
+    function bukaKembaliTombol() {
+      tombolKirim.disabled = false;
+      tombolKirim.textContent = 'Kirim Jawaban';
+    }
+    elNama.addEventListener('input', () => { state.nama = elNama.value; simpan(); bukaKembaliTombol(); });
+    elKelas.addEventListener('input', () => { state.kelas = elKelas.value; simpan(); bukaKembaliTombol(); });
+    elLangkah.addEventListener('input', bukaKembaliTombol);
+
+    tombolKirim.addEventListener('click', async () => {
+      if (!URL_APPS_SCRIPT) { pesanKirim('Tujuan pengiriman belum dipasang. Minta guru mengisi URL_APPS_SCRIPT di kode.', true); return; }
+      if (!state.nama.trim() || !state.kelas.trim()) { pesanKirim('Isi dulu nama/kelompok dan kelasmu.', true); (state.nama.trim() ? elKelas : elNama).focus(); return; }
+      const kurang = state.langkah.findIndex(t => t.trim().length < MIN_HURUF);
+      if (kurang >= 0) { pesanKirim('Langkah ' + LANGKAH[kurang].ikon + ' ' + LANGKAH[kurang].judul + ' belum diisi (minimal ' + MIN_HURUF + ' huruf).', true); return; }
+
+      const m = MISI[state.misi];
+      tombolKirim.disabled = true;
+      tombolKirim.textContent = 'Mengirim...';
+      try {
+        // text/plain menghindari preflight CORS yang tidak didukung Apps Script
+        const res = await fetch(URL_APPS_SCRIPT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            aksi: 'tantangan',
+            nama: state.nama.trim(), kelas: state.kelas.trim(),
+            misi: m.no + ' ' + m.judul, tantangan: m.soal[state.soal],
+            format: formatDipilih, langkah: state.langkah.map(t => t.trim())
+          })
+        });
+        const hasil = await res.json();
+        if (!hasil.ok) throw new Error(hasil.error || 'ditolak server');
+        tombolKirim.textContent = 'Terkirim ✓';
+        pesanKirim('Jawabanmu sudah terkirim ke guru. Lanjut wujudkan karyamu di langkah 3!');
+      } catch (err) {
+        bukaKembaliTombol();
+        pesanKirim('Gagal mengirim. Cek koneksi lalu coba lagi. Jawabanmu tetap tersimpan di halaman ini.', true);
+      }
+    });
+
+    /* Hapus semua jawaban dari layar + penyimpanan sementara perangkat ini.
+       Jawaban yang sudah terkirim ke Sheets tidak ikut terhapus. */
+    document.getElementById('tombolHapus').addEventListener('click', () => {
+      if (!confirm('Hapus semua jawabanmu dari layar ini?\n\nJawaban yang sudah terkirim ke guru tetap tersimpan.')) return;
+      state.misi = 0; state.soal = 0; state.nama = ''; state.kelas = '';
+      state.langkah = ['', '', '', '', ''];
+      try { sessionStorage.removeItem(KUNCI_TM); sessionStorage.removeItem(KUNCI_IDE); } catch (e) {}
+      elNama.value = ''; elKelas.value = '';
+      document.querySelectorAll('.tm-step-isi').forEach(t => { t.value = ''; });
+      renderDaftarMisi(); renderDetail(); hitungProgres(); bukaKembaliTombol();
+      pesanKirim('Jawaban sudah dihapus dari layar ini.');
+    });
+
+    renderDaftarMisi();
+    renderDetail();
+    hitungProgres();
+  </script>
 
   <script src="app.js"></script>
   <script>
     window.Pemandu && window.Pemandu.set([
-      'Saatnya beraksi! Pikirkan satu masalah lingkungan di Tulungagung, lalu cari pelajaran dari masa lalu untuk menyelesaikannya.',
+      'Saatnya beraksi! Pilih satu misi, lalu telusuri jalurnya: masa lalu, analisis, masa kini, prediksi, dan aksi.',
+      'Hubungkan pelajaran sejarah dengan masalah nyata di Tulungagung, misalnya lingkungan, hoaks, atau budaya lokal.',
       'Pilih format karyamu: video, infografis, atau poster. Tulis idemu dulu, baru unggah.'
     ]);
   </script>
