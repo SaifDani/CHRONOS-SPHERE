@@ -175,6 +175,10 @@ body::before{
 .btn-peta-eksplorasi{ background:linear-gradient(90deg,#2f7ce8,#4a9cf5); }
 .btn-peta-eksplorasi .icon-circle{ color:#2f7ce8; }
 
+/* Teori Asal-Usul — amber ke koral, nuansa purbakala */
+.btn-teori-menu{ background:linear-gradient(90deg,#c98a2b,#f0805a); }
+.btn-teori-menu .icon-circle{ color:#c98a2b; }
+
 /* Out of Yunnan — oranye kemerahan 
 .btn-teori-yunnan{ background:linear-gradient(90deg,#d9552b,#f0805a); }
 .btn-teori-yunnan .icon-circle{ color:#d9552b; }*/
@@ -375,12 +379,14 @@ body.page-peta > *{ position:relative; z-index:1; }
   color:#fff;
 }
 .teori-cards{
-  max-width:760px;
+  max-width:680px;
   margin:0 auto 2rem;
   display:grid;
   grid-template-columns:repeat(2, 1fr);
   gap:1rem;
 }
+
+/* Kartu generik polos (masih dipakai di tempat lain seperti challenge-card dsb) */
 a.card{ text-decoration:none; color:inherit; }
 .card{
   background:rgba(255,255,255,.05);
@@ -389,63 +395,112 @@ a.card{ text-decoration:none; color:inherit; }
   overflow:hidden;
   display:flex;
   flex-direction:column;
-}
-.card{
   cursor:pointer;
   transition:transform .15s ease, border-color .15s ease;
 }
 .card:hover{ transform:translateY(-3px); border-color:rgba(255,255,255,.35); }
 .card:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
-.card-thumb{
-  height:110px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:2.4rem;
-}
-.thumb-yunnan{ background:linear-gradient(135deg,#d9552b,#3a1a10); }
-.thumb-taiwan{ background:linear-gradient(135deg,#1fa39b,#0f2b2a); }
-.thumb-africa{ background:linear-gradient(135deg,#c98a2b,#3a2a12); }
-.thumb-nusantara{ background:linear-gradient(135deg,#3f8f4f,#12291a); }
-.thumb-fosil{ background:linear-gradient(135deg,#c98a2b,#3a2a12); }
-.card-body{
-  padding:.9rem 1rem 1.1rem;
-  flex:1;
+
+/* ============================================================
+   Kartu teori di peta.html — versi ringkas dari gaya "hub-card",
+   pakai var(--a)/(--b) yang di-set lewat style="--a:...;--b:...;"
+   langsung di tag <a>, sama kayak di menu-teori.html.
+   ============================================================ */
+a.teori-mini{ text-decoration:none; color:inherit; }
+.teori-mini{
+  position:relative;
   display:flex;
   flex-direction:column;
-}
-.card-body h3{
-  margin:0 0 .3rem;
-  font-family:'Cinzel','Cinzel Decorative',Georgia,serif;
-  font-size:1rem;
-  color:#fff;
-}
-.card-body p{
-  margin:0 0 .8rem;
-  font-size:.8rem;
-  color:#b9c4e0;
-  flex:1;
-}
-.card-btn{
-  all:unset;
-  box-sizing:border-box;
-  display:block;
-  width:100%;
+  align-items:flex-start;
+  gap:.45rem;
+  padding:1.1rem 1rem 1rem;
+  border-radius:16px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.07), rgba(255,255,255,.02)),
+    radial-gradient(circle at 15% 10%, color-mix(in srgb, var(--a) 24%, transparent), transparent 55%);
+  border:1px solid rgba(255,255,255,.14);
+  overflow:hidden;
+  isolation:isolate;
   cursor:pointer;
-  text-align:center;
-  padding:.5rem;
-  border-radius:999px;
-  font-size:.78rem;
-  font-weight:700;
-  color:#fff;
-  transition:transform .15s ease;
+  transition:transform .25s cubic-bezier(.2,.8,.3,1.2), box-shadow .3s ease, border-color .3s ease;
 }
-.card-btn:hover{ transform:scale(1.04); }
-.btn-yunnan-card{ background:linear-gradient(90deg,#d9552b,#f0805a); }
-.btn-taiwan-card{ background:linear-gradient(90deg,#1fa39b,#4fd1c5); }
-.btn-africa-card{ background:linear-gradient(90deg,#c98a2b,#e0b24a); }
-.btn-nusantara-card{ background:linear-gradient(90deg,#3f8f4f,#6fbf73); }
-.btn-fosil-card{ background:linear-gradient(90deg,#c98a2b,#e0b24a); }
+.teori-mini::before{
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg, var(--a), var(--b));
+}
+.teori-mini::after{
+  content:'';
+  position:absolute; inset:0;
+  background:linear-gradient(120deg, transparent 30%, rgba(255,255,255,.2) 48%, transparent 66%);
+  transform:translateX(-120%);
+  transition:transform .6s ease;
+  pointer-events:none;
+  z-index:2;
+}
+.teori-mini:hover{
+  transform:translateY(-4px) scale(1.015);
+  border-color:color-mix(in srgb, var(--a) 60%, white 10%);
+  box-shadow:0 12px 26px -8px color-mix(in srgb, var(--a) 55%, transparent), 0 3px 10px rgba(0,0,0,.3);
+}
+.teori-mini:hover::after{ transform:translateX(120%); }
+.teori-mini:active{ transform:translateY(-1px) scale(.99); }
+.teori-mini:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
+
+.teori-mini-icon{
+  position:relative; z-index:1;
+  display:flex; align-items:center; justify-content:center;
+  width:2.7rem; height:2.7rem;
+  border-radius:50%;
+  font-size:1.25rem;
+  background:linear-gradient(135deg, var(--a), var(--b));
+  box-shadow:0 0 0 4px color-mix(in srgb, var(--a) 18%, transparent), 0 5px 12px -3px color-mix(in srgb, var(--a) 70%, transparent);
+  transition:transform .3s ease;
+}
+.teori-mini:hover .teori-mini-icon{ transform:scale(1.1) rotate(-6deg); }
+
+.teori-mini h3{
+  position:relative; z-index:1;
+  margin:0;
+  font-family:'Cinzel','Cinzel Decorative',Georgia,serif;
+  font-size:.92rem;
+  color:#fff;
+}
+.teori-mini p{
+  position:relative; z-index:1;
+  margin:0;
+  font-size:.72rem;
+  line-height:1.45;
+  color:#c9d1ee;
+}
+.teori-mini-btn{
+  position:relative; z-index:1;
+  margin-top:.2rem;
+  display:inline-flex;
+  align-items:center;
+  gap:.3rem;
+  font-size:.68rem;
+  font-weight:800;
+  letter-spacing:.02em;
+  padding:.4rem .8rem;
+  border-radius:999px;
+  color:#1a1430;
+  background:linear-gradient(90deg, var(--a), var(--b));
+}
+.teori-mini-arrow{ transition:transform .25s ease; display:inline-block; }
+.teori-mini:hover .teori-mini-arrow{ transform:translateX(3px); }
+
+@media (prefers-reduced-motion: reduce){
+  .teori-mini, .teori-mini::after, .teori-mini-icon, .teori-mini-arrow{ transition:none; }
+}
+@media (max-width:480px){
+  .teori-cards{ gap:.6rem; }
+  .teori-mini{ padding:.85rem .7rem .8rem; }
+  .teori-mini-icon{ width:2.2rem; height:2.2rem; font-size:1rem; }
+  .teori-mini h3{ font-size:.8rem; }
+  .teori-mini p{ font-size:.64rem; }
+  .teori-mini-btn{ font-size:.6rem; padding:.3rem .6rem; }
+}
 
 .bottom-nav{
   max-width:500px;
@@ -823,6 +878,14 @@ a.card{ text-decoration:none; color:inherit; }
   display:flex;
   justify-content:space-between;
 }
+.gallery-kosong{
+  text-align:center;
+  color:#dce3ff;
+  padding:1.5rem 0;
+  max-width:900px;
+  margin:0 auto;
+}
+.gallery-kosong[hidden]{ display:none; }
 
 /* ============================================
    HALAMAN PENJELASAN TEORI (teori.html)
@@ -936,7 +999,46 @@ a.card{ text-decoration:none; color:inherit; }
   border-color:rgba(255,255,255,.15);
   background:none;
 }
-.infographic-img{ display:block; width:100%; height:auto; }
+.infographic-img{ display:block; width:100%; height:auto; cursor:zoom-in; }
+
+/* ============================================================
+   LIGHTBOX — tampilan full-layar saat infografik diklik
+   ============================================================ */
+body.page-peta > .lightbox-overlay,
+.lightbox-overlay{
+  position:fixed !important; inset:0; z-index:1000 !important;
+  background:rgba(5,5,15,.92);
+  display:flex; align-items:center; justify-content:center;
+  padding:2rem 1rem;
+  opacity:0; visibility:hidden;
+  transition:opacity .25s ease, visibility 0s linear .25s;
+}
+body.page-peta > .lightbox-overlay.open,
+.lightbox-overlay.open{
+  opacity:1; visibility:visible;
+  transition:opacity .25s ease, visibility 0s linear 0s;
+}
+.lightbox-overlay img{
+  max-width:100%; max-height:100%;
+  border-radius:10px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  cursor:zoom-out;
+  transform:scale(.92);
+  transition:transform .25s ease;
+}
+.lightbox-overlay.open img{ transform:scale(1); }
+.lightbox-close{
+  position:absolute; top:1.1rem; right:1.1rem;
+  width:2.4rem; height:2.4rem;
+  border-radius:50%;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.25);
+  color:#fff;
+  font-size:1.2rem;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+}
+.lightbox-close:hover{ background:rgba(255,255,255,.22); }
 .infographic-empty{
   padding:1.6rem 1rem;
   text-align:center;
@@ -1223,4 +1325,109 @@ a.card{ text-decoration:none; color:inherit; }
 @keyframes psBadgeMuncul{
   from{ opacity:0; transform:translateY(-6px) scale(.96); }
   to{ opacity:1; transform:none; }
+}
+/* ============================================
+   HUB TEORI ASAL-USUL (teori-menu.html)
+   ============================================ */
+.hub-grid{
+  max-width:680px;
+  margin:0 auto 2rem;
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:1.1rem;
+}
+@media (max-width:480px){
+  .hub-grid{ gap:.6rem; }
+  .hub-card{ padding:1rem .8rem 1rem; }
+  .hub-icon{ width:2.6rem; height:2.6rem; font-size:1.2rem; }
+  .hub-card h3{ font-size:.88rem; }
+  .hub-card p{ font-size:.68rem; line-height:1.4; }
+  .hub-btn{ font-size:.64rem; padding:.35rem .6rem; }
+}
+.hub-card{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:.6rem;
+  padding:1.6rem 1.4rem 1.5rem;
+  border-radius:20px;
+  text-decoration:none;
+  color:#fff;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.07), rgba(255,255,255,.02)),
+    radial-gradient(circle at 15% 15%, color-mix(in srgb, var(--a) 22%, transparent), transparent 55%);
+  border:1px solid rgba(255,255,255,.14);
+  overflow:hidden;
+  isolation:isolate;
+  cursor:pointer;
+  transition:transform .25s cubic-bezier(.2,.8,.3,1.2), box-shadow .3s ease, border-color .3s ease;
+}
+.hub-card::before{
+  /* garis tipis gradasi di tepi atas, warna sesuai teorinya */
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg, var(--a), var(--b));
+}
+.hub-card::after{
+  /* efek kilau yang menyapu saat hover */
+  content:'';
+  position:absolute; inset:0;
+  background:linear-gradient(120deg, transparent 30%, rgba(255,255,255,.22) 48%, transparent 66%);
+  transform:translateX(-120%);
+  transition:transform .7s ease;
+  pointer-events:none;
+  z-index:2;
+}
+.hub-card:hover{
+  transform:translateY(-6px) scale(1.015);
+  border-color:color-mix(in srgb, var(--a) 60%, white 10%);
+  box-shadow:0 16px 34px -10px color-mix(in srgb, var(--a) 55%, transparent), 0 4px 14px rgba(0,0,0,.35);
+}
+.hub-card:hover::after{ transform:translateX(120%); }
+.hub-card:active{ transform:translateY(-2px) scale(.99); }
+.hub-card:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
+
+.hub-icon{
+  position:relative;
+  display:flex; align-items:center; justify-content:center;
+  width:3.4rem; height:3.4rem;
+  border-radius:50%;
+  font-size:1.6rem;
+  background:linear-gradient(135deg, var(--a), var(--b));
+  box-shadow:0 0 0 5px color-mix(in srgb, var(--a) 18%, transparent), 0 6px 16px -4px color-mix(in srgb, var(--a) 70%, transparent);
+  transition:transform .3s ease;
+}
+.hub-card:hover .hub-icon{ transform:scale(1.1) rotate(-6deg); }
+
+.hub-card h3{
+  margin:0;
+  font-family:'Cinzel','Cinzel Decorative',Georgia,serif;
+  font-size:1.08rem;
+  letter-spacing:.01em;
+}
+.hub-card p{
+  margin:0;
+  font-size:.8rem;
+  line-height:1.55;
+  color:#c9d1ee;
+}
+.hub-btn{
+  margin-top:.3rem;
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  font-size:.74rem;
+  font-weight:800;
+  letter-spacing:.02em;
+  padding:.45rem .9rem;
+  border-radius:999px;
+  color:#1a1430;
+  background:linear-gradient(90deg, var(--a), var(--b));
+}
+.hub-arrow{ transition:transform .25s ease; display:inline-block; }
+.hub-card:hover .hub-arrow{ transform:translateX(4px); }
+
+@media (prefers-reduced-motion: reduce){
+  .hub-card, .hub-card::after, .hub-icon, .hub-arrow{ transition:none; }
 }

@@ -11,7 +11,7 @@
 </head>
 <body class="page-peta">
 
-  <a href="peta.html" class="back-link"><span class="back-icon">&larr;</span> Kembali ke Peta</a>
+  <a href="peta.html" class="back-link" id="backLink"><span class="back-icon">&larr;</span> Kembali ke Halaman Sebelumnya</a>
 
   <!-- Satu halaman untuk keempat teori. Isinya diisi otomatis dari data TEORI di bawah,
        dibuka lewat teori.html?teori=yunnan | taiwan | africa | nusantara -->
@@ -66,6 +66,11 @@
     <div class="nav-item"><a href="pengaturan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">⚙️<span>Pengaturan</span></a></div>
   </nav>
 
+  <div class="lightbox-overlay" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Tutup">✕</button>
+    <img id="lightboxImg" src="" alt="">
+  </div>
+
   <script>
     /* ============================================================
        ISI TEORI — edit teks di sini kalau mau mengubah penjelasan.
@@ -89,7 +94,7 @@
           'Sungai-sungai besar seperti Mekong dan Salween diduga menjadi jalur perjalanan.'
         ],
         catatan: 'Penelitian arkeologi, bahasa, dan genetika yang lebih baru banyak menunjuk Taiwan, bukan Yunnan, sebagai titik awal penutur Austronesia. Bandingkan dengan teori Out of Taiwan.',
-        infografik: 'infografik/out-of-yunnan.png'
+        infografik: 'infografik/out-of-yunnan.jpg'
       },
       taiwan: {
         icon: '🏝️',
@@ -200,9 +205,32 @@
       slot.classList.add('has-img');
       img.className = 'infographic-img';
       img.alt = 'Infografik ' + t.judul;
+      img.addEventListener('click', () => bukaLightbox(img.src, img.alt));
       slot.appendChild(img);
     };
     img.src = t.infografik;
+
+    // Lightbox: klik infografik untuk tampil penuh layar, klik lagi (atau tombol X / Esc) untuk tutup
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    function bukaLightbox(src, alt) {
+      lightboxImg.src = src;
+      lightboxImg.alt = alt;
+      lightbox.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function tutupLightbox() {
+      lightbox.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    lightbox.addEventListener('click', tutupLightbox);
+    document.getElementById('lightboxClose').addEventListener('click', (e) => {
+      e.stopPropagation();
+      tutupLightbox();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') tutupLightbox();
+    });
 
     // Tombol sebelumnya / berikutnya
     const pager = document.getElementById('teoriPager');
@@ -219,6 +247,21 @@
       n.href = 'teori.html?teori=' + URUTAN[idx + 1];
       pager.appendChild(n);
     }
+  </script>
+
+  <script>
+    (function () {
+      var tombolKembali = document.getElementById('backLink');
+      if (!tombolKembali) return;
+      tombolKembali.addEventListener('click', function (e) {
+        if (window.history.length > 1) {
+          e.preventDefault();
+          window.history.back();
+        }
+        // Kalau tidak ada riwayat (misal dibuka langsung lewat link/bookmark),
+        // biarkan href bawaan di atas jadi tujuan default.
+      });
+    })();
   </script>
 
 </body>

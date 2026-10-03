@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHRONOS-SPHERE — Teori Asal-Usul</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+</head>
+<body class="page-peta">
+
+  <a href="index.html" class="back-link" id="backLink"><span class="back-icon">&larr;</span> Kembali ke Beranda</a>
+
+  <div class="page-header">
+    <h1 class="page-title">Teori Asal-Usul</h1>
+    <p class="page-subtitle">Pilih salah satu teori untuk menyelami penjelasan, bukti, dan jalur persebarannya</p>
+  </div>
+
+  <div class="hub-grid">
+
+    <a class="hub-card" href="teori.html?teori=yunnan" style="--a:#d9552b; --b:#f0805a;">
+      <span class="hub-icon">🏔️</span>
+      <h3>Out of Yunnan</h3>
+      <p>Nenek moyang berasal dari Yunnan, Tiongkok Selatan, lalu bergerak ke selatan dalam dua gelombang migrasi.</p>
+      <span class="hub-btn">Jelajahi teori <span class="hub-arrow">→</span></span>
+    </a>
+
+    <a class="hub-card" href="teori.html?teori=taiwan" style="--a:#1fa39b; --b:#4fd1c5;">
+      <span class="hub-icon">🏝️</span>
+      <h3>Out of Taiwan</h3>
+      <p>Penutur Austronesia berlayar dari Taiwan menuju Filipina, lalu menyebar ke seluruh Nusantara dan Pasifik.</p>
+      <span class="hub-btn">Jelajahi teori <span class="hub-arrow">→</span></span>
+    </a>
+
+    <a class="hub-card" href="teori.html?teori=africa" style="--a:#c98a2b; --b:#e0b24a;">
+      <span class="hub-icon">🌍</span>
+      <h3>Out of Africa</h3>
+      <p>Manusia modern (Homo sapiens) berevolusi di Afrika, lalu bermigrasi dan menyebar ke seluruh dunia.</p>
+      <span class="hub-btn">Jelajahi teori <span class="hub-arrow">→</span></span>
+    </a>
+
+    <a class="hub-card" href="teori.html?teori=nusantara" style="--a:#3f8f4f; --b:#6fbf73;">
+      <span class="hub-icon">🌴</span>
+      <h3>Teori Nusantara</h3>
+      <p>Nenek moyang bangsa Indonesia berkembang dari kepulauan Nusantara sendiri, bukan pendatang dari luar.</p>
+      <span class="hub-btn">Jelajahi teori <span class="hub-arrow">→</span></span>
+    </a>
+
+  </div>
+
+  <nav class="bottom-nav">
+    <div class="nav-item"><a href="peta.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">🗺️<span>Peta Interaktif</span></a></div>
+    <div class="nav-item"><a href="panduan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">📖<span>Panduan</span></a></div>
+    <div class="nav-item"><a href="papan_skor.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">📊<span>Progres</span></a></div>
+    <div class="nav-item"><a href="pengaturan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">⚙️<span>Pengaturan</span></a></div>
+  </nav>
+
+  <script>
+    (function () {
+      var tombolKembali = document.getElementById('backLink');
+      if (!tombolKembali) return;
+      tombolKembali.addEventListener('click', function (e) {
+        if (window.history.length > 1) {
+          e.preventDefault();
+          window.history.back();
+        }
+        // Kalau tidak ada riwayat (misal dibuka langsung lewat link/bookmark),
+        // biarkan href bawaan di atas jadi tujuan default.
+      });
+    })();
+  </script>
+
+</body>
+</html>

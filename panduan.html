@@ -11,7 +11,7 @@
 </head>
 <body class="page-peta">
 
-  <a href="index.html" class="back-link"><span class="back-icon">&larr;</span> Kembali ke Beranda</a>
+  <a href="index.html" class="back-link" id="backLink"><span class="back-icon">&larr;</span> Kembali ke Beranda</a>
 
   <div class="page-header">
     <h1 class="page-title">Panduan</h1>
@@ -75,6 +75,21 @@
     <div class="nav-item"><a href="papan_skor.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">📊<span>Progres</span></a></div>
     <div class="nav-item"><a href="pengaturan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">⚙️<span>Pengaturan</span></a></div>
   </nav>
+
+  <script>
+    (function () {
+      var tombolKembali = document.getElementById('backLink');
+      if (!tombolKembali) return;
+      tombolKembali.addEventListener('click', function (e) {
+        if (window.history.length > 1) {
+          e.preventDefault();
+          window.history.back();
+        }
+        // Kalau tidak ada riwayat (misal dibuka langsung lewat link/bookmark),
+        // biarkan href bawaan di atas jadi tujuan default.
+      });
+    })();
+  </script>
 
 </body>
 </html>
