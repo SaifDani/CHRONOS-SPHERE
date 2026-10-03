@@ -24,6 +24,7 @@
     <div class="kuis-label">Nama saat ini</div>
     <input class="kuis-input" id="inputNamaBaru" type="text" maxlength="24" placeholder="Contoh: Kelompok 3 (X-8)">
     <button class="hotspot-submit" id="tombolSimpanNama" style="margin-top:.8rem;">Simpan nama</button>
+    <button class="hotspot-submit" id="tombolHapusNama" style="margin-top:.5rem; background:linear-gradient(90deg,#e0435f,#ef6f8c);">Hapus nama di perangkat ini</button>
     <p class="upload-hint" id="hintNama" hidden></p>
   </div>
 
@@ -35,9 +36,9 @@
   </div>
 
   <div class="challenge-card" style="max-width:480px; margin-top:1rem;">
-    <h3>Draf Ide Tantangan</h3>
+    <h3>Draf Jawaban Tantangan</h3>
     <p id="ringkasanIde">Memuat…</p>
-    <button class="hotspot-submit" id="tombolHapusIde" style="background:linear-gradient(90deg,#e0435f,#ef6f8c);">Hapus draf ide tersimpan</button>
+    <button class="hotspot-submit" id="tombolHapusIde" style="background:linear-gradient(90deg,#e0435f,#ef6f8c);">Hapus draf jawaban tersimpan</button>
   </div>
 
   <div class="challenge-card" style="max-width:480px; margin-top:1rem;">
@@ -45,16 +46,12 @@
     <p>CHRONOS-SPHERE — SMA Negeri 1 Kedungwaru, Kabupaten Tulungagung.<br>Semua data (nama, skor, draf ide) disimpan langsung di browser perangkat ini, bukan di server — jadi kalau ganti HP/laptop atau membersihkan data browser, data lokal ini akan hilang. Skor yang sudah terkirim ke Papan Skor bersama tetap aman tersimpan di Google Sheets.</p>
   </div>
 
-  <nav class="bottom-nav">
-    <div class="nav-item"><a href="peta.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">🗺️<span>Peta Interaktif</span></a></div>
-    <div class="nav-item"><a href="panduan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">📖<span>Panduan</span></a></div>
-    <div class="nav-item"><a href="papan_skor.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">📊<span>Progres</span></a></div>
-    <div class="nav-item active">⚙️<span>Pengaturan</span></div>
-  </nav>
+  <nav class="bottom-nav"></nav>
 
   <script>
     const KUNCI_KUIS = 'chronos_kuis_v1';
     const KUNCI_IDE = 'chronos_ide_terakhir';
+    const KUNCI_TM = 'chronos_tantangan_state';
     const $ = id => document.getElementById(id);
 
     function muatData() {
@@ -77,6 +74,17 @@
       hint.textContent = ok ? 'Nama tersimpan. Dipakai lain kali kamu main kuis.' : 'Gagal menyimpan — penyimpanan browser mungkin diblokir.';
     });
 
+    $('tombolHapusNama').addEventListener('click', () => {
+      data.nama = '';
+      $('inputNamaBaru').value = '';
+      const ok = simpanData(data);
+      const hint = $('hintNama');
+      hint.hidden = false;
+      hint.textContent = ok
+        ? 'Nama sudah dihapus dari perangkat ini. Skor atas nama itu di Papan Skor bersama (Google Sheets) tidak ikut terhapus.'
+        : 'Gagal menghapus — penyimpanan browser mungkin diblokir.';
+    });
+
     // --- Skor ---
     function tampilkanRingkasanSkor() {
       const n = (data.skor || []).length;
@@ -96,21 +104,26 @@
 
     // --- Draf ide ---
     function adaIde() {
-      try { return !!(sessionStorage.getItem(KUNCI_IDE) || '').trim(); } catch (e) { return false; }
+      try {
+        if ((sessionStorage.getItem(KUNCI_IDE) || '').trim()) return true;
+        const s = JSON.parse(sessionStorage.getItem(KUNCI_TM) || 'null');
+        return !!(s && ((s.nama || '').trim() || (s.langkah || []).some(t => String(t).trim())));
+      } catch (e) { return false; }
     }
     function tampilkanRingkasanIde() {
       $('ringkasanIde').textContent = adaIde()
-        ? 'Ada draf ide tersimpan sementara dari halaman Tantangan Masa Kini.'
-        : 'Tidak ada draf ide tersimpan saat ini.';
+        ? 'Ada draf jawaban tersimpan sementara dari halaman Tantangan Masa Kini.'
+        : 'Tidak ada draf jawaban tersimpan saat ini.';
     }
     tampilkanRingkasanIde();
     $('tombolHapusIde').addEventListener('click', () => {
-      try { sessionStorage.removeItem(KUNCI_IDE); } catch (e) {}
+      try { sessionStorage.removeItem(KUNCI_IDE); sessionStorage.removeItem(KUNCI_TM); } catch (e) {}
       tampilkanRingkasanIde();
     });
   </script>
 
 
+  <script src="nav.js"></script>
   <script src="app.js"></script>
 
 </body>
