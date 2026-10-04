@@ -22,8 +22,11 @@
 
     <!-- ========== LAYAR 1: MULAI ========== -->
     <section class="kuis-card" id="layarMulai">
-      <label class="kuis-label" for="inputNama">Nama / Kelompok</label>
-      <input class="kuis-input" id="inputNama" type="text" maxlength="24" placeholder="Contoh: Kelompok 3 (X-8)">
+      <label class="kuis-label" for="inputNama">Nama / Kelompok <span class="kuis-wajib">(wajib diisi)</span></label>
+      <input class="kuis-input" id="inputNama" type="text" maxlength="24" placeholder="Contoh: Kelompok 3 (X-8)" autocomplete="off" aria-required="true">
+      <label class="kuis-label" for="inputKelas">Kelas <span class="kuis-wajib">(wajib diisi)</span></label>
+      <input class="kuis-input" id="inputKelas" type="text" maxlength="12" placeholder="Contoh: X-8" autocomplete="off" aria-required="true">
+      <p class="kuis-pesan-nama" id="pesanNama" role="alert" hidden></p>
 
       <div class="kuis-label">Pilih tantangan</div>
       <div class="kuis-topik" id="daftarTopik"></div>
@@ -412,9 +415,48 @@
     /* ---------- state permainan ---------- */
     let sesi = null, timer = null, terkunci = false;
 
+    /* ---------- nama & kelas wajib diisi sebelum main ---------- */
+    const NAMA_TERLARANG = ['pemain','anonim','anonymous','anon','tes','test','testing','coba','percobaan','user','admin','guest','tamu','siswa','murid','aku','saya','nama','namaku','nama saya','xxx','kelompok','kelas','abc','abcd'];
+    const POLA_NGAWUR = ['asdf','sdfg','dfgh','fghj','ghjk','hjkl','qwer','wert','erty','rtyu','tyui','yuio','uiop','zxcv','xcvb','cvbn','vbnm'];
+    function rapikan(t) { return String(t || '').trim().replace(/\s+/g, ' '); }
+    function namaValid(n) {
+      const kecil = rapikan(n).toLowerCase();
+      const huruf = kecil.replace(/[^\p{L}]/gu, '');
+      if (huruf.length < 3) return false;                          // terlalu pendek
+      if (NAMA_TERLARANG.indexOf(kecil) >= 0) return false;        // nama asal-asalan
+      if (/(\p{L})\1{3,}/u.test(kecil)) return false;              // aaaa
+      if (!/[aeiou]/.test(huruf)) return false;                    // tanpa huruf hidup
+      if (POLA_NGAWUR.some(p => huruf.indexOf(p) >= 0)) return false;  // asdf, qwer, dst.
+      return true;
+    }
+    function kelasValid(k) {
+      k = rapikan(k);
+      return k.length >= 2 && /(\d|\b(?:x|xi|xii)\b)/i.test(k);    // mis. X-8, XI-2, XII IPS 1
+    }
+    function pesanIdentitas() {
+      if (!namaValid($('inputNama').value)) return 'Tulis namamu yang asli dulu (bukan "tes", "asdf", atau nama asal-asalan).';
+      if (!kelasValid($('inputKelas').value)) return 'Isi kelasmu dulu, contoh: X-8 atau XI-2.';
+      return '';
+    }
+    function perbaruiKunciNama() {
+      const ok = !pesanIdentitas();
+      $('daftarTopik').classList.toggle('terkunci', !ok);
+      if (ok) $('pesanNama').hidden = true;
+    }
+    function tampilPesanNama() {
+      const kolom = namaValid($('inputNama').value) ? $('inputKelas') : $('inputNama');
+      $('pesanNama').textContent = pesanIdentitas();
+      $('pesanNama').hidden = false;
+      kolom.classList.remove('kocok'); void kolom.offsetWidth; kolom.classList.add('kocok');
+      kolom.focus();
+    }
+    $('inputNama').addEventListener('input', perbaruiKunciNama);
+    $('inputKelas').addEventListener('input', perbaruiKunciNama);
+
     function mulai(topik) {
-      const nama = $('inputNama').value.trim() || 'Pemain';
-      data.nama = nama;
+      if (pesanIdentitas()) { tampilPesanNama(); return; }
+      data.nama = rapikan($('inputNama').value);
+      data.kelas = rapikan($('inputKelas').value);
       simpan(data);
 
       let pool = topik === 'semua' ? acak(SOAL).slice(0, JUMLAH_CAMPURAN)
@@ -618,7 +660,7 @@
       // kirim ke papan skor bersama, lalu muat ulang Top 10
       $('infoGlobalHasil').textContent = URL_SKOR ? 'Mengirim skor…' : '';
       $('badgeJuara').hidden = true;
-      kirimSkor({ nama: data.nama || 'Pemain', poin: sesi.poin, topik: sesi.label, benar: sesi.benar, total: total })
+      kirimSkor({ nama: data.nama || 'Pemain', kelas: data.kelas || '', poin: sesi.poin, topik: sesi.label, benar: sesi.benar, total: total })
         .then(ok => {
           muatPapanGlobal('papanGlobalHasil', 'infoGlobalHasil', ok || !URL_SKOR ? '' : 'Skor kamu belum terkirim. ');
           if (ok) cekPeringkatOtomatis(data.nama || 'Pemain', sesi.label);
@@ -632,8 +674,10 @@
     });
 
     /* ---------- init ---------- */
-    $('inputNama').value = data.nama || '';
+    $('inputNama').value = namaValid(data.nama) ? data.nama : '';
+    $('inputKelas').value = kelasValid(data.kelas) ? data.kelas : '';
     bangunTopik();
+    perbaruiKunciNama();
     isiPapan('papanMulai');
     muatPapanGlobal('papanGlobalMulai', 'infoGlobalMulai');
     pemanduBicara(TEKS_PEMANDU.layarMulai);

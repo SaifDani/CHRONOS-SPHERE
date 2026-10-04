@@ -9,6 +9,12 @@
    Opsi: <body data-nav-aktif="peta"> untuk menandai menu aktif secara
    manual, berguna di halaman anak seperti jalur-sutra.html.
 
+   Tombol kembali: teks <a class="back-link"> disesuaikan otomatis dari
+   tujuannya. Kalau mengarah ke beranda (index.html) tulisannya "Kembali
+   ke Beranda", selain itu "Kembali ke Halaman Sebelumnya". Jadi halaman
+   yang hanya punya tombol kembali (tanpa menu bawah) juga cukup memuat
+   nav.js.
+
    Animasi: pil emas meluncur ke menu yang ditekan lalu halaman berpindah;
    di halaman baru pil melanjutkan dari posisi sebelumnya, jadi terasa
    seperti satu menu yang bergerak. Otomatis mati kalau perangkat
@@ -28,6 +34,36 @@
   var kurangiGerak = function () {
     return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   };
+
+  /* ---------- Tombol kembali: teks mengikuti tujuan ---------- */
+  function labelKembali(a) {
+    var href = a.getAttribute('href') || '';
+    var nama = href.split(/[?#]/)[0].split('/').pop();
+    var beranda = bersih(nama) === 'index' || href === '/' || href === './';
+    return beranda ? 'Kembali ke Beranda' : 'Kembali ke Halaman Sebelumnya';
+  }
+
+  function terapkanKembali(a) {
+    var teks = labelKembali(a);
+    var ikon = a.querySelector('.back-icon');
+    // buang semua isi selain ikon panah, lalu pasang teks yang sesuai
+    Array.prototype.slice.call(a.childNodes).forEach(function (n) {
+      if (n !== ikon) a.removeChild(n);
+    });
+    a.appendChild(document.createTextNode((ikon ? ' ' : '') + teks));
+  }
+
+  function sesuaikanKembali() {
+    var daftar = document.querySelectorAll('.back-link');
+    Array.prototype.forEach.call(daftar, function (a) {
+      terapkanKembali(a);
+      // kalau halaman mengubah tujuan lewat JavaScript, teks ikut berubah
+      if (window.MutationObserver) {
+        new MutationObserver(function () { terapkanKembali(a); })
+          .observe(a, { attributes: true, attributeFilter: ['href'] });
+      }
+    });
+  }
 
   function pasang() {
     var nav = document.querySelector('.bottom-nav');
@@ -128,9 +164,14 @@
     });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', pasang);
-  } else {
+  function mulai() {
+    sesuaikanKembali();
     pasang();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mulai);
+  } else {
+    mulai();
   }
 })();

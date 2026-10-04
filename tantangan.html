@@ -37,9 +37,10 @@
     <p class="tm-intro">Dari masa lalu sampai aksi nyata. Isi tiap langkah dengan singkat; jawabanmu tersimpan otomatis selama tab terbuka.</p>
 
     <div class="tm-identitas">
-      <input class="hotspot-input tm-input" id="namaKelompok" type="text" maxlength="24" placeholder="Nama / Kelompok" autocomplete="off">
-      <input class="hotspot-input tm-input" id="kelasSiswa" type="text" maxlength="12" placeholder="Kelas (mis. XI-2)" autocomplete="off">
+      <input class="hotspot-input tm-input" id="namaKelompok" type="text" maxlength="24" placeholder="Nama / Kelompok (wajib)" autocomplete="off">
+      <input class="hotspot-input tm-input" id="kelasSiswa" type="text" maxlength="12" placeholder="Kelas (wajib, mis. XI-2)" autocomplete="off">
     </div>
+    <p class="tm-kunci-info" id="infoKunci">🔒 Isi nama asli dan kelasmu dulu untuk membuka kolom jawaban di bawah.</p>
 
     <div class="tm-progress" aria-label="Progres jalur berpikir">
       <div class="tm-progress-bar"><div class="tm-progress-fill" id="progresIsi"></div></div>
@@ -200,6 +201,51 @@
       const draf = sessionStorage.getItem(KUNCI_IDE);
       if (draf && !state.langkah[4]) state.langkah[4] = draf;
     } catch (e) {}
+
+    /* ---------- nama wajib & dipakai bersama kuis ---------- */
+    const KUNCI_KUIS = 'chronos_kuis_v1';
+    const NAMA_TERLARANG = ['pemain','anonim','anonymous','anon','tes','test','testing','coba','percobaan','user','admin','guest','tamu','siswa','murid','aku','saya','nama','namaku','nama saya','xxx','kelompok','kelas','abc','abcd'];
+    const POLA_NGAWUR = ['asdf','sdfg','dfgh','fghj','ghjk','hjkl','qwer','wert','erty','rtyu','tyui','yuio','uiop','zxcv','xcvb','cvbn','vbnm'];
+    function rapikan(t) { return String(t || '').trim().replace(/\s+/g, ' '); }
+    function namaValid(n) {
+      const kecil = rapikan(n).toLowerCase();
+      const huruf = kecil.replace(/[^\p{L}]/gu, '');
+      if (huruf.length < 3) return false;                          // terlalu pendek
+      if (NAMA_TERLARANG.indexOf(kecil) >= 0) return false;        // nama asal-asalan
+      if (/(\p{L})\1{3,}/u.test(kecil)) return false;              // aaaa
+      if (!/[aeiou]/.test(huruf)) return false;                    // tanpa huruf hidup
+      if (POLA_NGAWUR.some(p => huruf.indexOf(p) >= 0)) return false;  // asdf, qwer, dst.
+      return true;
+    }
+    function kelasValid(k) {
+      k = rapikan(k);
+      return k.length >= 2 && /(\d|\b(?:x|xi|xii)\b)/i.test(k);    // mis. X-8, XI-2, XII IPS 1
+    }
+    function bacaDataKuis() {
+      try { const d = JSON.parse(localStorage.getItem(KUNCI_KUIS)); if (d && typeof d === 'object') return d; } catch (e) {}
+      return null;
+    }
+    function simpanKelasBersama(k) {
+      const d = bacaDataKuis() || { nama: '', skor: [] };
+      if (!Array.isArray(d.skor)) d.skor = [];
+      d.kelas = String(k).trim().slice(0, 12);
+      try { localStorage.setItem(KUNCI_KUIS, JSON.stringify(d)); } catch (e) {}
+    }
+    function simpanNamaBersama(n) {
+      const d = bacaDataKuis() || { nama: '', skor: [] };
+      if (!Array.isArray(d.skor)) d.skor = [];
+      d.nama = String(n).trim().slice(0, 24);
+      try { localStorage.setItem(KUNCI_KUIS, JSON.stringify(d)); } catch (e) {}
+    }
+    // Kalau siswa sudah mengisi nama di kuis, pakai nama yang sama di sini
+    if (!namaValid(state.nama)) {
+      const dk = bacaDataKuis();
+      if (dk && namaValid(dk.nama)) state.nama = String(dk.nama);
+    }
+    if (!kelasValid(state.kelas)) {
+      const dk2 = bacaDataKuis();
+      if (dk2 && kelasValid(dk2.kelas)) state.kelas = String(dk2.kelas);
+    }
 
     /* ============================================================
        RENDER MISI
@@ -367,7 +413,7 @@
        Tempel URL Web App Apps Script (yang berakhiran /exec) di
        bawah ini. Pakai URL yang SAMA dengan yang dipakai kuis/papan skor.
        ============================================================ */
-    const URL_APPS_SCRIPT = '';
+    const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbx0U0iV280vs7M_yxxcd6gqxmzNwcKXmNofRDc_C-9bDvC9ewUIxPB51kHiosIDfu64/exec';
 
     const elNama = document.getElementById('namaKelompok');
     const elKelas = document.getElementById('kelasSiswa');
@@ -375,6 +421,21 @@
     const elKirimPesan = document.getElementById('kirimPesan');
     elNama.value = state.nama;
     elKelas.value = state.kelas;
+
+    // Kolom jawaban terkunci sampai nama diisi
+    const infoKunci = document.getElementById('infoKunci');
+    function kocok(x) { x.classList.remove('kocok'); void x.offsetWidth; x.classList.add('kocok'); }
+    function perbaruiKunci() {
+      const buka = namaValid(state.nama) && kelasValid(state.kelas);
+      document.querySelectorAll('.tm-step-isi').forEach(t => { t.disabled = !buka; });
+      elLangkah.classList.toggle('tm-terkunci', !buka);
+      infoKunci.hidden = buka;
+    }
+    elLangkah.addEventListener('click', () => {
+      if (namaValid(state.nama) && kelasValid(state.kelas)) return;
+      const salah = namaValid(state.nama) ? elKelas : elNama;
+      kocok(salah); salah.focus();
+    });
 
     function pesanKirim(teks, galat) {
       elKirimPesan.textContent = teks;
@@ -385,13 +446,16 @@
       tombolKirim.disabled = false;
       tombolKirim.textContent = 'Kirim Jawaban';
     }
-    elNama.addEventListener('input', () => { state.nama = elNama.value; simpan(); bukaKembaliTombol(); });
-    elKelas.addEventListener('input', () => { state.kelas = elKelas.value; simpan(); bukaKembaliTombol(); });
+    elNama.addEventListener('input', () => { state.nama = elNama.value; simpan(); perbaruiKunci(); bukaKembaliTombol(); });
+    elNama.addEventListener('change', () => { if (namaValid(state.nama)) simpanNamaBersama(state.nama); });
+    elKelas.addEventListener('input', () => { state.kelas = elKelas.value; simpan(); perbaruiKunci(); bukaKembaliTombol(); });
+    elKelas.addEventListener('change', () => { if (kelasValid(state.kelas)) simpanKelasBersama(state.kelas); });
     elLangkah.addEventListener('input', bukaKembaliTombol);
 
     tombolKirim.addEventListener('click', async () => {
       if (!URL_APPS_SCRIPT) { pesanKirim('Tujuan pengiriman belum dipasang. Minta guru mengisi URL_APPS_SCRIPT di kode.', true); return; }
-      if (!state.nama.trim() || !state.kelas.trim()) { pesanKirim('Isi dulu nama/kelompok dan kelasmu.', true); (state.nama.trim() ? elKelas : elNama).focus(); return; }
+      if (!namaValid(state.nama)) { pesanKirim('Tulis namamu yang asli dulu (bukan "tes", "asdf", atau nama asal-asalan).', true); elNama.focus(); return; }
+      if (!kelasValid(state.kelas)) { pesanKirim('Isi kelasmu dulu, contoh: X-8 atau XI-2.', true); elKelas.focus(); return; }
       const kurang = state.langkah.findIndex(t => t.trim().length < MIN_HURUF);
       if (kurang >= 0) { pesanKirim('Langkah ' + LANGKAH[kurang].ikon + ' ' + LANGKAH[kurang].judul + ' belum diisi (minimal ' + MIN_HURUF + ' huruf).', true); return; }
 
@@ -428,14 +492,16 @@
       state.langkah = ['', '', '', '', ''];
       try { sessionStorage.removeItem(KUNCI_TM); sessionStorage.removeItem(KUNCI_IDE); } catch (e) {}
       elNama.value = ''; elKelas.value = '';
+      simpanNamaBersama(''); simpanKelasBersama('');
       document.querySelectorAll('.tm-step-isi').forEach(t => { t.value = ''; });
-      renderDaftarMisi(); renderDetail(); hitungProgres(); bukaKembaliTombol();
+      renderDaftarMisi(); renderDetail(); hitungProgres(); bukaKembaliTombol(); perbaruiKunci();
       pesanKirim('Jawaban sudah dihapus dari layar ini.');
     });
 
     renderDaftarMisi();
     renderDetail();
     hitungProgres();
+    perbaruiKunci();
   </script>
 
   <script src="nav.js"></script>

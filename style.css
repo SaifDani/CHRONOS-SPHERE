@@ -1908,3 +1908,128 @@ body:not(.page-peta) .pemandu-wrap{ bottom:clamp(2.5rem, 12vh, 5rem); }
   .nav-indikator, .nav-item .nav-ikon, .nav-item span:not(.nav-ikon){ transition:none; }
   .nav-item .nav-link:hover .nav-ikon{ transform:none; }
 }
+
+/* ============================================
+   Reset papan skor (papan_skor.html)
+   ============================================ */
+.rs-bawah{ text-align:center; margin-top:1.2rem; }
+.rs-buka{
+  all:unset;
+  box-sizing:border-box;
+  cursor:pointer;
+  padding:.5rem 1rem;
+  border-radius:999px;
+  font-size:.74rem;
+  font-weight:700;
+  color:#ffb3c0;
+  background:rgba(224,67,95,.08);
+  border:1px solid rgba(224,67,95,.4);
+  transition:background .15s ease;
+}
+.rs-buka:hover{ background:rgba(224,67,95,.2); }
+.rs-buka:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+
+.rs-lapis{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:1rem;
+  background:rgba(8,6,28,.75);
+  -webkit-backdrop-filter:blur(4px);
+  backdrop-filter:blur(4px);
+}
+.rs-lapis[hidden]{ display:none; }
+.rs-kartu{
+  width:100%;
+  max-width:380px;
+  padding:1.3rem 1.3rem 1.2rem;
+  border-radius:18px;
+  background:linear-gradient(160deg,#241a52,#15103a);
+  border:1px solid rgba(224,67,95,.5);
+  box-shadow:0 18px 50px rgba(0,0,0,.6);
+  animation:rsMuncul .25s cubic-bezier(.34,1.56,.64,1) both;
+}
+.rs-kartu h3{ margin:0 0 .5rem; font-family:'Cinzel',Georgia,serif; font-size:1.05rem; color:#fff; }
+.rs-kartu p{ margin:0 0 .8rem; font-size:.8rem; line-height:1.5; color:#c9d1ee; }
+.rs-kartu .kuis-input{ width:100%; box-sizing:border-box; }
+.rs-pesan{ margin:.6rem 0 0 !important; font-size:.76rem !important; color:#9be85c !important; }
+.rs-pesan.galat{ color:#ff9fb0 !important; }
+.rs-pesan[hidden]{ display:none; }
+.rs-tombol{ display:flex; gap:.6rem; margin-top:1rem; }
+.rs-tombol button{
+  all:unset;
+  box-sizing:border-box;
+  flex:1;
+  text-align:center;
+  cursor:pointer;
+  padding:.65rem .8rem;
+  border-radius:999px;
+  font-size:.8rem;
+  font-weight:700;
+}
+.rs-batal{ color:#dce3ff; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2); }
+.rs-hapus{ color:#fff; background:linear-gradient(90deg,#e0435f,#ef6f8c); }
+.rs-hapus:disabled{ opacity:.65; cursor:default; }
+.rs-tombol button:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+@keyframes rsMuncul{ from{ opacity:0; transform:translateY(14px) scale(.94); } to{ opacity:1; transform:none; } }
+@media (prefers-reduced-motion:reduce){ .rs-kartu{ animation:none; } }
+
+/* Pilihan data yang direset */
+.rs-pilihan{ display:flex; flex-direction:column; gap:.35rem; margin:0 0 .9rem; }
+.rs-pilihan label{
+  display:flex; align-items:center; gap:.55rem;
+  padding:.5rem .7rem;
+  font-size:.8rem; color:#dce3ff;
+  border-radius:10px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.14);
+  cursor:pointer;
+}
+.rs-pilihan label:has(input:checked){ border-color:rgba(224,67,95,.7); background:rgba(224,67,95,.14); color:#fff; }
+.rs-pilihan input{ accent-color:#e0435f; }
+
+/* ============================================
+   Nama wajib diisi (kuis.html & tantangan.html)
+   ============================================ */
+.kocok{ animation:kocokNama .38s ease; }
+@keyframes kocokNama{
+  0%,100%{ transform:translateX(0); }
+  20%{ transform:translateX(-7px); }
+  40%{ transform:translateX(7px); }
+  60%{ transform:translateX(-5px); }
+  80%{ transform:translateX(5px); }
+}
+.kuis-input.kocok, .tm-input.kocok{ border-color:#e0435f !important; box-shadow:0 0 0 3px rgba(224,67,95,.3); }
+
+.kuis-wajib{ font-weight:600; font-size:.68rem; color:#ff9fb0; letter-spacing:0; text-transform:none; }
+.kuis-pesan-nama{
+  margin:.45rem 0 .2rem;
+  padding:.5rem .7rem;
+  font-size:.76rem;
+  line-height:1.4;
+  color:#ffb3c0;
+  background:rgba(224,67,95,.12);
+  border:1px solid rgba(224,67,95,.4);
+  border-radius:8px;
+}
+.kuis-pesan-nama[hidden]{ display:none; }
+#daftarTopik.terkunci .kuis-topik-btn{ opacity:.45; filter:saturate(.5); }
+
+.tm-kunci-info{
+  margin:0 0 .9rem;
+  padding:.5rem .8rem;
+  font-size:.76rem;
+  color:#ffd98a;
+  background:rgba(244,214,77,.1);
+  border:1px solid rgba(244,214,77,.35);
+  border-radius:10px;
+}
+.tm-kunci-info[hidden]{ display:none; }
+.tm-steps{ position:relative; }
+.tm-terkunci::after{ content:""; position:absolute; inset:0; cursor:not-allowed; }
+.tm-terkunci .tm-step{ opacity:.5; }
+.tm-step-isi:disabled{ cursor:not-allowed; }
+@media (prefers-reduced-motion:reduce){ .kocok{ animation:none; } }

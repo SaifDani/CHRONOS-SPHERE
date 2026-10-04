@@ -8,6 +8,132 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+      /* ===== Animasi mewah: 4 kartu teori (sama seperti di peta.html) ===== */
+      @property --ang { syntax:'<angle>'; inherits:false; initial-value:0deg; }
+      @property --spot{ syntax:'<number>'; inherits:true;  initial-value:0; }
+
+      .hub-grid{ perspective:1100px; }
+
+      .hub-card{
+        --rx:0deg; --ry:0deg; --lift:0px; --sc:1;
+        position:relative; isolation:isolate; overflow:hidden;
+        background:
+          radial-gradient(circle at var(--mx,50%) var(--my,0%),
+            color-mix(in srgb,var(--a) calc(var(--spot) * 34%),transparent), transparent 62%),
+          rgba(255,255,255,.06);
+        transform:perspective(900px) rotateX(var(--ry)) rotateY(var(--rx)) translateY(var(--lift)) scale(var(--sc));
+        transform-style:preserve-3d;
+        transition:transform .22s ease-out, box-shadow .45s ease, border-color .45s ease, --spot .45s ease;
+        will-change:transform;
+      }
+      .hub-card:nth-child(odd){ --dx:-34px; }
+      .hub-card:nth-child(even){ --dx:34px; }
+
+      .hub-card:hover,
+      .hub-card:focus-visible{
+        --lift:-8px; --sc:1.03; --spot:1;
+        box-shadow:0 22px 44px -14px color-mix(in srgb,var(--a) 70%,transparent),
+                   0 0 30px -6px color-mix(in srgb,var(--b) 55%,transparent);
+      }
+      .hub-card:active{ --sc:.97; --lift:-2px; }
+
+      /* bingkai gradien berputar */
+      .hub-card::before{
+        content:''; position:absolute; inset:-4px -1px -1px -1px; border-radius:inherit; padding:2px; z-index:3;
+        background:conic-gradient(from var(--ang), var(--a), transparent 28%, var(--b) 52%, transparent 78%, var(--a));
+        -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite:xor; mask-composite:exclude;
+        opacity:0; transition:opacity .45s ease; pointer-events:none;
+        animation:bingkaiPutar 3.5s linear infinite;
+      }
+      .hub-card:hover::before,
+      .hub-card:focus-visible::before{ opacity:1; }
+      @keyframes bingkaiPutar{ to{ --ang:360deg; } }
+
+      /* kilatan cahaya menyapu */
+      .hub-card::after{
+        content:''; position:absolute; top:0; bottom:0; left:-70%; width:45%; z-index:4;
+        background:linear-gradient(105deg,transparent,rgba(255,255,255,.3),transparent);
+        transform:skewX(-20deg); opacity:0; pointer-events:none;
+      }
+      .hub-card:hover::after{ animation:kilatSapu .9s ease-out; }
+      @keyframes kilatSapu{
+        0%{ left:-70%; opacity:0; } 15%{ opacity:1; } 100%{ left:140%; opacity:0; }
+      }
+
+      /* ikon: melayang + cincin denyut */
+      .hub-icon{
+        position:relative; z-index:1;
+        animation:ikonMelayang 3.6s ease-in-out infinite;
+        transition:scale .35s cubic-bezier(.34,1.56,.64,1), rotate .35s ease, box-shadow .35s ease;
+      }
+      .hub-icon::after{
+        content:''; position:absolute; inset:0; border-radius:50%;
+        border:2px solid var(--b);
+        animation:cincinDenyut 2.8s ease-out infinite;
+        pointer-events:none;
+      }
+      .hub-card:nth-child(2) .hub-icon, .hub-card:nth-child(2) .hub-icon::after{ animation-delay:-.9s; }
+      .hub-card:nth-child(3) .hub-icon, .hub-card:nth-child(3) .hub-icon::after{ animation-delay:-1.8s; }
+      .hub-card:nth-child(4) .hub-icon, .hub-card:nth-child(4) .hub-icon::after{ animation-delay:-2.7s; }
+      .hub-card:hover .hub-icon{
+        scale:1.25; rotate:-7deg;
+        box-shadow:0 0 22px var(--b), 0 6px 14px rgba(0,0,0,.4);
+      }
+      @keyframes ikonMelayang{
+        0%,100%{ translate:0 2px; }
+        50%    { translate:0 -6px; }
+      }
+      @keyframes cincinDenyut{
+        0%{ transform:scale(1); opacity:.9; }
+        100%{ transform:scale(2); opacity:0; }
+      }
+
+      /* teks & tombol */
+      .hub-card h3, .hub-card p, .hub-btn{ position:relative; z-index:1; }
+      .hub-card h3{ transition:color .3s ease, text-shadow .3s ease; }
+      .hub-card:hover h3{ color:var(--b); text-shadow:0 0 14px color-mix(in srgb,var(--a) 70%,transparent); }
+      .hub-btn{
+        overflow:hidden;
+        transition:box-shadow .3s ease, filter .3s ease;
+      }
+      .hub-btn::before{
+        content:''; position:absolute; top:0; bottom:0; left:-60%; width:40%;
+        background:linear-gradient(105deg,transparent,rgba(255,255,255,.55),transparent);
+        transform:skewX(-20deg);
+      }
+      .hub-card:hover .hub-btn{
+        box-shadow:0 6px 18px -4px color-mix(in srgb,var(--a) 80%,transparent);
+        filter:brightness(1.12);
+      }
+      .hub-card:hover .hub-btn::before{ animation:kilatSapu .9s .25s ease-out; }
+      .hub-arrow{ transition:transform .3s cubic-bezier(.34,1.56,.64,1); }
+      .hub-card:hover .hub-arrow{ transform:translateX(6px); }
+
+      /* masuk berurutan */
+      .hub-grid.reveal-on .hub-card:not(.in){
+        opacity:0;
+        transform:translate(var(--dx,0px),50px) scale(.9) rotateX(14deg);
+      }
+      .hub-grid.reveal-on .hub-card.in{
+        animation:kartuMasuk .95s cubic-bezier(.2,.9,.25,1.12) backwards;
+        animation-delay:calc(var(--i,0) * .15s);
+      }
+      @keyframes kartuMasuk{
+        0%  { opacity:0; transform:translate(var(--dx,0px),60px) scale(.88) rotateX(16deg); filter:blur(6px); }
+        60% { filter:blur(0); }
+        100%{ opacity:1; transform:perspective(900px) rotateX(0) rotateY(0) translateY(0) scale(1); filter:blur(0); }
+      }
+
+      @media (prefers-reduced-motion:reduce){
+        .hub-card::before, .hub-icon, .hub-icon::after{ animation:none !important; }
+        .hub-card:hover::after, .hub-card:hover .hub-btn::before{ animation:none !important; }
+        .hub-card{ transition:none; }
+      }
+    </style>
 </head>
 <body class="page-peta">
 
@@ -50,20 +176,58 @@
 
   </div>
 
-  <nav class="bottom-nav">
-    <div class="nav-item"><a href="peta.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">🗺️<span>Peta Interaktif</span></a></div>
-    <div class="nav-item"><a href="panduan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">📖<span>Panduan</span></a></div>
-    <div class="nav-item"><a href="papan_skor.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">📊<span>Progres</span></a></div>
-    <div class="nav-item"><a href="pengaturan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">⚙️<span>Pengaturan</span></a></div>
-  </nav>
+  <nav class="bottom-nav"></nav>
 
 
+  <script src="nav.js"></script>
   <script src="app.js"></script>
   <script>
     window.Pemandu && window.Pemandu.set([
       'Ada empat teori tentang asal-usul nenek moyang kita. Pilih salah satu, lalu bandingkan buktinya.',
       'Tipsnya, jangan buru-buru cari mana yang paling benar. Catat dulu bukti tiap teori, baru kamu timbang sendiri.'
     ]);
+  </script>
+
+  <script>
+    /* Animasi kartu teori: muncul berurutan + efek miring 3D mengikuti kursor */
+    (function () {
+      var wrap = document.querySelector('.hub-grid');
+      if (!wrap) return;
+      var cards = Array.prototype.slice.call(wrap.querySelectorAll('.hub-card'));
+      cards.forEach(function (c, i) { c.style.setProperty('--i', i); });
+
+      var kurangiGerak = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (kurangiGerak || !('IntersectionObserver' in window)) {
+        cards.forEach(function (c) { c.classList.add('in'); });
+      } else {
+        wrap.classList.add('reveal-on');
+        var io = new IntersectionObserver(function (entri) {
+          entri.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+          });
+        }, { threshold: 0.15 });
+        cards.forEach(function (c) { io.observe(c); });
+      }
+
+      if (!kurangiGerak && window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
+        cards.forEach(function (c) {
+          c.addEventListener('pointermove', function (e) {
+            var r = c.getBoundingClientRect();
+            var x = (e.clientX - r.left) / r.width;
+            var y = (e.clientY - r.top) / r.height;
+            c.style.setProperty('--rx', ((x - 0.5) * 12).toFixed(2) + 'deg');
+            c.style.setProperty('--ry', ((0.5 - y) * 12).toFixed(2) + 'deg');
+            c.style.setProperty('--mx', (x * 100).toFixed(1) + '%');
+            c.style.setProperty('--my', (y * 100).toFixed(1) + '%');
+          });
+          c.addEventListener('pointerleave', function () {
+            c.style.setProperty('--rx', '0deg');
+            c.style.setProperty('--ry', '0deg');
+          });
+        });
+      }
+    })();
   </script>
 
 </body>

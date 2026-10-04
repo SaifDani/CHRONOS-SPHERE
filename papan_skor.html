@@ -34,7 +34,29 @@
       <button class="ps-refresh" id="tombolMuat" type="button">🔄 Muat ulang</button>
       <a class="kuis-link-btn" href="kuis.html" style="padding:.7rem 1.2rem;">Main kuis →</a>
     </div>
+
+    <div class="rs-bawah">
+      <button class="rs-buka" id="tombolBukaReset" type="button">🔒 Reset data</button>
+    </div>
   </main>
+
+  <div class="rs-lapis" id="lapisReset" hidden>
+    <div class="rs-kartu" role="dialog" aria-modal="true" aria-labelledby="judulReset">
+      <h3 id="judulReset">Reset Data</h3>
+      <p>Pilih data yang mau dihapus. Data di Google Sheets akan <b>dihapus permanen</b> dan tidak bisa dikembalikan. Masukkan kata sandi guru untuk melanjutkan.</p>
+      <div class="rs-pilihan" role="radiogroup" aria-label="Data yang dihapus">
+        <label><input type="radio" name="targetReset" value="skor" checked> Skor kuis saja</label>
+        <label><input type="radio" name="targetReset" value="tantangan"> Jawaban Tantangan saja</label>
+        <label><input type="radio" name="targetReset" value="semua"> Keduanya</label>
+      </div>
+      <input class="kuis-input" id="inputSandiReset" type="password" placeholder="Kata sandi" autocomplete="off">
+      <p class="rs-pesan" id="pesanReset" aria-live="polite" hidden></p>
+      <div class="rs-tombol">
+        <button class="rs-batal" id="tombolBatalReset" type="button">Batal</button>
+        <button class="rs-hapus" id="tombolKonfirmasiReset" type="button">Hapus Data</button>
+      </div>
+    </div>
+  </div>
 
   <div class="ps-confetti" id="confeti" aria-hidden="true"></div>
 
@@ -201,6 +223,85 @@
     tampilkanIdentitas();
     $('tombolMuat').addEventListener('click', muat);
     muat();
+
+    /* ============================================================
+       RESET PAPAN SKOR (butuh kata sandi)
+       Tombol terlihat oleh semua, tapi penghapusan hanya berjalan kalau
+       kata sandinya cocok dengan KATA_SANDI_RESET di Apps Script.
+       Pengecekan dilakukan di server, bukan di halaman ini.
+       ============================================================ */
+    const lapisReset = $('lapisReset');
+    const inputSandi = $('inputSandiReset');
+    const pesanReset = $('pesanReset');
+    const tombolOk = $('tombolKonfirmasiReset');
+
+    const PESAN_BERHASIL = {
+      skor: 'Semua skor sudah dihapus.',
+      tantangan: 'Semua jawaban tantangan sudah dihapus.',
+      semua: 'Skor dan jawaban tantangan sudah dihapus.'
+    };
+
+    function pesanR(teks, galat) {
+      pesanReset.textContent = teks;
+      pesanReset.classList.toggle('galat', !!galat);
+      pesanReset.hidden = false;
+    }
+    function bukaReset() {
+      inputSandi.value = '';
+      document.querySelector('input[name="targetReset"][value="skor"]').checked = true;
+      pesanReset.hidden = true;
+      tombolOk.disabled = false;
+      tombolOk.textContent = 'Hapus Data';
+      lapisReset.hidden = false;
+      inputSandi.focus();
+    }
+    function tutupReset() {
+      lapisReset.hidden = true;
+      inputSandi.value = '';
+    }
+
+    $('tombolBukaReset').addEventListener('click', bukaReset);
+    $('tombolBatalReset').addEventListener('click', tutupReset);
+    if (location.hash === '#reset') bukaReset();   // dibuka dari menu Pengaturan
+    lapisReset.addEventListener('click', e => { if (e.target === lapisReset) tutupReset(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !lapisReset.hidden) tutupReset(); });
+    inputSandi.addEventListener('keydown', e => { if (e.key === 'Enter') tombolOk.click(); });
+
+    tombolOk.addEventListener('click', async () => {
+      const sandi = inputSandi.value;
+      const terpilih = document.querySelector('input[name="targetReset"]:checked');
+      const target = terpilih ? terpilih.value : 'skor';
+      if (!URL_SKOR) { pesanR('Papan skor bersama belum diaktifkan.', true); return; }
+      if (!sandi) { pesanR('Masukkan kata sandinya dulu.', true); inputSandi.focus(); return; }
+
+      tombolOk.disabled = true;
+      tombolOk.textContent = 'Menghapus…';
+      const batas = new AbortController();
+      const timer = setTimeout(() => batas.abort(), 15000);
+      try {
+        // text/plain menghindari preflight CORS yang tidak didukung Apps Script
+        const res = await fetch(URL_SKOR, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ aksi: 'reset', kunci: sandi, target: target }),
+          signal: batas.signal
+        });
+        const j = await res.json();
+        inputSandi.value = '';
+        if (!j.ok) throw new Error(j.error || 'ditolak');
+        pesanR(PESAN_BERHASIL[target] || 'Data sudah dihapus.');
+        tombolOk.textContent = 'Selesai ✓';
+        muat();
+        setTimeout(tutupReset, 1400);
+      } catch (err) {
+        tombolOk.disabled = false;
+        tombolOk.textContent = 'Hapus Data';
+        pesanR(err.name === 'AbortError' ? 'Koneksi terlalu lama. Coba lagi.' : (err.message || 'Gagal menghapus.'), true);
+        inputSandi.focus();
+      } finally {
+        clearTimeout(timer);
+      }
+    });
 
     window.Pemandu && window.Pemandu.set([
       'Ini Papan Skor. Pilih tab materi untuk melihat penjelajah terbaik di tiap topik.',
