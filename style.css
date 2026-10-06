@@ -2033,3 +2033,7 @@ body:not(.page-peta) .pemandu-wrap{ bottom:clamp(2.5rem, 12vh, 5rem); }
 .tm-terkunci .tm-step{ opacity:.5; }
 .tm-step-isi:disabled{ cursor:not-allowed; }
 @media (prefers-reduced-motion:reduce){ .kocok{ animation:none; } }
+
+/* Tombol menu: Jejak Nenek Moyang (misi.html) */
+.btn-misi-nenek-moyang{ background:linear-gradient(90deg,#3f8f4f,#6fbf73); }
+.btn-misi-nenek-moyang .icon-circle{ color:#3f8f4f; }

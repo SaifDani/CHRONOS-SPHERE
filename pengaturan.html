@@ -36,6 +36,13 @@
   </div>
 
   <div class="challenge-card" style="max-width:480px; margin-top:1rem;">
+    <h3>Progres Misi</h3>
+    <p id="ringkasanMisi">Memuat…</p>
+    <button class="hotspot-submit" id="tombolResetMisi" style="background:linear-gradient(90deg,#e0435f,#ef6f8c);">Reset progres misi di perangkat ini</button>
+    <p class="upload-hint" id="hintMisi" hidden></p>
+  </div>
+
+  <div class="challenge-card" style="max-width:480px; margin-top:1rem;">
     <h3>Draf Jawaban Tantangan</h3>
     <p id="ringkasanIde">Memuat…</p>
     <button class="hotspot-submit" id="tombolHapusIde" style="background:linear-gradient(90deg,#e0435f,#ef6f8c);">Hapus draf jawaban tersimpan</button>
@@ -49,7 +56,7 @@
 
   <div class="challenge-card" style="max-width:480px; margin-top:1rem;">
     <h3>Tentang</h3>
-    <p>CHRONOS-SPHERE — SMA Negeri 1 Kedungwaru, Kabupaten Tulungagung.<br>Semua data (nama, skor, draf ide) disimpan langsung di browser perangkat ini, bukan di server — jadi kalau ganti HP/laptop atau membersihkan data browser, data lokal ini akan hilang. Skor yang sudah terkirim ke Papan Skor bersama tetap aman tersimpan di Google Sheets.</p>
+    <p>CHRONOS-SPHERE — SMA Negeri 1 Kedungwaru, Kabupaten Tulungagung.<br>Semua data (nama, skor, progres misi, draf ide) disimpan langsung di browser perangkat ini, bukan di server — jadi kalau ganti HP/laptop atau membersihkan data browser, data lokal ini akan hilang. Skor yang sudah terkirim ke Papan Skor bersama tetap aman tersimpan di Google Sheets.</p>
   </div>
 
   <nav class="bottom-nav"></nav>
@@ -58,6 +65,8 @@
     const KUNCI_KUIS = 'chronos_kuis_v1';
     const KUNCI_IDE = 'chronos_ide_terakhir';
     const KUNCI_TM = 'chronos_tantangan_state';
+    const KUNCI_MISI = 'chronos_misi_v1';
+    const JUMLAH_MISI = 8;   // samakan dengan jumlah misi di misi.js
     const $ = id => document.getElementById(id);
 
     function muatData() {
@@ -81,6 +90,7 @@
     });
 
     $('tombolHapusNama').addEventListener('click', () => {
+      if (!confirm('Hapus nama dan kelas dari perangkat ini?')) return;
       data.nama = '';
       $('inputNamaBaru').value = '';
       const ok = simpanData(data);
@@ -106,6 +116,33 @@
       const hint = $('hintSkor');
       hint.hidden = false;
       hint.textContent = 'Skor lokal sudah dihapus. Skor di Papan Skor bersama (Google Sheets) tidak ikut terhapus.';
+    });
+
+    // --- Progres misi ---
+    function muatMisi() {
+      try { return JSON.parse(localStorage.getItem(KUNCI_MISI)) || null; } catch (e) { return null; }
+    }
+    function tampilkanRingkasanMisi() {
+      const m = muatMisi(), xp = (m && m.xp) || {};
+      const selesai = Object.keys(xp).length;
+      const total = Object.values(xp).reduce((a, b) => a + b, 0);
+      $('ringkasanMisi').textContent = selesai
+        ? ('Kamu sudah menyelesaikan ' + selesai + ' dari ' + JUMLAH_MISI + ' misi dengan total ' + total + ' XP. Reset akan menghapus XP, lencana, Evidence Bag, dan jawaban refleksi.')
+        : 'Belum ada progres misi di perangkat ini.';
+      $('tombolResetMisi').disabled = !m;
+      $('tombolResetMisi').style.opacity = m ? '' : '.5';
+    }
+    tampilkanRingkasanMisi();
+    $('tombolResetMisi').addEventListener('click', () => {
+      if (!confirm('Reset semua progres misi? XP, lencana, Evidence Bag, dan jawaban refleksimu akan dihapus dan kamu mulai dari Misi 1.')) return;
+      let ok = true;
+      try { localStorage.removeItem(KUNCI_MISI); } catch (e) { ok = false; }
+      tampilkanRingkasanMisi();
+      const hint = $('hintMisi');
+      hint.hidden = false;
+      hint.textContent = ok
+        ? 'Progres misi sudah direset. Buka halaman Misi untuk mulai dari awal.'
+        : 'Gagal mereset — penyimpanan browser mungkin diblokir.';
     });
 
     // --- Draf ide ---

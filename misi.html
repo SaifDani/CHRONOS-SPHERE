@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHRONOS-SPHERE — Misi: Jejak Nenek Moyang</title>
+<link rel="stylesheet" href="style.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="misi.css" />
+</head>
+<body class="page-peta">
+
+<a href="index.html" class="back-link" id="backLink"><span class="back-icon">&larr;</span> Kembali ke Beranda</a>
+
+<div class="page-header">
+  <h1 class="page-title">Misi Jejak Nenek Moyang</h1>
+  <p class="page-subtitle">Selesaikan 8 misi sains, teknologi, rekayasa, dan matematika untuk menemukan asal-usul nenek moyang bangsa Indonesia.</p>
+</div>
+
+<main class="misi" id="app">
+  <div class="m-top">
+    <div class="m-avatar" aria-hidden="true">🧭</div>
+    <div class="m-who"><b id="pNama">Penjelajah</b><small id="pXP">0 / 800 XP</small>
+      <div class="m-xpbar"><i id="xpBar"></i></div></div>
+  </div>
+  <div class="m-rail" id="rail" role="tablist" aria-label="Daftar misi"></div>
+  <section class="m-stage" id="stage" aria-live="polite"></section>
+  <section class="m-bag"><h3>🎒 Evidence Bag</h3><div id="bag"></div></section>
+</main>
+
+<nav class="bottom-nav"></nav>
+
+<script src="misi.js"></script>
+
+<script src="nav.js"></script>
+<script src="app.js"></script>
+<script>
+  window.Pemandu && window.Pemandu.set([
+    'Selamat datang, Penjelajah! Selesaikan 8 misi untuk mengumpulkan bukti dan XP.',
+    'Salah menjawab tidak apa-apa. Kamu bisa mencoba lagi, tapi XP misi itu jadi setengah.'
+  ]);
+</script>
+</body>
+</html>
