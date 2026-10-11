@@ -51,29 +51,152 @@
       }
       .psphere-hotspot.done::before{ animation:none; opacity:0; }
       #tourFrame{ position:relative; }
+      button.thumb-chip{ all:unset; box-sizing:border-box; cursor:pointer; flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:.3rem; padding:.5rem .8rem; border-radius:10px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12); color:#b9c4e0; font-size:.68rem; font-weight:600; transition:transform .15s ease, background .15s ease; }
+      button.thumb-chip:hover{ transform:scale(1.05); }
+      button.thumb-chip:focus-visible{ outline:2px solid #f4d64d; outline-offset:2px; }
+      button.thumb-chip.active{ background:linear-gradient(90deg,#2f7ce8,#4a9cf5); border-color:transparent; color:#fff; }
+      .thumb-strip{ justify-content:center; }
+      .info-panel{ max-width:900px; margin:0 auto 1.6rem; padding:1rem 1.2rem; border-radius:14px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); }
+      .info-panel h3{ margin:0 0 .5rem; font-family:'Cinzel','Cinzel Decorative',Georgia,serif; font-size:1rem; color:#fff; }
+      .info-panel p{ margin:0; font-size:.85rem; line-height:1.6; color:#c9d1ee; }
+
+      /* ===== TAMPILAN BARU: kaca, cahaya, warna per tab ===== */
+      body.page-peta::before{ content:''; position:fixed; inset:0; z-index:-1; pointer-events:none;
+        background:radial-gradient(600px 400px at 12% 8%,rgba(47,124,232,.22),transparent 70%),
+                   radial-gradient(520px 380px at 90% 30%,rgba(244,214,77,.14),transparent 70%),
+                   radial-gradient(560px 420px at 30% 95%,rgba(63,143,79,.16),transparent 70%); }
+      .page-title{ background:linear-gradient(90deg,#fff,#f4d64d,#fff); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; letter-spacing:.05em; }
+      .tour-frame{ border:1px solid rgba(244,214,77,.45); border-radius:20px;
+        box-shadow:0 0 0 5px rgba(244,214,77,.08),0 24px 60px -16px rgba(0,0,0,.7),0 0 50px -10px rgba(244,214,77,.3); }
+      .tour-badge{ position:absolute; left:.8rem; top:.8rem; z-index:5; pointer-events:none; display:flex; align-items:center; gap:.4rem;
+        padding:.35rem .8rem; border-radius:999px; font-size:.72rem; font-weight:700; color:#fff;
+        background:rgba(8,14,30,.65); border:1px solid rgba(244,214,77,.6); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+      .tour-badge::before{ content:''; width:8px; height:8px; border-radius:50%; background:#f4d64d; box-shadow:0 0 0 0 rgba(244,214,77,.7); animation:badgeLive 1.8s infinite; }
+      @keyframes badgeLive{ 70%{ box-shadow:0 0 0 8px rgba(244,214,77,0); } 100%{ box-shadow:0 0 0 0 rgba(244,214,77,0); } }
+
+      .thumb-strip{ display:grid; grid-template-columns:repeat(4,1fr); gap:.7rem; overflow:visible; padding:.2rem 0 .3rem; }
+      button.thumb-chip{ --acc:#4a9cf5; position:relative; overflow:hidden; flex-direction:column; justify-content:center; min-height:84px; border-radius:16px; font-size:.78rem; letter-spacing:.02em;
+        background:linear-gradient(160deg,color-mix(in srgb,var(--acc) 16%,transparent),rgba(255,255,255,.04));
+        border:1px solid color-mix(in srgb,var(--acc) 40%,transparent); transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s ease,background .25s ease; }
+      button.thumb-chip[data-tab="area"]{ --acc:#4a9cf5; }
+      button.thumb-chip[data-tab="museum"]{ --acc:#e0b24a; }
+      button.thumb-chip[data-tab="penggalian"]{ --acc:#f0805a; }
+      button.thumb-chip[data-tab="fosil"]{ --acc:#6fbf73; }
+      button.thumb-chip .thumb-icon{ font-size:1.9rem; transition:transform .3s cubic-bezier(.34,1.56,.64,1); filter:drop-shadow(0 4px 8px rgba(0,0,0,.4)); }
+      button.thumb-chip:hover{ transform:translateY(-4px); }
+      button.thumb-chip:hover .thumb-icon{ transform:scale(1.2) rotate(-6deg); }
+      button.thumb-chip.active{ color:#fff; transform:translateY(-4px);
+        background:linear-gradient(160deg,color-mix(in srgb,var(--acc) 55%,transparent),color-mix(in srgb,var(--acc) 15%,transparent));
+        border-color:var(--acc); box-shadow:0 12px 28px -8px color-mix(in srgb,var(--acc) 80%,transparent),0 0 0 1px var(--acc) inset; }
+      button.thumb-chip.active::after{ content:''; position:absolute; left:20%; right:20%; bottom:0; height:3px; border-radius:3px; background:var(--acc); box-shadow:0 0 12px var(--acc); }
+
+      .info-panel{ --acc:#4a9cf5; position:relative; overflow:hidden; padding:1.3rem 1.5rem 1.4rem 1.7rem; border-radius:20px;
+        background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 14%,rgba(255,255,255,.05)),rgba(255,255,255,.04));
+        border:1px solid color-mix(in srgb,var(--acc) 45%,transparent); box-shadow:0 18px 40px -18px color-mix(in srgb,var(--acc) 70%,transparent); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+      .info-panel::before{ content:''; position:absolute; left:0; top:0; bottom:0; width:5px; background:linear-gradient(var(--acc),transparent); }
+      .info-panel::after{ content:attr(data-icon); position:absolute; right:-.4rem; bottom:-1.6rem; font-size:7.5rem; opacity:.1; transform:rotate(-12deg); pointer-events:none; }
+      .info-panel h3{ font-size:1.15rem; margin-bottom:.2rem; }
+      .info-sub{ display:block; margin-bottom:.8rem; font-size:.7rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--acc); }
+      .info-panel p{ position:relative; z-index:1; font-size:.92rem; line-height:1.75; color:#e3e9ff; }
+      .info-panel.ganti > *{ animation:infoMasuk .45s cubic-bezier(.2,.9,.25,1.1) both; }
+      .info-panel.ganti p{ animation-delay:.08s; }
+      @keyframes infoMasuk{ from{ opacity:0; transform:translateY(14px); filter:blur(4px); } to{ opacity:1; transform:none; filter:blur(0); } }
+
+      .hotspot-btn{ background:linear-gradient(160deg,rgba(255,255,255,.1),rgba(255,255,255,.03)); backdrop-filter:blur(6px); }
+      .hotspot-btn.active{ box-shadow:0 8px 22px -6px rgba(47,124,232,.8); }
+      .hotspot-card{ position:relative; overflow:hidden; border-radius:20px; border:1px solid rgba(255,255,255,.16);
+        background:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.03)); box-shadow:0 18px 40px -20px rgba(0,0,0,.8); }
+      .hotspot-card::before{ content:''; position:absolute; left:0; right:0; top:0; height:4px; background:linear-gradient(90deg,#2f7ce8,#f4d64d,#6fbf73); }
+      .hotspot-card.active{ animation:infoMasuk .45s ease both; }
+      .hotspot-submit{ transition:transform .2s ease,box-shadow .2s ease; }
+      .hotspot-submit:not(:disabled):hover{ transform:translateY(-2px); box-shadow:0 8px 20px -6px rgba(244,214,77,.6); }
+      @media (max-width:520px){ button.thumb-chip{ min-height:72px; font-size:.68rem; } button.thumb-chip .thumb-icon{ font-size:1.5rem; } .info-panel p{ font-size:.86rem; } }
+      @media (prefers-reduced-motion:reduce){ .tour-badge::before,.info-panel.ganti > *,.hotspot-card.active{ animation:none; } }
+
+      /* ===== LAYOUT 2 MODE: Pelajari / Tantangan ===== */
+      .tour-layout{ max-width:1200px; margin:0 auto; padding:0 1rem; display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:1.5rem; align-items:start; }
+      .tour-left{ position:sticky; top:1rem; }
+      .tour-left .tour-frame{ max-width:none; margin:0; aspect-ratio:4/3; }
+      .tour-right{ min-width:0; }
+      .tour-right .thumb-strip{ grid-template-columns:repeat(2,1fr); margin-bottom:1rem; }
+      .tour-right .info-panel, .tour-right .hotspot-card{ max-width:none; }
+      .tour-right .hotspot-list{ justify-content:flex-start; margin-bottom:1rem; }
+      .tour-hint{ position:absolute; left:50%; bottom:.8rem; translate:-50% 0; z-index:5; pointer-events:none; white-space:nowrap; font-size:.7rem; font-weight:600; color:#fff; padding:.4rem .9rem; border-radius:999px; background:rgba(8,14,30,.7); border:1px solid rgba(255,255,255,.25); backdrop-filter:blur(6px); transition:opacity .6s ease; animation:hintNaik 2.4s ease-in-out infinite; }
+      .tour-hint.hilang{ opacity:0; animation:none; }
+      @keyframes hintNaik{ 50%{ transform:translateY(-4px); } }
+
+      .mode-switch{ position:relative; display:grid; grid-template-columns:1fr 1fr; padding:5px; margin-bottom:1.1rem; border-radius:999px; background:rgba(8,14,30,.6); border:1px solid rgba(255,255,255,.18); backdrop-filter:blur(8px); }
+      .mode-ind{ position:absolute; top:5px; bottom:5px; left:5px; width:calc(50% - 5px); border-radius:999px; background:linear-gradient(90deg,#e0b24a,#f4d64d); box-shadow:0 6px 18px -4px rgba(244,214,77,.7); transition:transform .4s cubic-bezier(.34,1.4,.64,1); }
+      .mode-switch.tantang .mode-ind{ transform:translateX(100%); }
+      .mode-btn{ all:unset; box-sizing:border-box; position:relative; z-index:1; cursor:pointer; text-align:center; padding:.7rem .5rem; font-size:.82rem; font-weight:800; letter-spacing:.03em; color:#c9d1ee; transition:color .3s ease; }
+      .mode-btn.active{ color:#2a1f05; }
+      .mode-btn:focus-visible{ outline:2px solid #fff; outline-offset:-3px; border-radius:999px; }
+      .mode-btn em{ font-style:normal; font-size:.65rem; margin-left:.3rem; padding:.1rem .45rem; border-radius:999px; background:rgba(255,255,255,.18); }
+      .mode-btn.active em{ background:rgba(42,31,5,.15); }
+      .mode-pane{ display:none; }
+      .mode-pane.active{ display:block; animation:infoMasuk .45s ease both; }
+
+      .prog{ height:8px; border-radius:8px; background:rgba(255,255,255,.1); overflow:hidden; }
+      .prog-bar{ height:100%; width:0; border-radius:8px; background:linear-gradient(90deg,#2f7ce8,#f4d64d,#6fbf73); transition:width .6s cubic-bezier(.2,.9,.25,1); }
+      .prog-txt{ margin:.5rem 0 .9rem; font-size:.75rem; font-weight:700; color:#c9d1ee; letter-spacing:.04em; }
+      .hotspot-btn.done .hotspot-num{ background:#3f8f4f; }
+      .hotspot-btn.done .hotspot-num::after{ content:'✓'; }
+      .hotspot-btn.done .hotspot-num{ font-size:0; } .hotspot-btn.done .hotspot-num::after{ font-size:.75rem; }
+      .psphere-hotspot.done{ background:linear-gradient(135deg,#6fbf73,#3f8f4f); box-shadow:0 0 0 4px rgba(111,191,115,.35),0 4px 10px rgba(0,0,0,.4); color:#fff; }
+      .q-nav{ display:flex; justify-content:space-between; gap:.6rem; margin-top:.4rem; }
+      .q-nav button{ all:unset; box-sizing:border-box; cursor:pointer; padding:.6rem 1.1rem; border-radius:999px; font-size:.78rem; font-weight:700; color:#fff; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2); transition:transform .2s ease,background .2s ease; }
+      .q-nav button:hover:not(:disabled){ transform:translateY(-2px); background:rgba(255,255,255,.16); }
+      .q-nav #qNext{ background:linear-gradient(90deg,#2f7ce8,#4a9cf5); border-color:transparent; }
+      .q-nav button:disabled{ opacity:.35; cursor:default; }
+      .q-nav button:focus-visible{ outline:2px solid #f4d64d; outline-offset:2px; }
+      @media (max-width:900px){ .tour-layout{ grid-template-columns:1fr; gap:1rem; } .tour-left{ position:static; } .tour-left .tour-frame{ aspect-ratio:16/10; } .tour-hint{ font-size:.62rem; } }
     </style>
 </head>
 <body class="page-peta">
 
-  <a href="peta.html" class="back-link" id="backLink"><span class="back-icon">&larr;</span> Kembali ke Peta</a>
+  <div class="top-bar">
+    <a href="peta.html" class="back-link" id="backLink"><span class="back-icon">&larr;</span> Kembali ke Peta</a>
+    <a href="index.html" class="home-btn" aria-label="Ke Beranda"><span class="home-teks">Beranda</span> <span class="home-icon">🏠</span></a>
+  </div>
 
   <div class="page-header">
     <h1 class="page-title" id="lokasiNama">Situs Fosil</h1>
     <p class="page-subtitle" id="lokasiSub">Tur panorama 360° lokasi penemuan fosil</p>
   </div>
 
+  <div class="tour-layout">
+    <div class="tour-left">
   <div class="tour-frame" id="tourFrame">
     <div id="panorama" style="width:100%; height:100%;"></div>
+    <div class="tour-hint" id="tourHint">👆 Geser untuk melihat 360° · klik titik kuning</div>
+    <div class="tour-badge" id="tourBadge">360°</div>
   </div>
 
-  <div class="thumb-strip">
-    <div class="thumb-chip"><span class="thumb-icon">🏛️</span>Area Situs</div>
-    <div class="thumb-chip"><span class="thumb-icon">🏺</span>Museum</div>
-    <div class="thumb-chip"><span class="thumb-icon">⛏️</span>Penggalian</div>
-    <div class="thumb-chip"><span class="thumb-icon">🦴</span>Fosil</div>
-    <div class="thumb-chip"><span class="thumb-icon">🌄</span>Pemandangan</div>
+    </div>
+    <div class="tour-right">
+      <div class="mode-switch" role="tablist">
+        <span class="mode-ind" id="modeInd"></span>
+        <button type="button" class="mode-btn active" data-mode="pelajari">📖 Pelajari</button>
+        <button type="button" class="mode-btn" data-mode="tantangan">🎯 Tantangan <em id="skorBadge">0/4</em></button>
+      </div>
+      <div class="mode-pane active" id="paneP">
+  <div class="thumb-strip" role="tablist" aria-label="Info situs">
+    <button type="button" class="thumb-chip active" role="tab" data-tab="area"><span class="thumb-icon">🏛️</span>Area Situs</button>
+    <button type="button" class="thumb-chip" role="tab" data-tab="museum"><span class="thumb-icon">🏺</span>Museum</button>
+    <button type="button" class="thumb-chip" role="tab" data-tab="penggalian"><span class="thumb-icon">⛏️</span>Penggalian</button>
+    <button type="button" class="thumb-chip" role="tab" data-tab="fosil"><span class="thumb-icon">🦴</span>Fosil</button>
   </div>
 
+  <div class="info-panel ganti" id="infoPanel" role="tabpanel">
+    <h3 id="infoJudul"></h3>
+    <span class="info-sub" id="infoSub"></span>
+    <p id="infoIsi"></p>
+  </div>
+
+      </div>
+      <div class="mode-pane" id="paneT">
+        <div class="prog"><div class="prog-bar" id="progBar"></div></div>
+        <div class="prog-txt" id="progTxt">Pertanyaan 1 dari 4</div>
   <div style="display:flex;gap:.5rem;max-width:520px;margin:1rem auto 0;">
     <input type="text" id="namaSiswa" class="hotspot-input" placeholder="Nama..." style="flex:2;margin:0;" />
     <input type="text" id="kelasSiswa" class="hotspot-input" placeholder="Kelas..." style="flex:1;margin:0;" />
@@ -136,6 +259,14 @@
     <button class="hotspot-submit">Kirim</button>
   </div>
 
+        <div class="q-nav">
+          <button type="button" id="qPrev">← Sebelumnya</button>
+          <button type="button" id="qNext">Lanjut →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <nav class="bottom-nav"></nav>
 
   <script src="nav.js"></script>
@@ -152,23 +283,99 @@
         icon: '🦴',
         nama: 'Situs Sangiran',
         sub: 'Menelusuri jejak manusia purba di Jawa Tengah',
-        pemandu: [
-          'Selamat datang di Sangiran, Jawa Tengah. Di sini banyak fosil manusia purba ditemukan. Geser fotonya dan cari titik kuning berkedip!',
-          'Klik titik kuning untuk membuka pertanyaan. Mulai dari nomor 01 ya.'
-        ],
-        // Placeholder contoh dari Pannellum (equirectangular asli, CC-licensed) — ganti dengan foto Sangiran aslimu kalau sudah ada
-        foto: 'https://pannellum.org/images/alma.jpg'
+        pemandu: ['Ini Situs Sangiran. Geser fotonya dan cari titik kuning berkedip!', 'Klik titik kuning untuk membuka pertanyaan. Mulai dari nomor 01 ya.'],
+        // Placeholder — ganti dengan foto 360 asli situsnya kalau sudah ada
+        foto: 'https://pannellum.org/images/alma.jpg',
+        info: {
+          area: 'Sangiran terletak di perbatasan Kabupaten Sragen dan Karanganyar, Jawa Tengah, sekitar 15 km di utara Kota Surakarta (Solo). Kawasannya berupa kubah tanah yang terkikis sungai sehingga lapisan tanah purba tersingkap. UNESCO menetapkannya sebagai Warisan Dunia pada 1996.',
+          museum: 'Ada. Museum Manusia Purba Sangiran di Krikilan, Kalijambe, Sragen, memamerkan fosil manusia purba, hewan, dan alat batu, serta menjelaskan lapisan tanah Sangiran.',
+          penggalian: 'Fosil di Sangiran banyak muncul di permukaan karena erosi hujan dan sungai. Peneliti dan warga menemukannya, lalu tim mencatat lokasi serta lapisan tanahnya sebelum fosil diangkat, dibersihkan, dan diteliti. Penelitian besar dipimpin G.H.R. von Koenigswald sejak 1930-an.',
+          fosil: 'Dari Sangiran ditemukan fosil Homo erectus (dulu disebut Pithecanthropus), fosil hewan seperti gajah purba dan banteng, serta alat serpih dari batu.'
+        }
+      },
+      trinil: {
+        icon: '🦴',
+        nama: 'Situs Trinil',
+        sub: 'Tempat Eugène Dubois menemukan Manusia Jawa',
+        pemandu: ['Ini Situs Trinil. Geser fotonya dan cari titik kuning berkedip!', 'Klik titik kuning untuk membuka pertanyaan. Mulai dari nomor 01 ya.'],
+        // Placeholder — ganti dengan foto 360 asli situsnya kalau sudah ada
+        foto: 'https://pannellum.org/images/alma.jpg',
+        info: {
+          area: 'Trinil berada di tepi Bengawan Solo, Kecamatan Kedunggalar, Kabupaten Ngawi, Jawa Timur.',
+          museum: 'Ada. Museum Trinil di lokasi penemuan memamerkan replika fosil Homo erectus beserta fosil hewan dari sekitar Bengawan Solo.',
+          penggalian: 'Eugène Dubois, dokter militer Belanda, menggali di tebing Bengawan Solo pada musim kemarau. Ia menemukan atap tengkorak pada 1891 dan tulang paha pada 1892 tidak jauh dari lokasi itu, lalu menamainya Pithecanthropus erectus.',
+          fosil: 'Temuan utamanya atap tengkorak dan tulang paha Homo erectus, yang membuktikan manusia purba itu sudah berjalan tegak.'
+        }
       },
       wajak: {
         icon: '🦴',
         nama: 'Situs Wajak',
         sub: 'Tempat ditemukannya Manusia Wajak di Campurdarat, Tulungagung',
-        pemandu: [
-          'Ini Situs Wajak di Campurdarat, Tulungagung, tempat Manusia Wajak ditemukan. Geser fotonya dan cari titik kuning berkedip!',
-          'Klik titik kuning untuk membuka pertanyaan. Mulai dari nomor 01 ya.'
-        ],
-        // Placeholder contoh dari Pannellum (equirectangular asli, CC-licensed) — ganti dengan foto Wajak aslimu kalau sudah ada
-        foto: 'https://pannellum.org/images/alma.jpg'
+        pemandu: ['Ini Situs Wajak. Geser fotonya dan cari titik kuning berkedip!', 'Klik titik kuning untuk membuka pertanyaan. Mulai dari nomor 01 ya.'],
+        // Placeholder — ganti dengan foto 360 asli situsnya kalau sudah ada
+        foto: 'https://pannellum.org/images/alma.jpg',
+        info: {
+          area: 'Situs Wajak berada di Campurdarat, Kabupaten Tulungagung, Jawa Timur, di kawasan perbukitan kapur (karst).',
+          museum: 'Belum ada museum khusus di lokasi (cek lagi sebelum dipakai). Fosil aslinya dikenal tersimpan di museum di Belanda, sedangkan di Tulungagung ada replika dan informasinya.',
+          penggalian: 'Fosil ditemukan pada 1888 oleh B.D. van Rietschoten di sebuah ceruk bukit karst, lalu diteliti Eugène Dubois. Temuan ini termasuk yang paling awal diteliti dari Indonesia.',
+          fosil: 'Fosil tengkorak dan rahang Homo sapiens purba (Manusia Wajak), yang ciri tubuhnya sudah mirip manusia modern.'
+        }
+      },
+      'lida-ajer': {
+        icon: '🦴',
+        nama: 'Situs Lida Ajer',
+        sub: 'Gua di Sumatera Barat dengan gigi manusia modern awal',
+        pemandu: ['Ini Situs Lida Ajer. Geser fotonya dan cari titik kuning berkedip!', 'Klik titik kuning untuk membuka pertanyaan. Mulai dari nomor 01 ya.'],
+        // Placeholder — ganti dengan foto 360 asli situsnya kalau sudah ada
+        foto: 'https://pannellum.org/images/alma.jpg',
+        info: {
+          area: 'Lida Ajer adalah gua di wilayah Kabupaten Lima Puluh Kota, dekat Payakumbuh, Sumatera Barat.',
+          museum: 'Belum ada museum khusus di gua (cek lagi sebelum dipakai). Koleksi lama hasil penggalian disimpan di museum di Belanda.',
+          penggalian: 'Eugène Dubois menggali gua ini pada akhir 1880-an dan membawa fosilnya ke Belanda. Ratusan gigi diteliti ulang pada 2010-an dengan penanggalan modern.',
+          fosil: 'Dua gigi Homo sapiens bersama fosil orangutan, harimau, dan hewan hutan lain, yang menunjukkan lingkungan hutan hujan tropis.'
+        }
+      },
+      'gua-harimau': {
+        icon: '🦴',
+        nama: 'Situs Gua Harimau',
+        sub: 'Gua hunian dan kubur prasejarah di Sumatera Selatan',
+        pemandu: ['Ini Situs Gua Harimau. Geser fotonya dan cari titik kuning berkedip!', 'Klik titik kuning untuk membuka pertanyaan. Mulai dari nomor 01 ya.'],
+        // Placeholder — ganti dengan foto 360 asli situsnya kalau sudah ada
+        foto: 'https://pannellum.org/images/alma.jpg',
+        info: {
+          area: 'Gua Harimau berada di kawasan karst Padang Bindu, Kabupaten Ogan Komering Ulu, Sumatera Selatan.',
+          museum: 'Belum ada museum khusus di gua (cek lagi sebelum dipakai). Informasi dan sebagian temuan bisa ditanyakan ke instansi arkeologi setempat.',
+          penggalian: 'Tim arkeolog Pusat Penelitian Arkeologi Nasional menggali gua ini sejak 2009. Mereka mencatat letak tiap kerangka dan bekal kuburnya sebelum diangkat dan diteliti.',
+          fosil: 'Puluhan kerangka manusia dari beberapa masa, termasuk penghuni awal dan penutur Austronesia, bersama perhiasan serta alat tulang dan batu.'
+        }
+      },
+      'leang-panninge': {
+        icon: '🦴',
+        nama: 'Situs Leang Panninge',
+        sub: 'Gua budaya Toala di Sulawesi Selatan',
+        pemandu: ['Ini Situs Leang Panninge. Geser fotonya dan cari titik kuning berkedip!', 'Klik titik kuning untuk membuka pertanyaan. Mulai dari nomor 01 ya.'],
+        // Placeholder — ganti dengan foto 360 asli situsnya kalau sudah ada
+        foto: 'https://pannellum.org/images/alma.jpg',
+        info: {
+          area: 'Leang Panninge terletak di Mallawa, Kabupaten Maros, Sulawesi Selatan, di kawasan karst Maros-Pangkep.',
+          museum: 'Belum ada museum khusus di gua (cek lagi sebelum dipakai). Kawasan karst di dekatnya punya Taman Prasejarah Leang-Leang.',
+          penggalian: 'Tim peneliti Indonesia dan Australia menggali gua ini sekitar 2015. Salah satu kerangka Toala yang ditemukan kemudian diteliti DNA-nya.',
+          fosil: 'Kerangka manusia dari budaya Toala, alat serpih batu (mata panah bergerigi), dan sisa makanan berupa hewan buruan.'
+        }
+      },
+      'liang-bua': {
+        icon: '🦴',
+        nama: 'Situs Liang Bua',
+        sub: 'Tempat ditemukannya Homo floresiensis di Flores',
+        pemandu: ['Ini Situs Liang Bua. Geser fotonya dan cari titik kuning berkedip!', 'Klik titik kuning untuk membuka pertanyaan. Mulai dari nomor 01 ya.'],
+        // Placeholder — ganti dengan foto 360 asli situsnya kalau sudah ada
+        foto: 'https://pannellum.org/images/alma.jpg',
+        info: {
+          area: 'Liang Bua adalah gua batu gamping di Kabupaten Manggarai, Pulau Flores, Nusa Tenggara Timur.',
+          museum: 'Belum bisa dipastikan ada museum di lokasi (cek lagi sebelum dipakai). Informasi temuannya dipamerkan di museum arkeologi.',
+          penggalian: 'Tim arkeolog Indonesia dan Australia menggali gua ini secara bertahap. Pada 2003 mereka menemukan rangka kecil yang kemudian dinamai Homo floresiensis, si manusia kerdil dari Flores.',
+          fosil: 'Rangka Homo floresiensis (LB1) bertubuh sekitar 1 meter, alat batu, dan fosil hewan seperti gajah purba kerdil (Stegodon) dan komodo.'
+        }
       }
     };
 
@@ -182,6 +389,59 @@
     document.getElementById('lokasiNama').textContent = L.nama;
     document.getElementById('lokasiSub').textContent = L.sub;
     window.Pemandu && window.Pemandu.set(L.pemandu);
+
+    // Tab info situs: Area Situs / Museum / Penggalian / Fosil
+    const JUDUL_TAB = { area: 'Area Situs', museum: 'Museum', penggalian: 'Penggalian', fosil: 'Fosil' };
+    const META_TAB = { area: ['🏛️', '#4a9cf5'], museum: ['🏺', '#e0b24a'], penggalian: ['⛏️', '#f0805a'], fosil: ['🦴', '#6fbf73'] };
+    const chipTab = document.querySelectorAll('.thumb-chip[data-tab]');
+    const panelInfo = document.getElementById('infoPanel');
+    document.getElementById('tourBadge').textContent = '📍 ' + L.nama + ' · 360°';
+    function tampilTab(kunciTab) {
+      chipTab.forEach(c => { const on = c.dataset.tab === kunciTab; c.classList.toggle('active', on); c.setAttribute('aria-selected', on); });
+      panelInfo.style.setProperty('--acc', META_TAB[kunciTab][1]);
+      panelInfo.dataset.icon = META_TAB[kunciTab][0];
+      document.getElementById('infoJudul').textContent = JUDUL_TAB[kunciTab];
+      document.getElementById('infoSub').textContent = L.nama;
+      document.getElementById('infoIsi').textContent = (L.info && L.info[kunciTab]) || 'Informasi belum tersedia.';
+      panelInfo.classList.remove('ganti'); void panelInfo.offsetWidth; panelInfo.classList.add('ganti');
+    }
+    chipTab.forEach(c => c.addEventListener('click', () => tampilTab(c.dataset.tab)));
+    tampilTab('area');
+
+    // Mode Pelajari / Tantangan + progres
+    const IDS = ['hm1', 'hm2', 'hm3', 'hm4'];
+    const SELESAI = new Set();
+    const HS = {};
+    const modeBtns = document.querySelectorAll('.mode-btn');
+    function setMode(m) {
+      document.getElementById('paneP').classList.toggle('active', m === 'pelajari');
+      document.getElementById('paneT').classList.toggle('active', m === 'tantangan');
+      document.querySelector('.mode-switch').classList.toggle('tantang', m === 'tantangan');
+      modeBtns.forEach(b => b.classList.toggle('active', b.dataset.mode === m));
+    }
+    modeBtns.forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+    function updateProg(id) {
+      const i = IDS.indexOf(id), n = SELESAI.size;
+      document.getElementById('progBar').style.width = (n / IDS.length * 100) + '%';
+      document.getElementById('progTxt').textContent = n === IDS.length
+        ? '🏆 Hebat! Semua tantangan di ' + L.nama + ' sudah terjawab.'
+        : 'Pertanyaan ' + (i + 1) + ' dari ' + IDS.length + ' · ' + n + ' terjawab';
+      document.getElementById('qPrev').disabled = i <= 0;
+      document.getElementById('qNext').disabled = i >= IDS.length - 1;
+      document.getElementById('skorBadge').textContent = n + '/' + IDS.length;
+    }
+    function idAktif() { const k = document.querySelector('.hotspot-card.active'); return k ? k.id : IDS[0]; }
+    function tandaiSelesai(id) {
+      SELESAI.add(id);
+      const t = document.querySelector('.hotspot-btn[data-target="' + id + '"]');
+      if (t) t.classList.add('done');
+      if (HS[id]) HS[id].classList.add('done');
+      updateProg(idAktif());
+    }
+    document.getElementById('qPrev').addEventListener('click', () => bukaKartu(IDS[IDS.indexOf(idAktif()) - 1]));
+    document.getElementById('qNext').addEventListener('click', () => bukaKartu(IDS[IDS.indexOf(idAktif()) + 1]));
+    document.getElementById('panorama').addEventListener('pointerdown', () => document.getElementById('tourHint').classList.add('hilang'), { once: true });
+    updateProg('hm1');
 
     const buttons = document.querySelectorAll('.hotspot-btn');
     const cards = document.querySelectorAll('.hotspot-card');
@@ -202,7 +462,7 @@
       cards.forEach(c => c.classList.remove('active'));
       tombol.classList.add('active');
       kartu.classList.add('active');
-      document.getElementById('hotspotList').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setMode('tantangan'); updateProg(id);
       if (window.Pemandu && PETUNJUK[id]) window.Pemandu.set(PETUNJUK[id]);
       return true;
     }
@@ -267,7 +527,7 @@
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(data)
         }).then(function () {
-          btn.textContent = 'Terkirim ✓';
+          btn.textContent = 'Terkirim ✓'; tandaiSelesai(kartu.id);
         }).catch(function () {
           btn.disabled = false;
           btn.textContent = 'Kirim';
@@ -303,7 +563,7 @@
         // Kosongkan dulu isi bawaan Pannellum, baru isi label angka kita sendiri.
         div.innerHTML = '';
         div.textContent = t.label;
-        div.addEventListener('click', function () { bukaKartu(t.id); });
+        HS[t.id] = div; div.addEventListener('click', function () { bukaKartu(t.id); });
       }
     }));
 

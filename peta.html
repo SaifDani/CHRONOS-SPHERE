@@ -187,12 +187,96 @@
         .teori-cards .card:hover::after, .teori-cards .card:hover .card-btn::before{ animation:none !important; }
         .teori-cards .card{ transition:none; }
       }
+
+      /* ===== Pin ala Google Maps (7 situs) ===== */
+      .w-jawa{ --h1:#ffa23d; --h2:#e8381f; }
+      .w-sumatera{ --h1:#4be08a; --h2:#0f8f55; }
+      .w-sulawesi{ --h1:#b985ff; --h2:#6a2fd0; }
+      .w-nusa{ --h1:#4fd2ff; --h2:#1470d6; }
+
+      .map-pin.gm-pin{
+        display:block; width:30px; height:30px;
+        transform:translate(-50%, calc(-50% - 21px));   /* ujung runcing tepat di titik top/left */
+        z-index:2; touch-action:none;
+        animation:gmJatuh .7s cubic-bezier(.3,1.5,.5,1) both;
+        animation-delay:calc(var(--n,0) * .09s + .25s);
+      }
+      @keyframes gmJatuh{
+        from{ opacity:0; transform:translate(-50%, calc(-50% - 70px)) scale(.6); }
+        to  { opacity:1; transform:translate(-50%, calc(-50% - 21px)) scale(1); }
+      }
+      .gm-body{
+        position:absolute; inset:0; display:block;
+        border-radius:50% 50% 50% 0; rotate:-45deg;
+        background:linear-gradient(135deg,var(--h1),var(--h2));
+        border:2px solid #fff;
+        box-shadow:0 5px 10px rgba(0,0,0,.45), inset 0 -3px 6px rgba(0,0,0,.18);
+        transition:translate .2s cubic-bezier(.3,1.6,.5,1), scale .2s ease, filter .2s ease;
+      }
+      .gm-body::before{   /* kilau kaca */
+        content:''; position:absolute; top:3px; left:4px; width:11px; height:8px; border-radius:50%;
+        background:radial-gradient(circle at 40% 40%, rgba(255,255,255,.65), transparent 70%);
+      }
+      .gm-in{
+        position:absolute; left:50%; top:50%; width:15px; height:15px; margin:-7.5px 0 0 -7.5px;
+        border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center;
+        box-shadow:inset 0 1px 3px rgba(0,0,0,.3);
+      }
+      .gm-in i{ font-style:normal; font-size:.62rem; line-height:1; rotate:45deg; }
+      .gm-pin:hover .gm-body, .gm-pin:focus-visible .gm-body{ translate:0 -7px; scale:1.14; filter:brightness(1.12) saturate(1.1); }
+      .gm-pin:focus-visible{ outline:none; }
+      .gm-pin:focus-visible .gm-body{ outline:3px solid #fff; outline-offset:3px; }
+      .gm-pin:active .gm-body{ scale:.95; translate:0 -2px; }
+
+      /* bayangan + cincin denyut di titik lokasi */
+      .gm-pin::before, .gm-pin::after{
+        content:''; position:absolute; left:50%; top:calc(50% + 21px);
+        border-radius:50%; pointer-events:none;
+      }
+      .gm-pin::before{ width:14px; height:5px; margin:-2.5px 0 0 -7px; background:rgba(0,0,0,.5); filter:blur(1.5px); }
+      .gm-pin::after{
+        width:16px; height:7px; margin:-3.5px 0 0 -8px; border:2px solid var(--h1);
+        animation:gmRing 2.4s ease-out infinite; animation-delay:calc(var(--n,0) * .3s);
+      }
+      @keyframes gmRing{ 0%{ transform:scale(.5); opacity:.9; } 100%{ transform:scale(3); opacity:0; } }
+
+      /* label nama */
+      .gm-pin .pin-tooltip{
+        position:absolute; margin:0; z-index:3; font-size:.62rem; letter-spacing:.02em;
+        background:rgba(8,14,30,.78); border:1px solid var(--h1); box-shadow:0 2px 8px rgba(0,0,0,.4);
+        top:calc(50% + 21px + 8px); left:50%; translate:-50% 0;
+      }
+      .gm-pin[data-l="kiri"] .pin-tooltip{ top:calc(50% - 10px); left:auto; right:calc(100% + 4px); translate:0 0; }
+      .gm-pin[data-l="kanan"] .pin-tooltip{ top:calc(50% - 10px); left:calc(100% + 4px); translate:0 0; }
+      .gm-pin[data-l="atas"] .pin-tooltip{ top:auto; bottom:calc(100% + 12px); }
+
+      /* legenda warna */
+      .gm-legenda{ display:flex; flex-wrap:wrap; justify-content:center; gap:.4rem .9rem; max-width:900px; margin:-.6rem auto 1.4rem; font-size:.78rem; color:#d4def5; }
+      .gm-legenda span{ display:inline-flex; align-items:center; gap:.4rem; }
+      .gm-legenda i{ width:12px; height:12px; border-radius:50% 50% 50% 0; rotate:-45deg; background:linear-gradient(135deg,var(--h1),var(--h2)); border:1.5px solid #fff; }
+
+      /* mode kalibrasi (peta.html#atur) */
+      .map-frame.atur .gm-pin{ cursor:grab; animation:none; }
+      .map-frame.atur .gm-pin.seret{ cursor:grabbing; z-index:5; }
+      .atur-kotak{ position:absolute; left:.5rem; bottom:.5rem; z-index:6; max-width:calc(100% - 1rem); padding:.5rem .7rem; border-radius:10px; background:rgba(8,14,30,.92); border:1px solid #f4d64d; color:#fff; font:.62rem/1.5 ui-monospace,Consolas,monospace; white-space:pre; overflow:auto; max-height:45%; }
+
+      @media (max-width:520px){
+        .map-pin.gm-pin{ width:24px; height:24px; transform:translate(-50%, calc(-50% - 17px)); }
+        @keyframes gmJatuh{ from{ opacity:0; transform:translate(-50%, calc(-50% - 60px)) scale(.6); } to{ opacity:1; transform:translate(-50%, calc(-50% - 17px)) scale(1); } }
+        .gm-in{ width:12px; height:12px; margin:-6px 0 0 -6px; } .gm-in i{ font-size:.5rem; }
+        .gm-pin::before, .gm-pin::after{ top:calc(50% + 17px); }
+        .gm-pin .pin-tooltip{ top:calc(50% + 17px + 6px); font-size:.52rem; padding:.1rem .35rem; }
+      }
+      @media (prefers-reduced-motion:reduce){ .map-pin.gm-pin, .gm-pin::after{ animation:none; } .gm-body{ transition:none; } }
     </style>
 
 </head>
 <body class="page-peta">
 
-  <a href="index.html" class="back-link"><span class="back-icon">&larr;</span> Kembali ke Beranda</a>
+  <div class="top-bar">
+    <a href="index.html" class="back-link" id="backLink"><span class="back-icon">&larr;</span> Kembali</a>
+    <a href="index.html" class="home-btn" aria-label="Ke Beranda"><span class="home-teks">Beranda</span> <span class="home-icon">🏠</span></a>
+  </div>
 
   <div class="page-header">
     <h1 class="page-title">Peta Eksplorasi</h1>
@@ -201,19 +285,55 @@
 
   <div class="map-frame">
 
-    <img src="map-uji-coba.jpeg" alt="Peta Eksplorasi Chronos-Sphere" class="map-image">
+    <img src="peta-nusantara-pin.png" alt="Peta Eksplorasi Chronos-Sphere" class="map-image">
 
-    <!-- Pin = lokasi penemuan fosil. Klik akan membuka tur 360° lokasi tsb (tur360.html).
-         Geser posisi dengan mengubah top/left (dalam %). -->
-    <a href="tur360.html?lokasi=sangiran" class="map-pin pin-fosil" style="top:60%; left:76%;" aria-label="Situs Sangiran">
-      <span class="pin-dot">🦴</span>
+    <!-- 7 pin lokasi penemuan fosil (gaya Google Maps). Klik membuka tur 360 (tur360.html?lokasi=...).
+         Posisi top/left dalam % dan ujung runcing pin = titik lokasi.
+         Tidak pas dengan gambar peta? Buka peta.html#atur, geser pin dengan jari/mouse,
+         lalu salin angka dari kotak "Kalibrasi" ke baris style di bawah ini.
+         Warna per wilayah: Jawa (jingga), Sumatera (hijau), Sulawesi (ungu), Nusa Tenggara (biru). -->
+    <a href="tur360.html?lokasi=sangiran" class="map-pin gm-pin w-jawa" data-l="kiri" data-id="sangiran" style="--n:0; top:79.5%; left:33.2%;" aria-label="Situs Sangiran">
+      <span class="gm-body"><span class="gm-in"><i>🦴</i></span></span>
       <span class="pin-tooltip">Sangiran</span>
     </a>
 
-    <a href="tur360.html?lokasi=wajak" class="map-pin pin-fosil" style="top:66%; left:81%;" aria-label="Situs Wajak">
-      <span class="pin-dot">🦴</span>
+    <a href="tur360.html?lokasi=trinil" class="map-pin gm-pin w-jawa" data-l="atas" data-id="trinil" style="--n:1; top:75.8%; left:36.4%;" aria-label="Situs Trinil">
+      <span class="gm-body"><span class="gm-in"><i>🦴</i></span></span>
+      <span class="pin-tooltip">Trinil</span>
+    </a>
+
+    <a href="tur360.html?lokasi=wajak" class="map-pin gm-pin w-jawa" data-l="kanan" data-id="wajak" style="--n:2; top:82.6%; left:37.8%;" aria-label="Situs Wajak">
+      <span class="gm-body"><span class="gm-in"><i>🦴</i></span></span>
       <span class="pin-tooltip">Wajak</span>
     </a>
+
+    <a href="tur360.html?lokasi=lida-ajer" class="map-pin gm-pin w-sumatera" data-l="kanan" data-id="lida-ajer" style="--n:3; top:37.1%; left:12.2%;" aria-label="Situs Lida Ajer">
+      <span class="gm-body"><span class="gm-in"><i>🦴</i></span></span>
+      <span class="pin-tooltip">Lida Ajer</span>
+    </a>
+
+    <a href="tur360.html?lokasi=gua-harimau" class="map-pin gm-pin w-sumatera" data-l="kanan" data-id="gua-harimau" style="--n:4; top:58.8%; left:19.6%;" aria-label="Situs Gua Harimau">
+      <span class="gm-body"><span class="gm-in"><i>🦴</i></span></span>
+      <span class="pin-tooltip">Gua Harimau</span>
+    </a>
+
+    <a href="tur360.html?lokasi=leang-panninge" class="map-pin gm-pin w-sulawesi" data-l="atas" data-id="leang-panninge" style="--n:5; top:64.7%; left:53.7%;" aria-label="Situs Leang Panninge">
+      <span class="gm-body"><span class="gm-in"><i>🦴</i></span></span>
+      <span class="pin-tooltip">Leang Panninge</span>
+    </a>
+
+    <a href="tur360.html?lokasi=liang-bua" class="map-pin gm-pin w-nusa" data-l="bawah" data-id="liang-bua" style="--n:6; top:74.5%; left:56.8%;" aria-label="Situs Liang Bua">
+      <span class="gm-body"><span class="gm-in"><i>🦴</i></span></span>
+      <span class="pin-tooltip">Liang Bua</span>
+    </a>
+
+  </div>
+
+  <div class="gm-legenda" aria-label="Keterangan warna pin">
+    <span class="w-jawa"><i></i>Jawa</span>
+    <span class="w-sumatera"><i></i>Sumatera</span>
+    <span class="w-sulawesi"><i></i>Sulawesi</span>
+    <span class="w-nusa"><i></i>Nusa Tenggara</span>
   </div>
 
   <h2 class="teori-cards-title">Teori Asal-Usul Nenek Moyang</h2>
@@ -262,8 +382,8 @@
   <script src="app.js"></script>
   <script>
     window.Pemandu && window.Pemandu.set([
-      'Ini Peta Eksplorasi. Klik pin tulang untuk menjelajahi lokasi penemuan fosil, atau pilih salah satu teori asal-usul di bawah peta.',
-      'Ada dua situs di peta ini: Sangiran di Jawa Tengah dan Wajak di Tulungagung, kabupatenmu sendiri. Coba keduanya!'
+      'Ini Peta Eksplorasi. Klik pin berwarna untuk menjelajahi lokasi penemuan fosil, atau pilih salah satu teori asal-usul di bawah peta.',
+      'Ada tujuh situs di peta ini, dari Sumatera sampai Flores. Wajak di Tulungagung adalah kabupatenmu sendiri. Coba semuanya!'
     ]);
   </script>
 
@@ -307,6 +427,39 @@
           });
         });
       }
+    })();
+  </script>
+
+  <script>
+    /* Mode kalibrasi: buka peta.html#atur lalu geser pin supaya ujungnya pas di lokasi pada gambar peta */
+    (function () {
+      if (location.hash !== '#atur') return;
+      var frame = document.querySelector('.map-frame');
+      var pins = Array.prototype.slice.call(frame.querySelectorAll('.gm-pin'));
+      var kotak = document.createElement('div'); kotak.className = 'atur-kotak'; frame.appendChild(kotak);
+      frame.classList.add('atur');
+      function tulis() {
+        kotak.textContent = 'Kalibrasi: geser pin, salin ke style masing-masing pin\n' +
+          pins.map(function (p) { return p.dataset.id + ': top:' + p.style.top + '; left:' + p.style.left + ';'; }).join('\n');
+      }
+      pins.forEach(function (p) {
+        p.addEventListener('click', function (e) { e.preventDefault(); });
+        p.addEventListener('dragstart', function (e) { e.preventDefault(); });
+        p.addEventListener('pointerdown', function (e) {
+          e.preventDefault(); p.setPointerCapture(e.pointerId); p.classList.add('seret');
+        });
+        p.addEventListener('pointermove', function (e) {
+          if (!p.classList.contains('seret')) return;
+          var r = frame.getBoundingClientRect();
+          var x = Math.min(100, Math.max(0, (e.clientX - r.left) / r.width * 100));
+          var y = Math.min(100, Math.max(0, (e.clientY - r.top) / r.height * 100));
+          /* jari/kursor memegang badan pin; titik lokasi ada di ujung bawah (21px di bawah pusat) */
+          var ujung = (e.clientY - r.top + 21) / r.height * 100;
+          p.style.left = x.toFixed(1) + '%'; p.style.top = Math.min(100, ujung).toFixed(1) + '%'; tulis();
+        });
+        p.addEventListener('pointerup', function () { p.classList.remove('seret'); });
+      });
+      tulis();
     })();
   </script>
 

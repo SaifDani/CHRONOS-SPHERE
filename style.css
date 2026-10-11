@@ -2037,3 +2037,55 @@ body:not(.page-peta) .pemandu-wrap{ bottom:clamp(2.5rem, 12vh, 5rem); }
 /* Tombol menu: Jejak Nenek Moyang (misi.html) */
 .btn-misi-nenek-moyang{ background:linear-gradient(90deg,#3f8f4f,#6fbf73); }
 .btn-misi-nenek-moyang .icon-circle{ color:#3f8f4f; }
+
+/* ===== Bar atas: tombol kembali (kiri) + tombol Beranda (kanan) ===== */
+.top-bar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.6rem;
+  margin-bottom:1.2rem;
+}
+.top-bar .back-link{ margin-bottom:0; min-width:0; }
+
+.home-btn{
+  flex-shrink:0;
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  color:#fff;
+  text-decoration:none;
+  font-size:.78rem;
+  font-weight:700;
+  white-space:nowrap;
+  padding:.5rem .7rem .5rem 1rem;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.18);
+  backdrop-filter:blur(6px);
+  transition:transform .15s ease, background .15s ease, box-shadow .15s ease;
+}
+.home-btn .home-icon{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:1.4rem;
+  height:1.4rem;
+  border-radius:50%;
+  background:rgba(255,255,255,.15);
+  font-size:.8rem;
+  transition:transform .15s ease;
+}
+.home-btn:hover{
+  background:rgba(255,255,255,.16);
+  box-shadow:0 4px 14px rgba(0,0,0,.3);
+  transform:translateX(2px);
+}
+.home-btn:hover .home-icon{ transform:scale(1.15); }
+.home-btn:active{ transform:scale(.96); }
+
+/* layar sangat sempit: tombol Beranda jadi ikon saja supaya tidak berdesakan */
+@media (max-width:380px){
+  .home-btn{ padding:.5rem; }
+  .home-btn .home-teks{ display:none; }
+}

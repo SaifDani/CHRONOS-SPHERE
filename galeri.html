@@ -8,15 +8,52 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+    <style>
+      .page-title{ background:linear-gradient(90deg,#fff,#f4d64d,#fff); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; letter-spacing:.05em; }
+      body.page-peta::before{ content:''; position:fixed; inset:0; z-index:-1; pointer-events:none;
+        background:radial-gradient(600px 400px at 10% 6%,rgba(47,124,232,.22),transparent 70%),radial-gradient(520px 380px at 92% 28%,rgba(244,214,77,.14),transparent 70%),radial-gradient(560px 420px at 30% 96%,rgba(139,63,214,.16),transparent 70%); }
+      .kirim-bar{ max-width:900px; margin:0 auto 1rem; display:flex; justify-content:center; }
+      .btn-kirim{ all:unset; cursor:pointer; box-sizing:border-box; padding:.75rem 1.5rem; border-radius:999px; font-weight:800; font-size:.85rem; color:#2a1f05; letter-spacing:.03em;
+        background:linear-gradient(90deg,#e0b24a,#f4d64d); box-shadow:0 10px 26px -8px rgba(244,214,77,.7); transition:transform .2s ease,box-shadow .2s ease; }
+      .btn-kirim:hover{ transform:translateY(-3px); } .btn-kirim:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
+      .gallery-card{ cursor:pointer; transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s ease; }
+      .gallery-card:hover{ transform:translateY(-6px); box-shadow:0 18px 36px -14px rgba(244,214,77,.5); }
+      .gallery-thumb.ada-gambar{ background-size:cover; background-position:center; }
+      .gallery-thumb.ada-gambar .play-icon{ filter:drop-shadow(0 4px 10px rgba(0,0,0,.7)); }
+      dialog.gl-dialog{ border:1px solid rgba(244,214,77,.45); border-radius:20px; padding:0; width:min(560px,94vw); max-height:92vh; overflow:auto; color:#fff;
+        background:linear-gradient(160deg,#16213f,#0c1226); box-shadow:0 30px 80px -10px rgba(0,0,0,.8); }
+      dialog.gl-dialog::backdrop{ background:rgba(4,8,20,.75); backdrop-filter:blur(4px); }
+      dialog.gl-lihat{ width:min(900px,96vw); }
+      .gl-isi{ padding:1.2rem 1.3rem 1.4rem; }
+      .gl-isi h3{ margin:0 0 .8rem; font-family:'Cinzel','Cinzel Decorative',Georgia,serif; font-size:1.1rem; }
+      .gl-tutup{ all:unset; cursor:pointer; position:absolute; right:.7rem; top:.6rem; z-index:2; width:2rem; height:2rem; border-radius:50%; text-align:center; line-height:2rem; background:rgba(255,255,255,.12); }
+      .gl-label{ display:block; margin:.7rem 0 .25rem; font-size:.72rem; font-weight:700; color:#c9d1ee; letter-spacing:.04em; }
+      .gl-isi .hotspot-input{ min-height:0; height:2.5rem; margin:0; resize:none; }
+      .gl-jenis{ display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; }
+      .gl-jenis label{ cursor:pointer; text-align:center; padding:.6rem .3rem; border-radius:12px; font-size:.74rem; font-weight:700; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.16); }
+      .gl-jenis input{ position:absolute; opacity:0; } .gl-jenis label:has(input:checked){ background:linear-gradient(160deg,rgba(244,214,77,.35),rgba(244,214,77,.1)); border-color:#f4d64d; color:#fff; }
+      .gl-jenis label:has(input:focus-visible){ outline:2px solid #fff; }
+      .gl-info{ margin:.5rem 0 0; font-size:.7rem; color:#9fb0d8; } .gl-pesan{ margin:.8rem 0 0; font-size:.8rem; font-weight:700; min-height:1.2rem; }
+      .gl-pratinjau{ display:none; margin-top:.6rem; max-width:100%; max-height:150px; border-radius:10px; }
+      .gl-kirim{ width:100%; margin-top:1rem; }
+      .gl-media{ width:100%; display:block; background:#000; } .gl-media img{ width:100%; max-height:75vh; object-fit:contain; display:block; }
+      .gl-media iframe{ width:100%; aspect-ratio:16/9; border:0; display:block; }
+      .gl-cap{ padding:.9rem 1.2rem 1.1rem; } .gl-cap h4{ margin:0 0 .2rem; font-size:1rem; } .gl-cap span{ font-size:.75rem; color:#b9c4e0; }
+    </style>
 </head>
 <body class="page-peta">
 
-  <a href="index.html" class="back-link" id="backLink"><span class="back-icon">&larr;</span> Kembali ke Beranda</a>
+  <div class="top-bar">
+    <a href="index.html" class="back-link" id="backLink"><span class="back-icon">&larr;</span> Kembali ke Beranda</a>
+    <a href="index.html" class="home-btn" aria-label="Ke Beranda"><span class="home-teks">Beranda</span> <span class="home-icon">🏠</span></a>
+  </div>
 
   <div class="page-header">
     <h1 class="page-title">Galeri Karya</h1>
     <p class="page-subtitle">Menampilkan hasil karya autentik murid dalam bentuk video, infografis, atau poster</p>
   </div>
+
+  <div class="kirim-bar"><button type="button" class="btn-kirim" id="bukaForm">＋ Kirim Karyamu</button></div>
 
   <div class="gallery-tabs">
     <button class="gallery-tab active" data-type="semua">Semua</button>
@@ -28,76 +65,164 @@
   <div class="gallery-grid" id="galleryGrid"></div>
   <p class="gallery-kosong" id="galleryKosong" hidden>Belum ada karya untuk kategori ini.</p>
 
-  <nav class="bottom-nav">
-    <div class="nav-item"><a href="peta.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">🗺️<span>Peta Interaktif</span></a></div>
-    <div class="nav-item"><a href="panduan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">📖<span>Panduan</span></a></div>
-    <div class="nav-item"><a href="papan_skor.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">📊<span>Progres</span></a></div>
-    <div class="nav-item"><a href="pengaturan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">⚙️<span>Pengaturan</span></a></div>
-  </nav>
+  <!-- Form kirim karya -->
+  <dialog class="gl-dialog" id="formDlg">
+    <button type="button" class="gl-tutup" id="tutupForm" aria-label="Tutup">✕</button>
+    <div class="gl-isi">
+      <h3>Kirim Karyamu</h3>
+      <span class="gl-label">Jenis karya</span>
+      <div class="gl-jenis">
+        <label><input type="radio" name="jenis" value="poster" checked>🎨 Poster</label>
+        <label><input type="radio" name="jenis" value="infografis">🖼️ Infografis</label>
+        <label><input type="radio" name="jenis" value="video">🎬 Video</label>
+      </div>
+      <label class="gl-label" for="fNama">Nama</label><input class="hotspot-input" id="fNama" maxlength="60" autocomplete="name">
+      <label class="gl-label" for="fKelas">Kelas</label><input class="hotspot-input" id="fKelas" maxlength="20">
+      <label class="gl-label" for="fKelompok">Kelompok</label><input class="hotspot-input" id="fKelompok" maxlength="40" placeholder="Contoh: Kelompok 3">
+      <label class="gl-label" for="fJudul">Judul karya</label><input class="hotspot-input" id="fJudul" maxlength="80">
+      <div id="boxFile">
+        <label class="gl-label" for="fFile">Pilih gambar (JPG / PNG / WEBP)</label><input class="hotspot-input" type="file" id="fFile" accept="image/jpeg,image/png,image/webp" style="padding:.45rem;height:auto;">
+        <img class="gl-pratinjau" id="pratinjau" alt="Pratinjau karya">
+        <p class="gl-info">Gambar otomatis dikecilkan supaya cepat terkirim.</p>
+      </div>
+      <div id="boxLink" hidden>
+        <label class="gl-label" for="fLink">Link YouTube</label><input class="hotspot-input" id="fLink" inputmode="url" placeholder="https://youtu.be/...">
+        <p class="gl-info">Upload videomu ke YouTube dengan mode <b>Tidak Publik (Unlisted)</b>, lalu tempel linknya di sini.</p>
+      </div>
+      <p class="gl-pesan" id="pesan" role="status"></p>
+      <button type="button" class="hotspot-submit gl-kirim" id="btnKirim">Kirim</button>
+    </div>
+  </dialog>
+
+  <!-- Penampil karya -->
+  <dialog class="gl-dialog gl-lihat" id="lihatDlg">
+    <button type="button" class="gl-tutup" id="tutupLihat" aria-label="Tutup">✕</button>
+    <div class="gl-media" id="lihatMedia"></div>
+    <div class="gl-cap"><h4 id="lihatJudul"></h4><span id="lihatMeta"></span></div>
+  </dialog>
+
+  <nav class="bottom-nav"></nav>
 
   <script>
-    /* ============================================================
-       DAFTAR KARYA — tambah karya baru cukup salin satu blok di
-       bawah ini. "type" harus salah satu dari: video, infografis, poster.
-       Ganti isi contoh di bawah dengan karya asli kelompok kamu.
-       ============================================================ */
-    const KARYA = [
-      { type: 'video',      judul: 'Contoh judul video',      kelompok: 'Kelompok 1', ikon: '🎬' },
-      { type: 'infografis', judul: 'Contoh judul infografis',  kelompok: 'Kelompok 2', ikon: '🖼️' },
-      { type: 'poster',     judul: 'Contoh judul poster',      kelompok: 'Kelompok 3', ikon: '🎨' }
-    ];
+    /* Isi dengan URL Web App (berakhiran /exec): sama dengan SHEET_URL kalau satu script */
+    const GALERI_URL = 'GANTI_URL_WEB_APP_GALERI';
+    const IKON = { video: '🎬', infografis: '🖼️', poster: '🎨' };
 
-    function el(tag, cls, text) {
-      const e = document.createElement(tag);
-      if (cls) e.className = cls;
-      if (text !== undefined) e.textContent = text;
-      return e;
-    }
-
-    function bangunKartu(k) {
-      const card = el('div', 'gallery-card');
-      card.dataset.type = k.type;
-      const thumb = el('div', 'gallery-thumb', k.ikon);
-      if (k.type === 'video') thumb.appendChild(el('span', 'play-icon', '▶️'));
-      card.appendChild(thumb);
-      const body = el('div', 'gallery-body');
-      body.appendChild(el('h4', null, k.judul));
-      body.appendChild(el('div', 'gallery-meta', k.kelompok));
-      card.appendChild(body);
-      return card;
+    function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; }
+    function idYoutube(u) { const m = /(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/.exec(u || ''); return m ? m[1] : ''; }
+    function thumbUrl(k, lebar) {
+      if (k.type === 'video') { const v = idYoutube(k.link); return v ? 'https://i.ytimg.com/vi/' + v + '/hqdefault.jpg' : ''; }
+      return k.id ? 'https://drive.google.com/thumbnail?id=' + encodeURIComponent(k.id) + '&sz=w' + lebar : '';
     }
 
     const grid = document.getElementById('galleryGrid');
     const kosong = document.getElementById('galleryKosong');
-    KARYA.forEach(k => grid.appendChild(bangunKartu(k)));
+    const lihatDlg = document.getElementById('lihatDlg');
 
+    function bangunKartu(k) {
+      const card = el('div', 'gallery-card'); card.dataset.type = k.type; card.tabIndex = 0; card.setAttribute('role', 'button');
+      const gambar = thumbUrl(k, 600);
+      const thumb = el('div', 'gallery-thumb', gambar ? '' : (IKON[k.type] || '🖼️'));
+      if (gambar) { thumb.classList.add('ada-gambar'); thumb.style.backgroundImage = 'url("' + gambar + '")'; }
+      if (k.type === 'video') thumb.appendChild(el('span', 'play-icon', '▶️'));
+      card.appendChild(thumb);
+      const body = el('div', 'gallery-body'); body.appendChild(el('h4', null, k.judul)); body.appendChild(el('div', 'gallery-meta', k.kelompok));
+      card.appendChild(body);
+      const buka = () => bukaKarya(k);
+      card.addEventListener('click', buka);
+      card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); buka(); } });
+      return card;
+    }
+
+    function bukaKarya(k) {
+      const box = document.getElementById('lihatMedia'); box.textContent = '';
+      if (k.type === 'video' && idYoutube(k.link)) {
+        const f = document.createElement('iframe');
+        f.src = 'https://www.youtube-nocookie.com/embed/' + idYoutube(k.link) + '?rel=0';
+        f.allow = 'accelerometer; encrypted-media; picture-in-picture'; f.allowFullscreen = true; f.title = k.judul; box.appendChild(f);
+      } else if (thumbUrl(k, 1600)) {
+        const img = document.createElement('img'); img.src = thumbUrl(k, 1600); img.alt = k.judul; box.appendChild(img);
+      } else { box.appendChild(el('p', 'gl-cap', 'Karya tidak bisa ditampilkan.')); }
+      document.getElementById('lihatJudul').textContent = k.judul;
+      document.getElementById('lihatMeta').textContent = (IKON[k.type] || '') + ' ' + k.type + ' · ' + k.kelompok;
+      lihatDlg.showModal();
+    }
+    lihatDlg.addEventListener('close', () => { document.getElementById('lihatMedia').textContent = ''; });
+    document.getElementById('tutupLihat').addEventListener('click', () => lihatDlg.close());
+
+    let tipeAktif = 'semua';
     function terapkanFilter(type) {
-      let terlihat = 0;
+      tipeAktif = type; let terlihat = 0;
       document.querySelectorAll('.gallery-card').forEach(card => {
         const tampil = type === 'semua' || card.dataset.type === type;
-        card.classList.toggle('hidden', !tampil);
-        if (tampil) terlihat++;
+        card.classList.toggle('hidden', !tampil); if (tampil) terlihat++;
       });
       kosong.hidden = terlihat > 0;
     }
+    document.querySelectorAll('.gallery-tab').forEach(tab => tab.addEventListener('click', () => {
+      document.querySelectorAll('.gallery-tab').forEach(t => t.classList.remove('active')); tab.classList.add('active'); terapkanFilter(tab.dataset.type);
+    }));
 
-    document.querySelectorAll('.gallery-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.gallery-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        terapkanFilter(tab.dataset.type);
-      });
+    // Ambil karya yang ditandai "ya" di Google Sheet
+    function muatKarya() {
+      if (GALERI_URL.indexOf('GANTI_') === 0) { terapkanFilter(tipeAktif); return; }
+      kosong.textContent = 'Memuat karya...'; kosong.hidden = false;
+      fetch(GALERI_URL + '?aksi=galeri').then(r => r.json()).then(list => {
+        grid.textContent = '';
+        (Array.isArray(list) ? list : []).forEach(k => { if (IKON[k.type]) grid.appendChild(bangunKartu(k)); });
+        kosong.textContent = 'Belum ada karya untuk kategori ini.'; terapkanFilter(tipeAktif);
+      }).catch(() => { kosong.textContent = 'Karya belum bisa dimuat. Periksa internet, lalu muat ulang halaman.'; kosong.hidden = false; });
+    }
+    muatKarya();
+
+    /* ===== Form kirim karya ===== */
+    const formDlg = document.getElementById('formDlg');
+    const f = id => document.getElementById(id);
+    const pesan = f('pesan'), btn = f('btnKirim');
+    let dataGambar = null;
+    try { f('fNama').value = localStorage.getItem('chronos_nama') || ''; f('fKelas').value = localStorage.getItem('chronos_kelas') || ''; f('fKelompok').value = localStorage.getItem('chronos_kelompok') || ''; } catch (e) {}
+    f('bukaForm').addEventListener('click', () => formDlg.showModal());
+    f('tutupForm').addEventListener('click', () => formDlg.close());
+    const jenisDipilih = () => document.querySelector('input[name="jenis"]:checked').value;
+    document.querySelectorAll('input[name="jenis"]').forEach(r => r.addEventListener('change', () => {
+      const v = jenisDipilih() === 'video'; f('boxLink').hidden = !v; f('boxFile').hidden = v;
+    }));
+
+    // Kecilkan gambar (maks 1800px, JPEG) supaya cepat terkirim
+    f('fFile').addEventListener('change', async () => {
+      dataGambar = null; f('pratinjau').style.display = 'none'; const file = f('fFile').files[0]; if (!file) return;
+      try {
+        const bmp = await createImageBitmap(file); const skala = Math.min(1, 1800 / Math.max(bmp.width, bmp.height));
+        const c = document.createElement('canvas'); c.width = Math.round(bmp.width * skala); c.height = Math.round(bmp.height * skala);
+        const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(bmp, 0, 0, c.width, c.height);
+        const url = c.toDataURL('image/jpeg', 0.85); dataGambar = url.split(',')[1];
+        f('pratinjau').src = url; f('pratinjau').style.display = 'block'; pesan.textContent = '';
+      } catch (e) { pesan.style.color = '#f0805a'; pesan.textContent = 'Gambar tidak bisa dibaca. Coba file lain.'; }
     });
 
-    terapkanFilter('semua');
+    btn.addEventListener('click', () => {
+      const d = { aksi: 'karya', jenis: jenisDipilih(), nama: f('fNama').value.trim(), kelas: f('fKelas').value.trim(), kelompok: f('fKelompok').value.trim(), judul: f('fJudul').value.trim() };
+      const salah = m => { pesan.style.color = '#f0805a'; pesan.textContent = m; };
+      if (!d.nama || !d.kelas || !d.kelompok || !d.judul) return salah('Lengkapi nama, kelas, kelompok, dan judul dulu ya.');
+      if (d.jenis === 'video') { d.link = f('fLink').value.trim(); if (!idYoutube(d.link)) return salah('Tempel link YouTube yang benar ya.'); }
+      else { if (!dataGambar) return salah('Pilih gambar karyamu dulu ya.'); d.mime = 'image/jpeg'; d.data = dataGambar; }
+      if (GALERI_URL.indexOf('GANTI_') === 0) return salah('URL Web App galeri belum dipasang di GALERI_URL.');
+      try { localStorage.setItem('chronos_nama', d.nama); localStorage.setItem('chronos_kelas', d.kelas); localStorage.setItem('chronos_kelompok', d.kelompok); } catch (e) {}
+      btn.disabled = true; btn.textContent = 'Mengirim...'; pesan.style.color = '#c9d1ee'; pesan.textContent = '';
+      fetch(GALERI_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(d) })
+        .then(() => {
+          pesan.style.color = '#6fbf73'; pesan.textContent = 'Terkirim ✓ Karyamu sudah masuk dan akan dilihat gurumu.';
+          btn.textContent = 'Kirim'; btn.disabled = false; f('fJudul').value = ''; f('fLink').value = ''; f('fFile').value = ''; f('pratinjau').style.display = 'none'; dataGambar = null;
+        }).catch(() => { btn.disabled = false; btn.textContent = 'Kirim'; salah('Gagal mengirim. Periksa internet, lalu coba lagi.'); });
+    });
   </script>
 
-
+  <script src="nav.js"></script>
   <script src="app.js"></script>
   <script>
     window.Pemandu && window.Pemandu.set([
       'Ini Galeri Karya. Pakai tab di atas untuk memilih video, infografis, atau poster.',
-      'Lihat karya teman-temanmu, siapa tahu kamu dapat inspirasi untuk karyamu sendiri!'
+      'Lihat karya teman-temanmu, atau klik tombol Kirim Karyamu untuk mengumpulkan karyamu sendiri!'
     ]);
   </script>
 

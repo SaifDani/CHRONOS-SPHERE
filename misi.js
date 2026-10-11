@@ -54,6 +54,19 @@ const totalXP = () => Object.values(S.xp).reduce((a, b) => a + b, 0);
 try { const n = (JSON.parse(localStorage.getItem('chronos_kuis_v1')) || {}).nama; if (n) $('pNama').textContent = n; } catch (e) {}
 
 let salah = 0, pilihan = [], urutan = [], ditolak = [];   // keadaan misi yang sedang dikerjakan
+let fbKey = '', fbTahan = false;   // penanda umpan balik terakhir (untuk tanda benar/salah)
+
+/* Nyawa berbentuk hati. turun: false | 'kurang' (nyawa -1) | 'habis' (nyawa habis, fase/ronde diulang).
+   Hati yang baru hilang berguncang lalu abu-abu, dan teks kecil di sampingnya menjelaskan kenapa. */
+function hatiHtml(sisa, total, nama, turun) {
+  const bentuk = '<path d="M12 21C5 15.5 1.5 12 1.5 7.6 1.5 4.4 4 2 7 2c2 0 3.8 1 5 2.8C13.2 3 15 2 17 2c3 0 5.5 2.4 5.5 5.6C22.5 12 19 15.5 12 21Z"/>';
+  let h = '<span class="hati-wrap"><span class="hati-baris" role="img" aria-label="' + nama + ' ' + sisa + ' dari ' + total + '">';
+  for (let k = 0; k < total; k++)
+    h += '<svg class="hati ' + (k < sisa ? 'on' : 'off') + (turun === 'kurang' && k === sisa ? ' lepas' : '') + '" viewBox="0 0 24 22" aria-hidden="true">' + bentuk + '</svg>';
+  h += '</span>';
+  if (turun) h += '<span class="hati-info" role="status">' + (turun === 'habis' ? '💔 Jawaban salah! Nyawa habis, diulang' : '💔 Jawaban salah! Nyawa berkurang 1') + '</span>';
+  return h + '</span>';
+}
 
 function acak(a) {
   let b;
@@ -63,11 +76,21 @@ function acak(a) {
 
 function renderAtas() {
   $('pXP').textContent = totalXP() + ' / ' + TOTAL + ' XP';
+  let gl = $('pGelar');
+  if (!gl) { gl = document.createElement('small'); gl.id = 'pGelar'; gl.className = 'm-gelar'; $('pXP').after(gl); }
+  const gelarKini = EB_GELAR.filter(x => totalXP() >= x[0]).pop();
+  gl.textContent = gelarKini[2] + ' ' + gelarKini[1];
+  if (renderAtas.xp != null && totalXP() > renderAtas.xp) {   // XP bertambah: bilah menyala sebentar
+    $('xpBar').classList.add('naik'); $('pXP').classList.add('naik');
+    setTimeout(() => { $('xpBar').classList.remove('naik'); $('pXP').classList.remove('naik'); }, 1400);
+  }
+  renderAtas.xp = totalXP();
   $('xpBar').style.width = (totalXP() / TOTAL * 100) + '%';
   $('rail').innerHTML = '';
   MISI.forEach((m, k) => {
     const b = document.createElement('button');
-    b.className = 'm-node' + (S.xp[k] != null ? ' done' : '') + (!S.akhir && k === S.i ? ' now' : '');
+    b.className = 'm-node' + (S.xp[k] != null ? ' done' : '') + (!S.akhir && k === S.i ? ' now' : '') +
+      (!S.akhir && S.xp[S.i] != null && k === S.i + 1 && S.xp[k] == null ? ' next' : '');
     b.textContent = k + 1;
     b.title = m.judul;
     b.setAttribute('aria-label', 'Misi ' + (k + 1) + ': ' + m.judul);
@@ -85,7 +108,7 @@ function renderAtas() {
   renderBag();
 }
 
-function mulai() { salah = 0; pilihan = []; urutan = []; ditolak = []; lab = { sel:-1, step:0, hot:[], msg:'' }; det = baruDet(); ex = baruEx(); vy = baruVy(); dh = baruDh(); mg = baruMg(); fn = baruFn(); render(); }
+function mulai() { fbKey = ''; fbTahan = true; setTimeout(() => { fbTahan = false; }, 80); salah = 0; pilihan = []; urutan = []; ditolak = []; lab = { sel:-1, step:0, hot:[], msg:'' }; det = baruDet(); ex = baruEx(); vy = baruVy(); dh = baruDh(); mg = baruMg(); fn = baruFn(); render(); }
 
 function render() {
   renderAtas();
@@ -94,6 +117,7 @@ function render() {
   let h = m.penuh ? '<h2>' + m.penuh + '</h2>' + (m.cerita ? '<p class="m-cerita">' + m.cerita + '</p>' : '') :
           '<span class="m-tag">' + m.tag + '</span><h2>' + m.ikon + ' Misi ' + (S.i + 1) + ': ' + m.judul + '</h2>' +
           '<p class="m-cerita">' + m.cerita + '</p>';
+  h = h.replace('</h2>', '</h2>' + hadiahHtml(m, sudah));
   if (m.data) {
     const mx = Math.max(...m.data.map(d => d[1]));
     h += '<table class="m-data"><tr><th>Etape</th><th>Jarak</th><th></th></tr>' +
@@ -102,9 +126,16 @@ function render() {
   h += (m.tipe === 'peta' || m.tipe === 'lab' || m.tipe === 'detektif' || m.tipe === 'ekspedisi' || m.tipe === 'perahu' || m.tipe === 'data' || m.tipe === 'migrasi' || m.tipe === 'final' ? '' : '<p class="m-tanya">' + m.tanya + '</p>') + '<div id="area"></div><div id="fb"></div><div id="aksi"></div>' +
        (m.caption ? '<p class="m-cap">' + m.caption + '</p>' : '');
   $('stage').innerHTML = h;
+  $('stage').style.setProperty('--wm', EB[S.i].w);
+  $('stage').classList.add('masuk'); clearTimeout(render.t); render.t = setTimeout(() => $('stage').classList.remove('masuk'), 900);
   if (sudah) { if (m.tipe === 'peta') gambarPeta(m); if (m.tipe === 'lab') { S.labDone = [0,1,2,3]; gambarLab(m); } if (m.tipe === 'detektif') { det = selesaiDet(); gambarDet(m); } if (m.tipe === 'ekspedisi') { ex = selesaiEx(); gambarEx(m); } if (m.tipe === 'perahu') { vy = selesaiVy(); gambarVy(m); } if (m.tipe === 'data') { dh = selesaiDh(); gambarDh(m); } if (m.tipe === 'migrasi') { mg = selesaiMg(); gambarMg(m); } if (m.tipe === 'final') { fn = selesaiFn(); gambarFn(m); } return tampilBenar(m); }
   if (m.tipe === 'urut') { urutan = []; m._pool = m._pool || acak(m.item); }
   gambarArea();
+}
+
+function hadiahHtml(m, sudah) {   // chip hadiah di bawah judul misi: XP dan bukti yang akan didapat
+  return '<div class="m-hadiah">' + (sudah ? '<span class="sdh">✅ Selesai · +' + S.xp[S.i] + ' XP</span>' : '<span>⭐ Hingga ' + m.xp + ' XP</span>') +
+    '<span>🎒 Bukti: ' + EB[S.i].n + '</span></div>';
 }
 
 function gambarArea() {
@@ -341,9 +372,9 @@ const pesan = d => d.msg ? '<div class="dt-msg ' + d.tipe + '" role="status">' +
 const gulir = () => { try { $('stage').scrollIntoView({ block:'start', behavior:matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth' }); } catch (e) {} };
 
 function kurangiNyawa(d) {   // kembalikan true bila kredibilitas habis dan fase diulang
-  d.nyawa--; d.combo = 0;
+  d.nyawa--; d.combo = 0; d.turun = 'kurang';
   if (d.nyawa > 0) return false;
-  d.nyawa = NYAWA;
+  d.nyawa = NYAWA; d.turun = 'habis';
   if (d.fase === 1) { d.putus = {}; d.buka = -1; }
   else { d.rantai = []; d.sel = -1; d.info = -1; d.hip = -1; d.sorot = null; }
   d.tipe = 'no'; d.msg = '🛡️ Kredibilitasmu habis. Dewan Sejarah meminta fase ini diulang dari awal. Kamu masih bisa mendapat XP.';
@@ -351,11 +382,10 @@ function kurangiNyawa(d) {   // kembalikan true bila kredibilitas habis dan fase
 }
 
 function hud(d, m) {
-  const fs = ['Saring bukti', 'Pasangkan', 'Uji silang'];
+  const fs = ['Saring bukti', 'Pasangkan', 'Uji silang'], turun = d.turun; d.turun = false;
   return '<div class="dt-hud"><ol class="dt-fase" aria-label="Tahap misi">' +
     fs.map((f, k) => '<li class="' + (d.fase === k + 1 ? 'now' : (d.fase > k + 1 ? 'done' : '')) + '"' + (d.fase === k + 1 ? ' aria-current="step"' : '') + '>' + f + '</li>').join('') + '</ol>' +
-    '<div class="dt-nyawa" role="img" aria-label="Kredibilitas ' + d.nyawa + ' dari ' + NYAWA + '">🛡️ ' +
-    Array.from({ length:NYAWA }, (_, k) => '<i class="' + (k < d.nyawa ? 'on' : '') + '"></i>').join('') + '</div>' +
+    '<div class="dt-nyawa">' + hatiHtml(d.nyawa, NYAWA, 'Kredibilitas', turun) + '</div>' +
     '<div class="dt-salah">Salah: <b>' + salah + '</b> (aman sampai ' + m.toleransi + ')</div></div>';
 }
 
@@ -521,7 +551,7 @@ function tutupDet(m) {
   $('fb').insertAdjacentHTML('afterbegin', '<p class="dt-bintang" role="img" aria-label="' + n + ' dari 3 bintang">' + '⭐'.repeat(n) + '☆'.repeat(3 - n) + '</p>');
 }
 
-function konfeti() {
+function konfeti(induk) {
   const w = document.createElement('div'); w.className = 'dt-konfeti'; w.setAttribute('aria-hidden', 'true');
   const e = ['🎉', '⭐', '🔎', '✨', '📜'];
   for (let k = 0; k < 22; k++) {
@@ -529,7 +559,7 @@ function konfeti() {
     s.style.left = (Math.random() * 100) + '%'; s.style.animationDelay = (Math.random() * .6) + 's'; s.style.fontSize = (1 + Math.random()) + 'rem';
     w.appendChild(s);
   }
-  document.body.appendChild(w); setTimeout(() => w.remove(), 3400);
+  (induk || document.body).appendChild(w); setTimeout(() => w.remove(), 3400);
 }
 
 /* ===== Misi 4: Digital Explorer (Ekspedisi Digital) ===== */
@@ -699,6 +729,11 @@ function exGagal(m, pesan, ulang) {   // kurangi baterai; bila habis, ronde diul
   if (ex.bat <= 0) { ex.bat = EX_LV[ex.lv].bat; ex.q = 0; ex.sq = -1; ex.urut = []; ex.pool = null; ex.msg = 'Baterai habis! Ronde ini diulang dari awal. ' + ulang; }
   gambarEx(m);
 }
+function exGagalTandai(m, sel, pesan, ulang) {
+  const bat = ex.bat, q = ex.q, r = ex.r;
+  exGagal(m, pesan, ulang);
+  if (ex.bat === bat - 1 && ex.q === q && ex.r === r) tandaiSalah(sel);   // bila baterai habis & ronde diulang, tidak ditandai
+}
 function exLulus(m, pesan) {
   ex.r++; ex.q = 0; ex.sq = -1; ex.bat = EX_LV[ex.lv].bat; ex.urut = []; ex.pool = null; ex.ok = true; ex.sel = -1; ex.msg = pesan;
   ex.tab = ex.r === 2 ? 'lokasi' : 'bumi'; konfeti();
@@ -748,7 +783,7 @@ function ikatEx(m) {
   }
   if (ex.r === 3 && q && !q.tap) A.querySelectorAll('.ex-tugas .opt').forEach(b => b.onclick = () => {
     if (+b.dataset.k === q.b) { ex.q++; ex.ok = true; ex.msg = '✓ ' + q.e; if (ex.q === Q.length) return exLulus(m, 'Ekspedisi selesai! ' + q.e); return gambarEx(m); }
-    exGagal(m, 'Belum tepat. Buka tab Google Earth dan baca angka koordinatnya dengan teliti.', '');
+    exGagalTandai(m, '.ex-tugas .opt[data-k="' + b.dataset.k + '"]', 'Belum tepat. Buka tab Google Earth dan baca angka koordinatnya dengan teliti.', '');
   });
 }
 
@@ -1292,8 +1327,9 @@ function mgBlok(k, ekstra) {
 
 function gambarMg(m) {
   if (mg.fin) return mgAkhir();
+  const turun = mg.turun; mg.turun = false;
   const R = mg.r, papan = MG_T.map((t, k) => R === 1 ? (mg.slot[k] != null ? MG_T[mg.slot[k]].w : null) : R === 2 ? (k < mg.st ? t.w : null) : t.w);
-  const hati = '<span class="mg-hati" role="img" aria-label="Nyawa ' + mg.hati + ' dari 3">' + [0, 1, 2].map(k => '<i class="' + (k < mg.hati ? 'on' : '') + '">♥</i>').join('') + '</span>';
+  const hati = hatiHtml(mg.hati, 3, 'Nyawa', turun);
   let isi = '';
   if (R === 1) {
     mg.pool = mg.pool || acak([0, 1, 2, 3, 4, 5]);
@@ -1330,10 +1366,19 @@ function mgAkhir() {
 }
 
 function mgGagal(m, pesan) {
-  salah++; mg.hati--; mg.ok = false; mg.msg = pesan;
+  salah++; mg.hati--; mg.ok = false; mg.msg = pesan; mg.turun = mg.hati <= 0 ? 'habis' : 'kurang';
   if (mg.hati <= 0) { mg.hati = 3; mg.msg = 'Nyawa habis, ronde ini diulang. ' + (mg.r === 1 ? 'Kali ini pertanyaan pemandu muncul di langkah kosong.' : 'Bacalah definisi tiap tahap dengan teliti.'); mg.bantu = mg.r === 1;
     if (mg.r === 1) { mg.slot = [null, null, null, null, null, null]; mg.cek = null; } if (mg.r === 2) { mg.st = 0; mg.opsi = null; mg.hid = []; } if (mg.r === 3) { mg.ch = 0; mg.tap = -1; mg.hp = 0; } }
   gambarMg(m);
+}
+function tandaiSalah(sel) {   // beri tanda merah pada pilihan yang baru saja salah dijawab
+  const e = $('area').querySelector(sel);
+  if (e) { e.classList.add('salah'); e.disabled = true; }
+}
+function mgGagalTandai(m, sel, pesan) {
+  const h = mg.hati, st = mg.st, ch = mg.ch;
+  mgGagal(m, pesan);
+  if (mg.hati === h - 1 && mg.st === st && mg.ch === ch) tandaiSalah(sel);   // bila nyawa habis & ronde diulang, tidak ditandai
 }
 function mgNaik(m, pesan, lanjut) { mg.ok = true; mg.msg = pesan; mg.lanjut = lanjut; konfeti(); gambarMg(m); }
 
@@ -1355,16 +1400,16 @@ function ikatMg(m) {
     const i = +b.dataset.i, t = MG_I[i][1];
     if (t === mg.st) { mg.st++; mg.opsi = null; mg.hid = []; mg.ok = true; mg.msg = '✓ Tepat! Papan jembatan terpasang.';
       if (mg.st === 6) { mg.jalan = true; return mgNaik(m, 'Semua tahap terpasang. Penalaran kasus ini lengkap dan runtut!', 'Lanjut ke Ronde 3'); } return gambarMg(m); }
-    mgGagal(m, 'Itu bukan ' + MG_T[mg.st].k + '. Pernyataan itu termasuk <b>' + mgJenis(t) + '</b>' + (t === 6 ? ': pendapat tanpa dasar bukti, jadi tidak boleh dipakai sebagai tahap penalaran.' : ': ' + MG_T[t].d));
+    mgGagalTandai(m, '.mg-pil[data-i="' + i + '"]', 'Itu bukan ' + MG_T[mg.st].k + '. Pernyataan itu termasuk <b>' + mgJenis(t) + '</b>' + (t === 6 ? ': pendapat tanpa dasar bukti, jadi tidak boleh dipakai sebagai tahap penalaran.' : ': ' + MG_T[t].d));
   });
   A.querySelectorAll('.mg-lang').forEach(b => b.onclick = () => {
     const i = +b.dataset.i, c = MG_RANTAI[mg.ch];
     if (i === c.x) { mg.tap = i; mg.ok = true; mg.msg = '✓ Betul, langkah itu bermasalah. Sekarang tentukan jenis kesalahannya.'; return gambarMg(m); }
-    mgGagal(m, 'Langkah ' + MG_T[i].k + ' masih masuk akal dan didukung langkah sebelumnya. Periksa kembali, adakah langkah yang melompat atau mengabaikan sesuatu?');
+    mgGagalTandai(m, '.mg-lang[data-i="' + i + '"]', 'Langkah ' + MG_T[i].k + ' masih masuk akal dan didukung langkah sebelumnya. Periksa kembali, adakah langkah yang melompat atau mengabaikan sesuatu?');
   });
   A.querySelectorAll('.mg-pil[data-j]').forEach(b => b.onclick = () => {
     const j = +b.dataset.j, c = MG_RANTAI[mg.ch];
-    if (j !== c.b) return mgGagal(m, 'Bukan itu. Bandingkan langkah yang bermasalah dengan langkah di sebelumnya: apa yang tidak sejalan?');
+    if (j !== c.b) return mgGagalTandai(m, '.mg-pil[data-j="' + j + '"]', 'Bukan itu. Bandingkan langkah yang bermasalah dengan langkah di sebelumnya: apa yang tidak sejalan?');
     mg.ch++; mg.tap = -1; mg.hp = 0;
     if (mg.ch === MG_RANTAI.length) { mg.fin = true; mg.jalan = true; konfeti(); gambarMg(m); return periksa(true); }
     mg.ok = true; mg.msg = '✓ Tepat! ' + c.e; gambarMg(m);
@@ -1593,8 +1638,8 @@ function fnBody(L) {
 function gambarFn(m) {
   if (fn.fin) return fnAkhir();
   if (!fn.mulai) return fnIntro();
-  const L = FN_L[fn.n], F = FN_F[L.f], d = fn.done;
-  const hati = `<span class="mg-hati" role="img" aria-label="Kredibilitas ${fn.hati} dari 5">${[0, 1, 2, 3, 4].map(k => `<i class="${k < fn.hati ? 'on' : ''}">♥</i>`).join('')}</span>`;
+  const L = FN_L[fn.n], F = FN_F[L.f], d = fn.done, turun = fn.turun; fn.turun = false;
+  const hati = hatiHtml(fn.hati, 5, 'Kredibilitas', turun);
   const dots = FN_F.map((_, k) => `<i class="${k < L.f ? 'done' : k === L.f ? 'now' : ''}"></i>`).join('');
   const sambung = fn.n === FN_L.length - 1 ? 'Tutup Kasus' : FN_L[fn.n + 1].f !== L.f ? 'Lanjut ke Fase ' + (L.f + 2) : 'Lanjut';
   $('area').innerHTML = `<div class="mg-head"><div><b>${F.ik} Fase ${L.f + 1}/5: ${F.k}</b><div class="ex-dots">${dots}</div><small class="fn-tag">${F.tag}</small></div><div class="mg-hud">${hati}<button class="mg-pet" id="fnPet"${fn.pet > 0 && !d ? '' : ' disabled'}>💡 Petunjuk (${fn.pet})</button></div></div>` +
@@ -1604,7 +1649,7 @@ function gambarFn(m) {
 }
 
 function fnGagal(m, pesan) {
-  salah++; fn.hati--; fn.ok = false; fn.msg = pesan;
+  salah++; fn.hati--; fn.ok = false; fn.msg = pesan; fn.turun = fn.hati <= 0 ? 'habis' : 'kurang';
   if (fn.hati <= 0) { const f = FN_L[fn.n].f; fn.n = FN_L.findIndex(x => x.f === f); fnReset(); fn.hati = 5; fn.msg = 'Kredibilitas habis! Fase ' + (f + 1) + ' diulang dari awal. Baca setiap petunjuk dengan teliti.'; }
   gambarFn(m);
 }
@@ -1774,6 +1819,7 @@ function periksa(benar) {
 }
 
 function tampilBenar(m, xp) {
+  const baru = xp != null;   // true = baru saja menyelesaikan misi (bukan membuka misi yang sudah selesai)
   if (xp == null) xp = S.xp[S.i];
   document.querySelectorAll('.opt').forEach((b, k) => {
     b.disabled = true;
@@ -1782,11 +1828,44 @@ function tampilBenar(m, xp) {
   });
   document.querySelectorAll('.pbtn,.lb-kartu').forEach(b => b.disabled = true);
   if (m.tipe === 'urut') $('area').innerHTML = '<div class="slots">' + m.item.map(t => '<div class="slot isi">' + t + '</div>').join('') + '</div>';
-  const lencana = LENCANA[S.i] ? ' Lencana baru: ' + LENCANA[S.i][0] + ' ' + LENCANA[S.i][1] + '.' : '';
+  const lencana = LENCANA[S.i] ? ' <span class="fb-lencana">Lencana baru: ' + LENCANA[S.i][0] + ' ' + LENCANA[S.i][1] + '</span>' : '';
   $('fb').innerHTML = '<div class="m-fb ok"><b>Benar! +' + xp + ' XP.</b>' + lencana + '<br>' + m.jelas + '</div>';
   const akhir = S.i === MISI.length - 1;
-  $('aksi').innerHTML = '<button class="m-btn" id="lanjut">' + (akhir ? 'Lihat hasil akhir' : 'Misi berikutnya') + '</button>';
+  $('aksi').innerHTML = '<button class="m-btn lanjut-besar' + (akhir ? ' akhir' : '') + '" id="lanjut"><span class="lanjut-teks"><small>' +
+    (akhir ? 'Semua misi sudah selesai' : 'Siap untuk misi berikutnya?') + '</small><b>' +
+    (akhir ? '🏆 Lihat hasil akhir' : 'Misi ' + (S.i + 2) + ': ' + MISI[S.i + 1].judul) + '</b></span><span class="lanjut-panah" aria-hidden="true">→</span></button>';
   $('lanjut').onclick = () => { if (akhir) S.akhir = true; else S.i++; simpan(); mulai(); };
+  if (baru) { const idx = S.i; setTimeout(() => rayakan(m, xp, idx), 900); }
+}
+
+/* ===== Layar perayaan saat misi selesai: bintang, XP berhitung naik, bukti baru, julukan baru ===== */
+function rayakan(m, xp, idx) {
+  if (S.akhir || S.i !== idx || S.xp[idx] == null || document.querySelector('dialog.rayakan')) return;
+  const tol = m.toleransi || 0, n = salah === 0 ? 3 : (salah <= tol ? 2 : 1), e = EB[idx], gerak = !kurangiGerak();
+  const sebelum = EB_GELAR.filter(x => totalXP() - xp >= x[0]).pop(), kini = EB_GELAR.filter(x => totalXP() >= x[0]).pop();
+  const akhir = idx === MISI.length - 1, nx = akhir ? null : MISI[idx + 1];
+  const pesan = ['', 'Tidak apa-apa salah, dari situlah kita belajar! Lebih teliti lagi, ya.', 'Bagus! Hanya sedikit kesalahan, pemahamanmu sudah kuat.', 'Sempurna! Tanpa satu pun kesalahan. Penjelajah sejati!'][n];
+  const dlg = document.createElement('dialog'); dlg.className = 'rayakan'; dlg.style.setProperty('--wr', e.w); dlg.setAttribute('aria-labelledby', 'ryJudul');
+  dlg.innerHTML = '<div class="ry-kartu"><div class="ry-sinar" aria-hidden="true"></div>' +
+    '<p class="ry-judul" id="ryJudul">MISI SELESAI!</p><h3 class="ry-misi">' + m.ikon + ' ' + m.judul + '</h3>' +
+    '<div class="ry-bintang" role="img" aria-label="' + n + ' dari 3 bintang">' + [0, 1, 2].map(k => '<span class="' + (k < n ? 'on' : '') + '" style="--i:' + k + '">' + (k < n ? '★' : '☆') + '</span>').join('') + '</div>' +
+    '<div class="ry-xp"><b id="ryXp">+' + (gerak ? 0 : xp) + '</b> <span>XP</span></div>' +
+    '<div class="ry-bukti"><span class="ry-ik">' + EB_SVG[idx] + '</span><div><small>🎒 Bukti baru terkumpul</small><b>' + e.n + '</b></div></div>' +
+    (sebelum !== kini ? '<div class="ry-gelar">🎖️ Julukan baru: ' + kini[2] + ' ' + kini[1] + '</div>' : '') +
+    '<p class="ry-pesan">' + pesan + '</p>' +
+    '<button class="ry-btn utama" id="ryLanjut" type="button">' + (akhir ? '🏆 Lihat hasil akhir' : '➡️ Lanjut ke Misi ' + (idx + 2) + ': ' + nx.judul) + '</button>' +
+    '<button class="ry-btn kedua" id="ryTutup" type="button">Baca penjelasan dulu</button></div>';
+  document.body.appendChild(dlg); dlg.showModal();
+  if (gerak) {
+    const el = dlg.querySelector('#ryXp'), t0 = performance.now();
+    (function tick(t) { const p = Math.min(1, (t - t0) / 900); el.textContent = '+' + Math.round(xp * (1 - Math.pow(1 - p, 3))); if (p < 1 && dlg.isConnected) requestAnimationFrame(tick); })(t0);
+    konfeti(dlg);
+  }
+  dlg.addEventListener('close', () => dlg.remove());
+  dlg.addEventListener('click', ev => { if (ev.target === dlg) dlg.close(); });
+  dlg.querySelector('#ryTutup').onclick = () => { dlg.close(); const f = $('fb'); if (f) f.scrollIntoView({ block:'start', behavior:gerak ? 'smooth' : 'auto' }); };
+  dlg.querySelector('#ryLanjut').onclick = () => { dlg.close(); const l = $('lanjut'); if (l) l.click(); };
+  dlg.querySelector('#ryLanjut').focus();
 }
 
 function renderAkhir() {
@@ -1814,6 +1893,59 @@ function renderAkhir() {
     simpan(); mulai();
   };
 }
+
+/* ===== Penanda jawaban benar/salah yang jelas =====
+   Setiap pesan umpan balik (dari semua jenis misi) otomatis diberi gaya hijau/merah/kuning,
+   memunculkan tanda besar ✓ / ✕ sesaat, mengedipkan bingkai misi, dan digulir ke layar bila
+   posisinya di luar tampilan. Tombol "Misi berikutnya" juga digulir ke layar saat muncul. */
+const FB_SEL = '.m-fb,.dt-msg,.mg-msg,.dh-msg,.ex-msg,.lb-msg';
+const kurangiGerak = () => { try { return matchMedia('(prefers-reduced-motion:reduce)').matches; } catch (e) { return false; } };
+
+function jenisFb(e) {
+  const c = e.classList;
+  if (c.contains('ok')) return 'ok';
+  if (c.contains('no')) return 'no';
+  if (c.contains('info') || c.contains('m-fb')) return 'info';
+  return /^\s*(💡|Petunjuk|Tulis jawaban|Lengkapi)/.test(e.textContent) ? 'info' : 'no';   // petunjuk bukan "salah"
+}
+function tampilPop(j) {
+  const lama = document.querySelector('.m-pop'); if (lama) lama.remove();
+  const p = document.createElement('div'); p.className = 'm-pop ' + j; p.setAttribute('aria-hidden', 'true');
+  p.innerHTML = '<span class="m-pop-ik">' + (j === 'ok' ? '✓' : '✕') + '</span><b>' + (j === 'ok' ? 'Benar!' : 'Belum tepat') + '</b>';
+  document.body.appendChild(p); setTimeout(() => p.remove(), 1100);
+}
+function kilatStage(j) {
+  const st = $('stage'); st.classList.remove('flash-ok', 'flash-no'); void st.offsetWidth; st.classList.add('flash-' + j);
+  clearTimeout(kilatStage.t); kilatStage.t = setTimeout(() => st.classList.remove('flash-ok', 'flash-no'), 900);
+}
+function nampak(a, b) {   // pastikan elemen a (dan tombol b di bawahnya, bila ada) terlihat di layar
+  const H = window.innerHeight || document.documentElement.clientHeight, ra = a.getBoundingClientRect(), rb = (b || a).getBoundingClientRect();
+  if (ra.top >= 60 && rb.bottom <= H - 90) return;
+  const aman = kurangiGerak() ? 'auto' : 'smooth';
+  try {
+    if (b && rb.bottom - ra.top > H - 170) b.scrollIntoView({ block:'end', behavior:aman });
+    else a.scrollIntoView({ block:(b || ra.height > H * .6) ? 'start' : 'center', behavior:aman });
+  } catch (e) {}
+}
+const pengamatFb = new MutationObserver(muts => {
+  const daftar = [];
+  muts.forEach(mu => mu.addedNodes.forEach(n => {
+    const d = n.nodeType === 3 ? n.parentElement : n;
+    if (!d || d.nodeType !== 1) return;
+    if (d.matches(FB_SEL)) daftar.push(d);
+    d.querySelectorAll(FB_SEL).forEach(x => daftar.push(x));
+  }));
+  if (!daftar.length) return;
+  daftar.forEach(e => { e.classList.remove('fb-ok', 'fb-no', 'fb-info'); e.classList.add('fb-' + jenisFb(e)); });
+  if (fbTahan) return;   // baru saja membuka/berpindah misi: jangan gulir atau kedip
+  const e = daftar[daftar.length - 1], j = jenisFb(e), key = j + '|' + e.textContent.trim() + '|' + salah + '|' + selesai();
+  if (key === fbKey) return;   // pesan lama yang hanya tergambar ulang
+  fbKey = key;
+  if (j !== 'info') { tampilPop(j); kilatStage(j); }
+  const lj = $('lanjut');
+  if (lj && e.closest('#fb')) nampak(e, lj); else nampak(e);
+});
+pengamatFb.observe($('stage'), { childList:true, subtree:true });
 
 if (S.akhir && selesai() < MISI.length) S.akhir = false;
 if (S.i > selesai()) S.i = selesai();
