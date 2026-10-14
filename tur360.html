@@ -9,48 +9,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
 
-    <!-- Pannellum: library foto 360 open-source, jalan langsung di halaman (tanpa iframe pihak ketiga) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 
     <style>
-      /* Titik hotspot custom — type:'custom' di Pannellum tidak menambahkan
-         ikon/tooltip bawaan apa pun, jadi style ini satu-satunya yang berlaku */
-      .psphere-hotspot{
-        box-sizing:border-box;
-        width:34px; height:34px;
-        border-radius:50%;
-        background:linear-gradient(135deg,#f4d64d,#e0b24a);
-        border:2px solid #fff;
-        box-shadow:0 0 0 4px rgba(244,214,77,.35), 0 4px 10px rgba(0,0,0,.4);
-        display:flex; align-items:center; justify-content:center;
-        font-weight:800; font-size:.8rem; color:#2a1f05;
-        cursor:pointer;
-        /* PENYEBAB BUG "numpuk di pojok": dulu di sini ada "position:relative", yang
-           menimpa "position:absolute" bawaan Pannellum. Akibatnya hotspot jadi elemen
-           biasa yang berbaris di pojok kiri atas. Harus absolute. */
-        position:absolute;
-        /* margin negatif (setengah ukuran) supaya TITIK TENGAH lingkaran pas di koordinat.
-           Jangan animasikan "transform" di elemen ini, karena dipakai Pannellum
-           untuk posisi; animasi denyut ada di ::before. */
-        margin-left:-17px;
-        margin-top:-17px;
-      }
-      .psphere-hotspot::before{
-        content:'';
-        position:absolute;
-        inset:-6px;
-        border-radius:50%;
-        background:inherit;
-        z-index:-1;
-        animation:psphere-pulse 1.8s ease-out infinite;
-      }
-      @keyframes psphere-pulse{
-        0%{ transform:scale(1); opacity:.55; }
-        70%,100%{ transform:scale(1.8); opacity:0; }
-      }
-      .psphere-hotspot.done::before{ animation:none; opacity:0; }
-      #tourFrame{ position:relative; }
+      #tourFrame{ position:relative; overflow:hidden; }
+      #panorama{ width:100%; height:100%; background:#0b1226; }
+      #panorama iframe{ display:block; width:100%; height:100%; border:0; }
       button.thumb-chip{ all:unset; box-sizing:border-box; cursor:pointer; flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:.3rem; padding:.5rem .8rem; border-radius:10px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12); color:#b9c4e0; font-size:.68rem; font-weight:600; transition:transform .15s ease, background .15s ease; }
       button.thumb-chip:hover{ transform:scale(1.05); }
       button.thumb-chip:focus-visible{ outline:2px solid #f4d64d; outline-offset:2px; }
@@ -68,7 +31,7 @@
       .page-title{ background:linear-gradient(90deg,#fff,#f4d64d,#fff); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; letter-spacing:.05em; }
       .tour-frame{ border:1px solid rgba(244,214,77,.45); border-radius:20px;
         box-shadow:0 0 0 5px rgba(244,214,77,.08),0 24px 60px -16px rgba(0,0,0,.7),0 0 50px -10px rgba(244,214,77,.3); }
-      .tour-badge{ position:absolute; left:.8rem; top:.8rem; z-index:5; pointer-events:none; display:flex; align-items:center; gap:.4rem;
+      .tour-badge{ position:absolute; right:.8rem; top:.8rem; z-index:5; pointer-events:none; display:flex; align-items:center; gap:.4rem;
         padding:.35rem .8rem; border-radius:999px; font-size:.72rem; font-weight:700; color:#fff;
         background:rgba(8,14,30,.65); border:1px solid rgba(244,214,77,.6); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
       .tour-badge::before{ content:''; width:8px; height:8px; border-radius:50%; background:#f4d64d; box-shadow:0 0 0 0 rgba(244,214,77,.7); animation:badgeLive 1.8s infinite; }
@@ -142,7 +105,6 @@
       .hotspot-btn.done .hotspot-num{ background:#3f8f4f; }
       .hotspot-btn.done .hotspot-num::after{ content:'✓'; }
       .hotspot-btn.done .hotspot-num{ font-size:0; } .hotspot-btn.done .hotspot-num::after{ font-size:.75rem; }
-      .psphere-hotspot.done{ background:linear-gradient(135deg,#6fbf73,#3f8f4f); box-shadow:0 0 0 4px rgba(111,191,115,.35),0 4px 10px rgba(0,0,0,.4); color:#fff; }
       .q-nav{ display:flex; justify-content:space-between; gap:.6rem; margin-top:.4rem; }
       .q-nav button{ all:unset; box-sizing:border-box; cursor:pointer; padding:.6rem 1.1rem; border-radius:999px; font-size:.78rem; font-weight:700; color:#fff; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2); transition:transform .2s ease,background .2s ease; }
       .q-nav button:hover:not(:disabled){ transform:translateY(-2px); background:rgba(255,255,255,.16); }
@@ -168,7 +130,7 @@
     <div class="tour-left">
   <div class="tour-frame" id="tourFrame">
     <div id="panorama" style="width:100%; height:100%;"></div>
-    <div class="tour-hint" id="tourHint">👆 Geser untuk melihat 360° · klik titik kuning</div>
+    <div class="tour-hint" id="tourHint">👆 Geser untuk melihat 360° · klik panah untuk berjalan</div>
     <div class="tour-badge" id="tourBadge">360°</div>
   </div>
 
@@ -275,17 +237,19 @@
   <script>
     /* ============================================================
        DATA LOKASI
-       "foto" = nama file foto 360 (equirectangular) kamu sendiri,
-       taruh file-nya di folder yang sama dengan tur360.html.
+       "embed" = link Street View untuk lokasi itu. Isi dengan salah satu:
+         (a) kode <iframe ...> lengkap dari Google Maps (Bagikan > Sematkan peta), atau
+         (b) isi src="..." saja.
+       Sekarang ketujuh lokasi masih memakai 1 embed sementara yang sama.
        ============================================================ */
     const LOKASI = {
       sangiran: {
         icon: '🦴',
         nama: 'Situs Sangiran',
         sub: 'Menelusuri jejak manusia purba di Jawa Tengah',
-        pemandu: ['Ini Situs Sangiran. Geser fotonya dan cari titik kuning berkedip!', 'Klik titik kuning untuk membuka pertanyaan. Mulai dari nomor 01 ya.'],
-        // Placeholder — ganti dengan foto 360 asli situsnya kalau sudah ada
-        foto: 'https://pannellum.org/images/alma.jpg',
+        pemandu: ['Ini Situs Sangiran. Geser panoramanya untuk melihat sekeliling.', 'Buka mode Tantangan untuk menjawab pertanyaan. Mulai dari nomor 01 ya.'],
+        // SEMENTARA — ganti dengan embed Street View asli situs ini
+        embed: 'https://www.google.com/maps/embed?pb=!4v1791968889431!6m8!1m7!1sCAoSF0NJSE0wb2dLRUlDQWdJQ2h6c2V6dVFF!2m2!1d-7.455848930699103!2d110.8344464416175!3f332.97807064630246!4f-3.210403961314938!5f0.7820865974627469',
         info: {
           area: 'Sangiran terletak di perbatasan Kabupaten Sragen dan Karanganyar, Jawa Tengah, sekitar 15 km di utara Kota Surakarta (Solo). Kawasannya berupa kubah tanah yang terkikis sungai sehingga lapisan tanah purba tersingkap. UNESCO menetapkannya sebagai Warisan Dunia pada 1996.',
           museum: 'Ada. Museum Manusia Purba Sangiran di Krikilan, Kalijambe, Sragen, memamerkan fosil manusia purba, hewan, dan alat batu, serta menjelaskan lapisan tanah Sangiran.',
@@ -297,9 +261,9 @@
         icon: '🦴',
         nama: 'Situs Trinil',
         sub: 'Tempat Eugène Dubois menemukan Manusia Jawa',
-        pemandu: ['Ini Situs Trinil. Geser fotonya dan cari titik kuning berkedip!', 'Klik titik kuning untuk membuka pertanyaan. Mulai dari nomor 01 ya.'],
-        // Placeholder — ganti dengan foto 360 asli situsnya kalau sudah ada
-        foto: 'https://pannellum.org/images/alma.jpg',
+        pemandu: ['Ini Situs Trinil. Geser panoramanya untuk melihat sekeliling.', 'Buka mode Tantangan untuk menjawab pertanyaan. Mulai dari nomor 01 ya.'],
+        // SEMENTARA — ganti dengan embed Street View asli situs ini
+        embed: 'https://www.google.com/maps/embed?pb=!4v1791958871294!6m8!1m7!1sCAoSFkNJSE0wb2dLRUlDQWdJQ094Yk95T2c.!2m2!1d-7.374594726791623!2d111.3574868963961!3f280.698442533831!4f-11.696784119300602!5f0.7820865974627469',
         info: {
           area: 'Trinil berada di tepi Bengawan Solo, Kecamatan Kedunggalar, Kabupaten Ngawi, Jawa Timur.',
           museum: 'Ada. Museum Trinil di lokasi penemuan memamerkan replika fosil Homo erectus beserta fosil hewan dari sekitar Bengawan Solo.',
@@ -311,9 +275,9 @@
         icon: '🦴',
         nama: 'Situs Wajak',
         sub: 'Tempat ditemukannya Manusia Wajak di Campurdarat, Tulungagung',
-        pemandu: ['Ini Situs Wajak. Geser fotonya dan cari titik kuning berkedip!', 'Klik titik kuning untuk membuka pertanyaan. Mulai dari nomor 01 ya.'],
-        // Placeholder — ganti dengan foto 360 asli situsnya kalau sudah ada
-        foto: 'https://pannellum.org/images/alma.jpg',
+        pemandu: ['Ini Situs Wajak. Geser panoramanya untuk melihat sekeliling.', 'Buka mode Tantangan untuk menjawab pertanyaan. Mulai dari nomor 01 ya.'],
+        // SEMENTARA — ganti dengan embed Street View asli situs ini
+        embed: 'https://www.google.com/maps/embed?pb=!4v1791958236062!6m8!1m7!1sQ4aq9uH-jzJ3t1u3US3Hog!2m2!1d-8.189234496924298!2d111.8306978227437!3f44.04913899934667!4f-7.0500542276587765!5f1.1043363856762676',
         info: {
           area: 'Situs Wajak berada di Campurdarat, Kabupaten Tulungagung, Jawa Timur, di kawasan perbukitan kapur (karst).',
           museum: 'Belum ada museum khusus di lokasi (cek lagi sebelum dipakai). Fosil aslinya dikenal tersimpan di museum di Belanda, sedangkan di Tulungagung ada replika dan informasinya.',
@@ -325,9 +289,9 @@
         icon: '🦴',
         nama: 'Situs Lida Ajer',
         sub: 'Gua di Sumatera Barat dengan gigi manusia modern awal',
-        pemandu: ['Ini Situs Lida Ajer. Geser fotonya dan cari titik kuning berkedip!', 'Klik titik kuning untuk membuka pertanyaan. Mulai dari nomor 01 ya.'],
-        // Placeholder — ganti dengan foto 360 asli situsnya kalau sudah ada
-        foto: 'https://pannellum.org/images/alma.jpg',
+        pemandu: ['Ini Situs Lida Ajer. Geser panoramanya untuk melihat sekeliling.', 'Buka mode Tantangan untuk menjawab pertanyaan. Mulai dari nomor 01 ya.'],
+        // SEMENTARA — ganti dengan embed Street View asli situs ini
+        embed: 'https://www.google.com/maps/embed?pb=!4v1791969353256!6m8!1m7!1sCAoSHENJQUJJaENBcndrTzhkZ3ZTLXZRMllBSDItdko.!2m2!1d-0.3184109872065776!2d100.5937708052155!3f359.88742!4f0!5f0.7820865974627469',
         info: {
           area: 'Lida Ajer adalah gua di wilayah Kabupaten Lima Puluh Kota, dekat Payakumbuh, Sumatera Barat.',
           museum: 'Belum ada museum khusus di gua (cek lagi sebelum dipakai). Koleksi lama hasil penggalian disimpan di museum di Belanda.',
@@ -339,9 +303,9 @@
         icon: '🦴',
         nama: 'Situs Gua Harimau',
         sub: 'Gua hunian dan kubur prasejarah di Sumatera Selatan',
-        pemandu: ['Ini Situs Gua Harimau. Geser fotonya dan cari titik kuning berkedip!', 'Klik titik kuning untuk membuka pertanyaan. Mulai dari nomor 01 ya.'],
-        // Placeholder — ganti dengan foto 360 asli situsnya kalau sudah ada
-        foto: 'https://pannellum.org/images/alma.jpg',
+        pemandu: ['Ini Situs Gua Harimau. Geser panoramanya untuk melihat sekeliling.', 'Buka mode Tantangan untuk menjawab pertanyaan. Mulai dari nomor 01 ya.'],
+        // SEMENTARA — ganti dengan embed Street View asli situs ini
+        embed: 'https://www.google.com/maps/embed?pb=!4v1791958236062!6m8!1m7!1sQ4aq9uH-jzJ3t1u3US3Hog!2m2!1d-8.189234496924298!2d111.8306978227437!3f44.04913899934667!4f-7.0500542276587765!5f1.1043363856762676',
         info: {
           area: 'Gua Harimau berada di kawasan karst Padang Bindu, Kabupaten Ogan Komering Ulu, Sumatera Selatan.',
           museum: 'Belum ada museum khusus di gua (cek lagi sebelum dipakai). Informasi dan sebagian temuan bisa ditanyakan ke instansi arkeologi setempat.',
@@ -353,9 +317,9 @@
         icon: '🦴',
         nama: 'Situs Leang Panninge',
         sub: 'Gua budaya Toala di Sulawesi Selatan',
-        pemandu: ['Ini Situs Leang Panninge. Geser fotonya dan cari titik kuning berkedip!', 'Klik titik kuning untuk membuka pertanyaan. Mulai dari nomor 01 ya.'],
-        // Placeholder — ganti dengan foto 360 asli situsnya kalau sudah ada
-        foto: 'https://pannellum.org/images/alma.jpg',
+        pemandu: ['Ini Situs Leang Panninge. Geser panoramanya untuk melihat sekeliling.', 'Buka mode Tantangan untuk menjawab pertanyaan. Mulai dari nomor 01 ya.'],
+        // SEMENTARA — ganti dengan embed Street View asli situs ini
+        embed: 'https://www.google.com/maps/embed?pb=!4v1791958236062!6m8!1m7!1sQ4aq9uH-jzJ3t1u3US3Hog!2m2!1d-8.189234496924298!2d111.8306978227437!3f44.04913899934667!4f-7.0500542276587765!5f1.1043363856762676',
         info: {
           area: 'Leang Panninge terletak di Mallawa, Kabupaten Maros, Sulawesi Selatan, di kawasan karst Maros-Pangkep.',
           museum: 'Belum ada museum khusus di gua (cek lagi sebelum dipakai). Kawasan karst di dekatnya punya Taman Prasejarah Leang-Leang.',
@@ -367,9 +331,9 @@
         icon: '🦴',
         nama: 'Situs Liang Bua',
         sub: 'Tempat ditemukannya Homo floresiensis di Flores',
-        pemandu: ['Ini Situs Liang Bua. Geser fotonya dan cari titik kuning berkedip!', 'Klik titik kuning untuk membuka pertanyaan. Mulai dari nomor 01 ya.'],
-        // Placeholder — ganti dengan foto 360 asli situsnya kalau sudah ada
-        foto: 'https://pannellum.org/images/alma.jpg',
+        pemandu: ['Ini Situs Liang Bua. Geser panoramanya untuk melihat sekeliling.', 'Buka mode Tantangan untuk menjawab pertanyaan. Mulai dari nomor 01 ya.'],
+        // SEMENTARA — ganti dengan embed Street View asli situs ini
+        embed: 'sementara belum ada',
         info: {
           area: 'Liang Bua adalah gua batu gamping di Kabupaten Manggarai, Pulau Flores, Nusa Tenggara Timur.',
           museum: 'Belum bisa dipastikan ada museum di lokasi (cek lagi sebelum dipakai). Informasi temuannya dipamerkan di museum arkeologi.',
@@ -411,7 +375,6 @@
     // Mode Pelajari / Tantangan + progres
     const IDS = ['hm1', 'hm2', 'hm3', 'hm4'];
     const SELESAI = new Set();
-    const HS = {};
     const modeBtns = document.querySelectorAll('.mode-btn');
     function setMode(m) {
       document.getElementById('paneP').classList.toggle('active', m === 'pelajari');
@@ -435,12 +398,10 @@
       SELESAI.add(id);
       const t = document.querySelector('.hotspot-btn[data-target="' + id + '"]');
       if (t) t.classList.add('done');
-      if (HS[id]) HS[id].classList.add('done');
       updateProg(idAktif());
     }
     document.getElementById('qPrev').addEventListener('click', () => bukaKartu(IDS[IDS.indexOf(idAktif()) - 1]));
     document.getElementById('qNext').addEventListener('click', () => bukaKartu(IDS[IDS.indexOf(idAktif()) + 1]));
-    document.getElementById('panorama').addEventListener('pointerdown', () => document.getElementById('tourHint').classList.add('hilang'), { once: true });
     updateProg('hm1');
 
     const buttons = document.querySelectorAll('.hotspot-btn');
@@ -537,72 +498,42 @@
     });
 
     /* ============================================================
-       POSISI 4 HOTSPOT di foto 360 ini.
-       "pitch" = atas/bawah (0 = lurus depan, + = ke atas, - = ke bawah)
-       "yaw"   = kiri/kanan (0 = arah depan awal foto, bisa -180 s/d 180)
-
-       Cara cari angka yang pas: buka halaman ini, panorama akan
-       mencetak posisi tiap klik ke Console browser (klik kanan ->
-       Inspect -> tab Console). Klik di titik yang kamu mau jadi
-       hotspot, lihat angka pitch/yaw yang muncul, salin ke sini.
+       TAMPILKAN PANORAMA (embed Street View)
+       Isi sumber dari L.embed. Boleh berupa kode <iframe> lengkap atau
+       hanya link src-nya.
        ============================================================ */
-    const TITIK_HOTSPOT = [
-      { id: 'hm1', label: '01', pitch: 0, yaw: 0    },  // depan
-      { id: 'hm2', label: '02', pitch: 0, yaw: 90   },  // kanan
-      { id: 'hm3', label: '03', pitch: 0, yaw: 180  },  // belakang
-      { id: 'hm4', label: '04', pitch: 0, yaw: -90  }   // kiri
-    ];
-
-    const hotSpots = TITIK_HOTSPOT.map(t => ({
-      pitch: t.pitch,
-      yaw: t.yaw,
-      type: 'custom',
-      cssClass: 'psphere-hotspot',
-      createTooltipFunc: function (div) {
-        // "div" di sini adalah elemen hotspot itu sendiri (bukan tooltip terpisah).
-        // Kosongkan dulu isi bawaan Pannellum, baru isi label angka kita sendiri.
-        div.innerHTML = '';
-        div.textContent = t.label;
-        HS[t.id] = div; div.addEventListener('click', function () { bukaKartu(t.id); });
-      }
-    }));
-
-    // Simpan viewer-nya di variabel ini — JANGAN panggil pannellum.viewer('panorama', ...)
-    // lagi di tempat lain, karena tiap dipanggil itu selalu BIKIN viewer baru dan
-    // menimpa yang lama (ini penyebab kotak hitam & 360-nya macet saat digeser).
-    //
-    // "hotSpotDebug: true" itu fitur BAWAAN Pannellum: tiap kamu klik di foto,
-    // otomatis muncul tulisan "Pitch: ... Yaw: ..." di Console browser (klik
-    // kanan -> Inspect -> tab Console). Pakai ini buat nyari koordinat hotspot,
-    // lalu set balik ke false (atau hapus barisnya) kalau sudah selesai.
-    //
-    // PENTING: baru dibuat setelah window 'load' (bukan langsung saat skrip
-    // jalan). #panorama ukurannya 100%/100% mengikuti .tour-frame yang pakai
-    // aspect-ratio — ukuran itu baru pasti setelah SEMUA elemen & font selesai
-    // dimuat. Kalau viewer dibuat lebih awal, Pannellum sempat mengukur ukuran
-    // yang belum stabil, dan semua hotspot jadi salah hitung posisi (nyangkut
-    // di pojok kiri atas).
-    let viewer;
-    window.addEventListener('load', function () {
-      // Kalau library Pannellum gagal dimuat (internet putus / CDN diblokir),
-      // tampilkan pesan, bukan error kosong.
-      if (typeof pannellum === 'undefined') {
-        const box = document.getElementById('panorama');
-        box.textContent = '';
+    function ambilSrc(teks) {
+      const t = String(teks || '').trim();
+      const m = t.match(/src\s*=\s*["']([^"']+)["']/i);
+      return m ? m[1].replace(/&amp;/g, '&') : t;
+    }
+    (function pasangPanorama() {
+      const box = document.getElementById('panorama');
+      const src = ambilSrc(L.embed);
+      if (src.indexOf('https://www.google.com/maps/embed') !== 0) {
         const pesan = document.createElement('div');
         pesan.className = 'tour-placeholder';
-        pesan.textContent = 'Panorama 360° belum bisa dimuat. Periksa koneksi internet, lalu muat ulang halaman ini.';
+        pesan.textContent = 'Panorama 360° untuk lokasi ini belum dipasang.';
         box.appendChild(pesan);
         return;
       }
-      viewer = pannellum.viewer('panorama', {
-        type: 'equirectangular',
-        panorama: L.foto,
-        autoLoad: true,
-        hotSpotDebug: false,   // ganti true SEMENTARA kalau mau mencari koordinat hotspot
-        hotSpots: hotSpots
+      const frame = document.createElement('iframe');
+      frame.src = src;
+      frame.title = 'Panorama 360° ' + L.nama;
+      frame.loading = 'lazy';
+      frame.allowFullscreen = true;
+      frame.referrerPolicy = 'strict-origin-when-cross-origin';
+      box.appendChild(frame);
+
+      // Klik di dalam iframe tidak sampai ke halaman ini, jadi petunjuk
+      // disembunyikan saat iframe mendapat fokus (window blur) atau setelah 8 detik.
+      const hint = document.getElementById('tourHint');
+      const sembunyi = () => hint.classList.add('hilang');
+      window.addEventListener('blur', function () {
+        if (document.activeElement === frame) sembunyi();
       });
-    });
+      setTimeout(sembunyi, 8000);
+    })();
   </script>
 
 

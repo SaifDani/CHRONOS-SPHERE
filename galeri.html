@@ -101,11 +101,16 @@
     <div class="gl-cap"><h4 id="lihatJudul"></h4><span id="lihatMeta"></span></div>
   </dialog>
 
-  <nav class="bottom-nav"></nav>
+  <nav class="bottom-nav">
+    <div class="nav-item"><a href="peta.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">🗺️<span>Peta Interaktif</span></a></div>
+    <div class="nav-item"><a href="panduan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">📖<span>Panduan</span></a></div>
+    <div class="nav-item"><a href="papan_skor.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">📊<span>Progres</span></a></div>
+    <div class="nav-item"><a href="pengaturan.html" style="all:unset;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.25rem;">⚙️<span>Pengaturan</span></a></div>
+  </nav>
 
   <script>
-    /* Isi dengan URL Web App (berakhiran /exec): sama dengan SHEET_URL kalau satu script */
-    const GALERI_URL = 'GANTI_URL_WEB_APP_GALERI';
+    /* Tempel URL Web App (berakhiran /exec) dari galeri-apps-script.gs di sini */
+    const GALERI_URL = 'https://script.google.com/macros/s/AKfycbx0U0iV280vs7M_yxxcd6gqxmzNwcKXmNofRDc_C-9bDvC9ewUIxPB51kHiosIDfu64/exec';
     const IKON = { video: '🎬', infografis: '🖼️', poster: '🎨' };
 
     function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; }
@@ -167,7 +172,7 @@
     function muatKarya() {
       if (GALERI_URL.indexOf('GANTI_') === 0) { terapkanFilter(tipeAktif); return; }
       kosong.textContent = 'Memuat karya...'; kosong.hidden = false;
-      fetch(GALERI_URL + '?aksi=galeri').then(r => r.json()).then(list => {
+      fetch(GALERI_URL).then(r => r.json()).then(list => {
         grid.textContent = '';
         (Array.isArray(list) ? list : []).forEach(k => { if (IKON[k.type]) grid.appendChild(bangunKartu(k)); });
         kosong.textContent = 'Belum ada karya untuk kategori ini.'; terapkanFilter(tipeAktif);
@@ -217,7 +222,6 @@
     });
   </script>
 
-  <script src="nav.js"></script>
   <script src="app.js"></script>
   <script>
     window.Pemandu && window.Pemandu.set([
