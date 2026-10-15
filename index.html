@@ -2,56 +2,92 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0c083b">
     <title>CHRONOS-SPHERE</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cinzel+Decorative:wght@700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+
 </head>
-<body>
+<body class="page-home">
+
+  <!-- dekorasi latar (tidak terbaca pembaca layar) -->
+  <div class="bg" aria-hidden="true">
+    <span class="orb o1"></span><span class="orb o2"></span>
+    <span class="relic r1">🦴</span><span class="relic r2">🏺</span><span class="relic r3">🗿</span>
+    <span class="relic r4">🌋</span><span class="relic r5">⏳</span><span class="relic r6">🧭</span>
+  </div>
 
   <header class="school-header">
     <div class="school-logo-slot">
       <img src="logo-smariduta.png" alt="logo SMARIDUTA">
     </div>
     <a class="school-text" href="https://sekolah.data.kemendikdasmen.go.id/profil-sekolah/3609386D-32A7-4496-9257-F6D0934F8FCB" target="_blank" rel="noopener">
-  <span class="school-name">SMA NEGERI 1 KEDUNGWARU</span>
-  <span class="school-region">Kabupaten Tulungagung</span>
-</a>
-
+      <span class="school-name">SMA NEGERI 1 KEDUNGWARU</span>
+      <span class="school-region">Kabupaten Tulungagung</span>
+    </a>
   </header>
 
-  <div class="hero">
-    <h1 class="title">CHRONOS-SPHERE</h1>
+  <main class="home-hero">
+    <div class="hero-badge">⚡ Petualangan Sejarah Interaktif</div>
+
+    <div class="title-wrap">
+      <span class="ring a" aria-hidden="true"></span>
+      <span class="ring b" aria-hidden="true"></span>
+      <h1 class="title" aria-label="CHRONOS-SPHERE"><span class="tw">CHRONOS</span><span class="td">-</span><span class="tw">SPHERE</span></h1>
+    </div>
+
     <div class="subtitle">Jelajah Ruang &amp; Waktu</div>
     <div class="tagline">&ldquo;Temukan bukti &bull; Hubungkan makna &bull; Ciptakan gagasan&rdquo;</div>
-  </div>
 
-  <nav class="menu">
-    <a href="peta.html" class="menu-btn btn-peta-eksplorasi">
-      <span class="icon-circle">🗺️</span>
-      <span class="label">Peta Eksplorasi</span>
+    <a class="cta" href="peta.html"><span class="play" aria-hidden="true">▶</span>Mulai Petualangan</a>
+
+    <ul class="chips" aria-label="Isi petualangan">
+      <li>🗺️ 6 Situs Prasejarah</li>
+      <li>🌏 4 Teori Asal-Usul</li>
+      <li>🏆 Papan Skor</li>
+    </ul>
+  </main>
+
+  <nav class="home-grid" aria-label="Menu utama">
+    <a href="peta.html" class="home-card c-peta" style="--i:0">
+      <span class="hc-tag">Mulai di sini</span>
+      <span class="hc-icon" aria-hidden="true">🗺️</span>
+      <span class="hc-title">Peta Eksplorasi</span>
+      <span class="hc-desc">Kunjungi situs manusia purba dan jelajahi tur 360°.</span>
+      <span class="hc-go">Buka <span>→</span></span>
     </a>
-    <a href="menu-teori.html" class="menu-btn btn-teori-menu">
-      <span class="icon-circle">🌏</span>
-      <span class="label">Teori Asal-Usul</span>
+    <a href="menu-teori.html" class="home-card c-teori" style="--i:1">
+      <span class="hc-icon" aria-hidden="true">🌏</span>
+      <span class="hc-title">Teori Asal-Usul</span>
+      <span class="hc-desc">Yunnan, Taiwan, Afrika, dan Nusantara. Dari mana leluhur kita?</span>
+      <span class="hc-go">Buka <span>→</span></span>
     </a>
-    <a href="kuis.html" class="menu-btn btn-kuis-game">
-      <span class="icon-circle">🎮</span>
-      <span class="label">Kuis Petualangan</span>
+    <a href="kuis.html" class="home-card c-kuis" style="--i:2">
+      <span class="hc-icon" aria-hidden="true">🎮</span>
+      <span class="hc-title">Kuis Petualangan</span>
+      <span class="hc-desc">Jawab cepat, kumpulkan poin, dan naik ke papan peringkat!</span>
+      <span class="hc-go">Main <span>→</span></span>
     </a>
-    <a href="misi.html" class="menu-btn btn-misi-nenek-moyang">
-      <span class="icon-circle">🧭</span>
-      <span class="label">Jejak Nenek Moyang</span>
+    <a href="misi.html" class="home-card c-misi" style="--i:3">
+      <span class="hc-icon" aria-hidden="true">🧭</span>
+      <span class="hc-title">Jejak Nenek Moyang</span>
+      <span class="hc-desc">Selesaikan misi untuk menelusuri jejak leluhur.</span>
+      <span class="hc-go">Mulai <span>→</span></span>
     </a>
-    <a href="tantangan.html" class="menu-btn btn-tantangan-masa-kini">
-      <span class="icon-circle">💡</span>
-      <span class="label">Tantangan Masa Kini</span>
+    <a href="tantangan.html" class="home-card c-tantangan" style="--i:4">
+      <span class="hc-icon" aria-hidden="true">💡</span>
+      <span class="hc-title">Tantangan Masa Kini</span>
+      <span class="hc-desc">Ubah pengetahuan sejarah menjadi gagasan nyata.</span>
+      <span class="hc-go">Coba <span>→</span></span>
     </a>
-    <a href="galeri.html" class="menu-btn btn-galeri-karya">
-      <span class="icon-circle">🖼️</span>
-      <span class="label">Galeri Karya</span>
+    <a href="galeri.html" class="home-card c-galeri" style="--i:5">
+      <span class="hc-icon" aria-hidden="true">🖼️</span>
+      <span class="hc-title">Galeri Karya</span>
+      <span class="hc-desc">Pamerkan karyamu dan lihat karya teman-temanmu.</span>
+      <span class="hc-go">Lihat <span>→</span></span>
     </a>
   </nav>
 

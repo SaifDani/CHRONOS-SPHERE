@@ -188,7 +188,7 @@
         .teori-cards .card{ transition:none; }
       }
 
-      /* ===== Pin ala Google Maps (7 situs) ===== */
+      /* ===== Pin ala Google Maps (6 situs) ===== */
       .w-jawa{ --h1:#ffa23d; --h2:#e8381f; }
       .w-sumatera{ --h1:#4be08a; --h2:#0f8f55; }
       .w-sulawesi{ --h1:#b985ff; --h2:#6a2fd0; }
@@ -270,6 +270,8 @@
       @media (prefers-reduced-motion:reduce){ .map-pin.gm-pin, .gm-pin::after{ animation:none; } .gm-body{ transition:none; } }
     </style>
 
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="plus.css" />
 </head>
 <body class="page-peta">
 
@@ -287,7 +289,7 @@
 
     <img src="peta-nusantara-pin.png" alt="Peta Eksplorasi Chronos-Sphere" class="map-image">
 
-    <!-- 7 pin lokasi penemuan fosil (gaya Google Maps). Klik membuka tur 360 (tur360.html?lokasi=...).
+    <!-- 6 pin lokasi penemuan fosil (gaya Google Maps). Klik membuka tur 360 (tur360.html?lokasi=...).
          Posisi top/left dalam % dan ujung runcing pin = titik lokasi.
          Tidak pas dengan gambar peta? Buka peta.html#atur, geser pin dengan jari/mouse,
          lalu salin angka dari kotak "Kalibrasi" ke baris style di bawah ini.
@@ -312,17 +314,12 @@
       <span class="pin-tooltip">Lida Ajer</span>
     </a>
 
-    <a href="tur360.html?lokasi=gua-harimau" class="map-pin gm-pin w-sumatera" data-l="kanan" data-id="gua-harimau" style="--n:4; top:58.8%; left:19.6%;" aria-label="Situs Gua Harimau">
-      <span class="gm-body"><span class="gm-in"><i>🦴</i></span></span>
-      <span class="pin-tooltip">Gua Harimau</span>
+    <a href="tur360.html?lokasi=leang-leang" class="map-pin gm-pin w-sulawesi" data-l="atas" data-id="leang-leang" style="--n:4; top:60%; left:54.5%;" aria-label="Situs Leang-Leang">
+      <span class="gm-body"><span class="gm-in"><i>🎨</i></span></span>
+      <span class="pin-tooltip">Leang-Leang</span>
     </a>
 
-    <a href="tur360.html?lokasi=leang-panninge" class="map-pin gm-pin w-sulawesi" data-l="atas" data-id="leang-panninge" style="--n:5; top:60%; left:54.5%;" aria-label="Situs Leang Panninge">
-      <span class="gm-body"><span class="gm-in"><i>🦴</i></span></span>
-      <span class="pin-tooltip">Leang Panninge</span>
-    </a>
-
-    <a href="tur360.html?lokasi=liang-bua" class="map-pin gm-pin w-nusa" data-l="bawah" data-id="liang-bua" style="--n:6; top:74.5%; left:56.8%;" aria-label="Situs Liang Bua">
+    <a href="tur360.html?lokasi=liang-bua" class="map-pin gm-pin w-nusa" data-l="bawah" data-id="liang-bua" style="--n:5; top:74.5%; left:56.8%;" aria-label="Situs Liang Bua">
       <span class="gm-body"><span class="gm-in"><i>🦴</i></span></span>
       <span class="pin-tooltip">Liang Bua</span>
     </a>
@@ -383,7 +380,7 @@
   <script>
     window.Pemandu && window.Pemandu.set([
       'Ini Peta Eksplorasi. Klik pin berwarna untuk menjelajahi lokasi penemuan fosil, atau pilih salah satu teori asal-usul di bawah peta.',
-      'Ada tujuh situs di peta ini, dari Sumatera sampai Flores. Wajak di Tulungagung adalah kabupatenmu sendiri. Coba semuanya!'
+      'Ada enam situs di peta ini, dari Sumatera sampai Flores. Wajak di Tulungagung adalah kabupatenmu sendiri. Coba semuanya!'
     ]);
   </script>
 
@@ -463,5 +460,6 @@
     })();
   </script>
 
+<script src="plus.js" defer></script>
 </body>
 </html>
