@@ -83,7 +83,7 @@
 
   <script>
     /* Tempel URL Web App (berakhiran /exec) dari galeri-apps-script.gs di sini */
-    const GALERI_URL = 'https://script.google.com/macros/s/AKfycbx0U0iV280vs7M_yxxcd6gqxmzNwcKXmNofRDc_C-9bDvC9ewUIxPB51kHiosIDfu64/exec';
+    const GALERI_URL = 'https://script.google.com/macros/s/AKfycbzMjRCHfjvFscKFq-jWbM0-jy1obrcY9nb_yjEQLraeR85ArynlefbSSrzuVjqcNkzuLQ/exec';
     const IKON = { video: '🎬', infografis: '🖼️', poster: '🎨' };
 
     function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; }
@@ -145,7 +145,7 @@
     function muatKarya() {
       if (GALERI_URL.indexOf('GANTI_') === 0) { terapkanFilter(tipeAktif); return; }
       kosong.textContent = 'Memuat karya...'; kosong.hidden = false;
-      fetch(GALERI_URL).then(r => r.json()).then(list => {
+      fetch(GALERI_URL + '?aksi=galeri').then(r => r.json()).then(list => {
         grid.textContent = '';
         (Array.isArray(list) ? list : []).forEach(k => { if (IKON[k.type]) grid.appendChild(bangunKartu(k)); });
         kosong.textContent = 'Belum ada karya untuk kategori ini. Selesaikan Tantangan Masa Kini lalu unggah karyamu!'; terapkanFilter(tipeAktif);

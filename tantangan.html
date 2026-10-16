@@ -375,7 +375,7 @@
        UNGGAH KARYA -> tampil di Galeri Karya (galeri.html)
        Karya dikirim ke Web App galeri; guru menandai "ya" di Sheet agar tampil.
        ============================================================ */
-    const GALERI_URL = 'https://script.google.com/macros/s/AKfycbx0U0iV280vs7M_yxxcd6gqxmzNwcKXmNofRDc_C-9bDvC9ewUIxPB51kHiosIDfu64/exec';
+    const GALERI_URL = 'https://script.google.com/macros/s/AKfycbzMjRCHfjvFscKFq-jWbM0-jy1obrcY9nb_yjEQLraeR85ArynlefbSSrzuVjqcNkzuLQ/exec';
     const kr = id => document.getElementById(id);
     const elPesan = kr('unggahPesan');
     function tampilPesan(teks, galat) {
@@ -428,13 +428,15 @@
       try { sessionStorage.setItem(KUNCI_IDE, state.langkah[4].trim()); } catch (e) {}
       const btn = kr('tombolUnggah');
       btn.disabled = true; btn.textContent = 'Mengirim...';
-      fetch(GALERI_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(d) })
-        .then(() => {
+      fetch(GALERI_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(d) })
+        .then(r => r.json())
+        .then(j => {
+          if (!j.ok) throw new Error(j.error || 'ditolak server');
           tampilPesan('Terkirim ✓ Karyamu sudah masuk dan akan tampil di Galeri Karya setelah dilihat gurumu.');
           btn.textContent = 'Kirim Karya ke Galeri'; btn.disabled = false;
           kr('krJudul').value = ''; kr('krLink').value = ''; kr('krFile').value = ''; kr('krPratinjau').style.display = 'none'; dataGambar = null;
         })
-        .catch(() => { btn.disabled = false; btn.textContent = 'Kirim Karya ke Galeri'; tampilPesan('Gagal mengirim. Periksa internet, lalu coba lagi.', true); });
+        .catch(err => { btn.disabled = false; btn.textContent = 'Kirim Karya ke Galeri'; tampilPesan('Gagal mengirim karya' + (err && err.message && err.message !== 'Failed to fetch' ? ': ' + err.message : '. Periksa internet, lalu coba lagi.'), true); });
     });
 
     /* ============================================================
@@ -442,7 +444,7 @@
        Tempel URL Web App Apps Script (yang berakhiran /exec) di
        bawah ini. Pakai URL yang SAMA dengan yang dipakai kuis/papan skor.
        ============================================================ */
-    const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbx0U0iV280vs7M_yxxcd6gqxmzNwcKXmNofRDc_C-9bDvC9ewUIxPB51kHiosIDfu64/exec';
+    const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzMjRCHfjvFscKFq-jWbM0-jy1obrcY9nb_yjEQLraeR85ArynlefbSSrzuVjqcNkzuLQ/exec';
 
     const elNama = document.getElementById('namaKelompok');
     const elKelas = document.getElementById('kelasSiswa');
