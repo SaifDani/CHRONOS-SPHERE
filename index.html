@@ -10,6 +10,66 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cinzel+Decorative:wght@700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
 
+<style>
+/* Orbit elips ala tata surya di belakang judul. Semua orbit & planet berada di BELAKANG tulisan. */
+body.page-home{ overflow-x:clip; }
+.home-hero{ isolation:isolate; }
+.orbit{
+  --t:26s;
+  position:absolute; left:50%; top:50%; z-index:-1; pointer-events:none;
+  width:var(--w); height:var(--h);
+  margin:calc(var(--h) / -2) 0 0 calc(var(--w) / -2);
+  border:1px dashed var(--c); border-radius:50%;
+  box-shadow:0 0 22px -6px var(--c), inset 0 0 22px -10px var(--c);
+  transform:rotate(var(--tilt)) scaleX(var(--arah,1));
+}
+.orbit.o-a{ --w:min(94vw,660px); --h:calc(var(--w) * .40); --tilt:-13deg; --c:rgba(244,214,77,.42); --p:#f4d64d; --pg:rgba(244,214,77,.8); --ps:13px; --t:28s; }
+.orbit.o-b{ --w:min(72vw,480px); --h:calc(var(--w) * .34); --tilt:11deg;  --c:rgba(79,209,197,.42); --p:#4fd1c5; --pg:rgba(79,209,197,.8); --ps:10px; --t:20s; --arah:-1; }
+/* planet: gerak x dan y berirama sinus, selisih seperempat putaran = lintasan elips */
+.orbit .px, .orbit .py{ position:absolute; inset:0; display:block; }
+.orbit .px{ animation:orbitX calc(var(--t) / 2) cubic-bezier(.37,0,.63,1) infinite alternate; }
+.orbit .py{ animation:orbitY calc(var(--t) / 2) cubic-bezier(.37,0,.63,1) infinite alternate; animation-delay:calc(var(--t) / -4); }
+.orbit .pl{
+  position:absolute; left:50%; top:50%; display:block;
+  width:var(--ps); height:var(--ps); margin:calc(var(--ps) / -2) 0 0 calc(var(--ps) / -2);
+  border-radius:50%; background:radial-gradient(circle at 35% 30%,#fff,var(--p) 55%);
+  box-shadow:0 0 14px 4px var(--pg);
+}
+@keyframes orbitX{ from{ transform:translateX(-50%); } to{ transform:translateX(50%); } }
+@keyframes orbitY{ from{ transform:translateY(-50%); } to{ transform:translateY(50%); } }
+/* Cincin orbit ikut bergoyang & berputar pelan (pakai properti translate/rotate terpisah, jadi tidak bentrok dengan transform miring orbit) */
+.orbit{ animation:orbitGoyang var(--ts,22s) ease-in-out infinite alternate; will-change:translate, rotate; }
+.orbit.o-a{ --ts:24s; }
+.orbit.o-b{ --ts:19s; animation-direction:alternate-reverse; }
+@keyframes orbitGoyang{
+  from{ translate:-12px -6px; rotate:-6deg; }
+  to  { translate:12px 8px;   rotate:6deg; }
+}
+
+/* Latar belakang (orb + relik) melayang pelan */
+body.page-home .bg .orb, body.page-home .bg .relic{
+  animation:melayang var(--dur,18s) ease-in-out infinite alternate;
+  animation-delay:var(--dl,0s); will-change:translate, rotate;
+}
+body.page-home .bg .orb{ --dur:26s; }
+body.page-home .bg .o1{ --dl:-4s; }
+body.page-home .bg .o2{ --dur:30s; --dl:-12s; animation-direction:alternate-reverse; }
+body.page-home .bg .r1{ --dur:17s; --dl:-2s; }
+body.page-home .bg .r2{ --dur:21s; --dl:-7s; }
+body.page-home .bg .r3{ --dur:19s; --dl:-11s; }
+body.page-home .bg .r4{ --dur:23s; --dl:-5s; }
+body.page-home .bg .r5{ --dur:16s; --dl:-9s; }
+body.page-home .bg .r6{ --dur:20s; --dl:-14s; }
+@keyframes melayang{
+  0%  { translate:0 0;       rotate:-4deg; }
+  50% { translate:14px -24px; rotate:4deg; }
+  100%{ translate:-12px 18px; rotate:-2deg; }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .orbit .px, .orbit .py, .orbit, body.page-home .bg .orb, body.page-home .bg .relic{ animation:none; }
+}
+</style>
 </head>
 <body class="page-home">
 
@@ -34,8 +94,8 @@
     <div class="hero-badge">⚡ Petualangan Sejarah Interaktif</div>
 
     <div class="title-wrap">
-      <span class="ring a" aria-hidden="true"></span>
-      <span class="ring b" aria-hidden="true"></span>
+      <span class="orbit o-a" aria-hidden="true"><i class="px"><i class="py"><i class="pl"></i></i></i></span>
+      <span class="orbit o-b" aria-hidden="true"><i class="px"><i class="py"><i class="pl"></i></i></i></span>
       <h1 class="title" aria-label="CHRONOS-SPHERE"><span class="tw">CHRONOS</span><span class="td">-</span><span class="tw">SPHERE</span></h1>
     </div>
 

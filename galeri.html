@@ -40,6 +40,8 @@
       .gl-media iframe{ width:100%; aspect-ratio:16/9; border:0; display:block; }
       .gl-cap{ padding:.9rem 1.2rem 1.1rem; } .gl-cap h4{ margin:0 0 .2rem; font-size:1rem; } .gl-cap span{ font-size:.75rem; color:#b9c4e0; }
     </style>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="plus.css" />
 </head>
 <body class="page-peta">
 
@@ -50,10 +52,10 @@
 
   <div class="page-header">
     <h1 class="page-title">Galeri Karya</h1>
-    <p class="page-subtitle">Menampilkan hasil karya autentik murid dalam bentuk video, infografis, atau poster</p>
+    <p class="page-subtitle">Hasil akhir projek murid dari Tantangan Masa Kini, dalam bentuk video, infografis, atau poster</p>
   </div>
 
-  <div class="kirim-bar"><button type="button" class="btn-kirim" id="bukaForm">＋ Kirim Karyamu</button></div>
+  <div class="kirim-bar"><a class="btn-kirim" href="tantangan.html">🚀 Mau karyamu tampil di sini? Selesaikan Tantangan Masa Kini</a></div>
 
   <div class="gallery-tabs">
     <button class="gallery-tab active" data-type="semua">Semua</button>
@@ -63,36 +65,7 @@
   </div>
 
   <div class="gallery-grid" id="galleryGrid"></div>
-  <p class="gallery-kosong" id="galleryKosong" hidden>Belum ada karya untuk kategori ini.</p>
-
-  <!-- Form kirim karya -->
-  <dialog class="gl-dialog" id="formDlg">
-    <button type="button" class="gl-tutup" id="tutupForm" aria-label="Tutup">✕</button>
-    <div class="gl-isi">
-      <h3>Kirim Karyamu</h3>
-      <span class="gl-label">Jenis karya</span>
-      <div class="gl-jenis">
-        <label><input type="radio" name="jenis" value="poster" checked>🎨 Poster</label>
-        <label><input type="radio" name="jenis" value="infografis">🖼️ Infografis</label>
-        <label><input type="radio" name="jenis" value="video">🎬 Video</label>
-      </div>
-      <label class="gl-label" for="fNama">Nama</label><input class="hotspot-input" id="fNama" maxlength="60" autocomplete="name">
-      <label class="gl-label" for="fKelas">Kelas</label><input class="hotspot-input" id="fKelas" maxlength="20">
-      <label class="gl-label" for="fKelompok">Kelompok</label><input class="hotspot-input" id="fKelompok" maxlength="40" placeholder="Contoh: Kelompok 3">
-      <label class="gl-label" for="fJudul">Judul karya</label><input class="hotspot-input" id="fJudul" maxlength="80">
-      <div id="boxFile">
-        <label class="gl-label" for="fFile">Pilih gambar (JPG / PNG / WEBP)</label><input class="hotspot-input" type="file" id="fFile" accept="image/jpeg,image/png,image/webp" style="padding:.45rem;height:auto;">
-        <img class="gl-pratinjau" id="pratinjau" alt="Pratinjau karya">
-        <p class="gl-info">Gambar otomatis dikecilkan supaya cepat terkirim.</p>
-      </div>
-      <div id="boxLink" hidden>
-        <label class="gl-label" for="fLink">Link YouTube</label><input class="hotspot-input" id="fLink" inputmode="url" placeholder="https://youtu.be/...">
-        <p class="gl-info">Upload videomu ke YouTube dengan mode <b>Tidak Publik (Unlisted)</b>, lalu tempel linknya di sini.</p>
-      </div>
-      <p class="gl-pesan" id="pesan" role="status"></p>
-      <button type="button" class="hotspot-submit gl-kirim" id="btnKirim">Kirim</button>
-    </div>
-  </dialog>
+  <p class="gallery-kosong" id="galleryKosong" hidden>Belum ada karya untuk kategori ini. Selesaikan Tantangan Masa Kini lalu unggah karyamu!</p>
 
   <!-- Penampil karya -->
   <dialog class="gl-dialog gl-lihat" id="lihatDlg">
@@ -175,60 +148,21 @@
       fetch(GALERI_URL).then(r => r.json()).then(list => {
         grid.textContent = '';
         (Array.isArray(list) ? list : []).forEach(k => { if (IKON[k.type]) grid.appendChild(bangunKartu(k)); });
-        kosong.textContent = 'Belum ada karya untuk kategori ini.'; terapkanFilter(tipeAktif);
+        kosong.textContent = 'Belum ada karya untuk kategori ini. Selesaikan Tantangan Masa Kini lalu unggah karyamu!'; terapkanFilter(tipeAktif);
       }).catch(() => { kosong.textContent = 'Karya belum bisa dimuat. Periksa internet, lalu muat ulang halaman.'; kosong.hidden = false; });
     }
     muatKarya();
 
-    /* ===== Form kirim karya ===== */
-    const formDlg = document.getElementById('formDlg');
-    const f = id => document.getElementById(id);
-    const pesan = f('pesan'), btn = f('btnKirim');
-    let dataGambar = null;
-    try { f('fNama').value = localStorage.getItem('chronos_nama') || ''; f('fKelas').value = localStorage.getItem('chronos_kelas') || ''; f('fKelompok').value = localStorage.getItem('chronos_kelompok') || ''; } catch (e) {}
-    f('bukaForm').addEventListener('click', () => formDlg.showModal());
-    f('tutupForm').addEventListener('click', () => formDlg.close());
-    const jenisDipilih = () => document.querySelector('input[name="jenis"]:checked').value;
-    document.querySelectorAll('input[name="jenis"]').forEach(r => r.addEventListener('change', () => {
-      const v = jenisDipilih() === 'video'; f('boxLink').hidden = !v; f('boxFile').hidden = v;
-    }));
-
-    // Kecilkan gambar (maks 1800px, JPEG) supaya cepat terkirim
-    f('fFile').addEventListener('change', async () => {
-      dataGambar = null; f('pratinjau').style.display = 'none'; const file = f('fFile').files[0]; if (!file) return;
-      try {
-        const bmp = await createImageBitmap(file); const skala = Math.min(1, 1800 / Math.max(bmp.width, bmp.height));
-        const c = document.createElement('canvas'); c.width = Math.round(bmp.width * skala); c.height = Math.round(bmp.height * skala);
-        const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(bmp, 0, 0, c.width, c.height);
-        const url = c.toDataURL('image/jpeg', 0.85); dataGambar = url.split(',')[1];
-        f('pratinjau').src = url; f('pratinjau').style.display = 'block'; pesan.textContent = '';
-      } catch (e) { pesan.style.color = '#f0805a'; pesan.textContent = 'Gambar tidak bisa dibaca. Coba file lain.'; }
-    });
-
-    btn.addEventListener('click', () => {
-      const d = { aksi: 'karya', jenis: jenisDipilih(), nama: f('fNama').value.trim(), kelas: f('fKelas').value.trim(), kelompok: f('fKelompok').value.trim(), judul: f('fJudul').value.trim() };
-      const salah = m => { pesan.style.color = '#f0805a'; pesan.textContent = m; };
-      if (!d.nama || !d.kelas || !d.kelompok || !d.judul) return salah('Lengkapi nama, kelas, kelompok, dan judul dulu ya.');
-      if (d.jenis === 'video') { d.link = f('fLink').value.trim(); if (!idYoutube(d.link)) return salah('Tempel link YouTube yang benar ya.'); }
-      else { if (!dataGambar) return salah('Pilih gambar karyamu dulu ya.'); d.mime = 'image/jpeg'; d.data = dataGambar; }
-      if (GALERI_URL.indexOf('GANTI_') === 0) return salah('URL Web App galeri belum dipasang di GALERI_URL.');
-      try { localStorage.setItem('chronos_nama', d.nama); localStorage.setItem('chronos_kelas', d.kelas); localStorage.setItem('chronos_kelompok', d.kelompok); } catch (e) {}
-      btn.disabled = true; btn.textContent = 'Mengirim...'; pesan.style.color = '#c9d1ee'; pesan.textContent = '';
-      fetch(GALERI_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(d) })
-        .then(() => {
-          pesan.style.color = '#6fbf73'; pesan.textContent = 'Terkirim ✓ Karyamu sudah masuk dan akan dilihat gurumu.';
-          btn.textContent = 'Kirim'; btn.disabled = false; f('fJudul').value = ''; f('fLink').value = ''; f('fFile').value = ''; f('pratinjau').style.display = 'none'; dataGambar = null;
-        }).catch(() => { btn.disabled = false; btn.textContent = 'Kirim'; salah('Gagal mengirim. Periksa internet, lalu coba lagi.'); });
-    });
-  </script>
+    </script>
 
   <script src="app.js"></script>
   <script>
     window.Pemandu && window.Pemandu.set([
       'Ini Galeri Karya. Pakai tab di atas untuk memilih video, infografis, atau poster.',
-      'Lihat karya teman-temanmu, atau klik tombol Kirim Karyamu untuk mengumpulkan karyamu sendiri!'
+      'Karya di sini berasal dari Tantangan Masa Kini. Selesaikan tantanganmu, unggah karyamu di sana, dan karyamu akan muncul di galeri ini!'
     ]);
   </script>
 
+<script src="plus.js" defer></script>
 </body>
 </html>

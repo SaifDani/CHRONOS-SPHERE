@@ -394,17 +394,28 @@
 
       var kurangiGerak = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      if (kurangiGerak || !('IntersectionObserver' in window)) {
+      var judul = document.querySelector('.teori-cards-title');
+      var gulir = false, tampil = false;
+      wrap.classList.add('reveal-on');
+      function tampilkan() {
+        if (tampil) return; tampil = true;
+        if (judul) judul.classList.add('tampil');
         cards.forEach(function (c) { c.classList.add('in'); });
-      } else {
-        wrap.classList.add('reveal-on');
-        var io = new IntersectionObserver(function (entri) {
-          entri.forEach(function (e) {
-            if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-          });
-        }, { threshold: 0.15 });
-        cards.forEach(function (c) { io.observe(c); });
       }
+      function cekGulir(e) {
+        if (gulir) return;
+        if (e && e.type === 'scroll' && window.scrollY < 40) return;   // abaikan scroll otomatis saat halaman dibuka
+        gulir = true;
+        ['scroll', 'wheel', 'touchmove'].forEach(function (n) { window.removeEventListener(n, cekGulir); });
+        if (!('IntersectionObserver' in window)) { tampilkan(); return; }
+        var io = new IntersectionObserver(function (entri) {
+          entri.forEach(function (x) {
+            if (x.isIntersecting) { io.disconnect(); tampilkan(); }
+          });
+        }, { threshold: 0, rootMargin: '0px 0px -12% 0px' });
+        io.observe(wrap);   // pantau wadahnya (kartu sendiri bergeser jauh ke samping, jadi tidak pernah "terlihat")
+      }
+      ['scroll', 'wheel', 'touchmove'].forEach(function (n) { window.addEventListener(n, cekGulir, { passive: true }); });
 
       // Efek miring 3D hanya untuk perangkat dengan mouse
       if (!kurangiGerak && window.matchMedia('(hover:hover) and (pointer:fine)').matches) {

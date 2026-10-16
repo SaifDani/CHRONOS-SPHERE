@@ -8,6 +8,239 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+      /* ===== Vibes sama seperti Peta Eksplorasi: kaca + bingkai gradien berputar + kilau emas + 3D tilt ===== */
+      @property --ang { syntax:'<angle>'; inherits:false; initial-value:0deg; }
+      @property --spot{ syntax:'<number>'; inherits:true;  initial-value:0; }
+
+      body.page-peta .teori-page{ max-width:860px; margin-left:auto; margin-right:auto; perspective:1100px; font-family:'Nunito',system-ui,sans-serif; }
+
+      /* kartu kaca dasar (hero, chip, section, catatan) */
+      body.page-peta .teori-page .fx{
+        --rx:0deg; --ry:0deg;
+        position:relative; isolation:isolate; overflow:hidden;
+        border-radius:18px; margin-bottom:1.1rem;
+        background:
+          radial-gradient(circle at var(--mx,50%) var(--my,0%),
+            color-mix(in srgb,var(--acc-a,#888) calc(var(--spot) * 30%),transparent), transparent 62%),
+          rgba(255,255,255,.05);
+        border:1px solid rgba(255,255,255,.12);
+        color:#e4eaff;
+        transform:perspective(900px) rotateX(var(--ry)) rotateY(var(--rx));
+        transition:transform .22s ease-out, translate .3s ease, scale .3s ease, box-shadow .45s ease, border-color .45s ease, --spot .45s ease;
+        will-change:transform;
+      }
+      body.page-peta .teori-page .fx:hover{
+        --spot:1; translate:0 -4px; scale:1.012; border-color:transparent;
+        box-shadow:0 20px 40px -16px color-mix(in srgb,var(--acc-a,#888) 70%,transparent),
+                   0 0 28px -8px color-mix(in srgb,var(--acc-b,#bbb) 55%,transparent);
+      }
+
+      /* bingkai gradien berputar */
+      body.page-peta .teori-page .fx::before{
+        content:''; position:absolute; inset:0; border-radius:inherit; padding:2px; z-index:3;
+        background:conic-gradient(from var(--ang), var(--acc-a,#888), transparent 28%, var(--acc-b,#bbb) 52%, transparent 78%, var(--acc-a,#888));
+        -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite:xor; mask-composite:exclude;
+        opacity:0; transition:opacity .45s ease; pointer-events:none;
+        animation:bingkaiPutar 4s linear infinite;
+      }
+      body.page-peta .teori-page .fx:hover::before{ opacity:1; }
+      body.page-peta .teori-page .teori-hero::before{ opacity:.8; }
+      @keyframes bingkaiPutar{ to{ --ang:360deg; } }
+
+      /* kilatan cahaya menyapu */
+      body.page-peta .teori-page .fx::after{
+        content:''; position:absolute; top:0; bottom:0; left:-70%; width:45%; z-index:4;
+        background:linear-gradient(105deg,transparent,rgba(255,255,255,.28),transparent);
+        transform:skewX(-20deg); opacity:0; pointer-events:none;
+      }
+      body.page-peta .teori-page .fx:hover::after{ animation:kilatSapu .9s ease-out; }
+      body.page-peta .teori-page .teori-hero::after{ animation:kilatPeriodik 8s ease-in-out 1.2s infinite; }
+      @keyframes kilatSapu{ 0%{ left:-70%; opacity:0; } 15%{ opacity:1; } 100%{ left:140%; opacity:0; } }
+      @keyframes kilatPeriodik{ 0%{ left:-70%; opacity:0; } 5%{ opacity:1; } 20%{ left:140%; opacity:0; } 100%{ left:140%; opacity:0; } }
+
+      /* ----- HERO ----- */
+      body.page-peta .teori-page .teori-hero{
+        display:flex; align-items:center; gap:1.1rem; padding:1.4rem 1.4rem;
+        background:
+          radial-gradient(circle at 12% 20%, color-mix(in srgb,var(--acc-a,#888) 30%,transparent), transparent 55%),
+          radial-gradient(circle at 92% 90%, color-mix(in srgb,var(--acc-b,#bbb) 22%,transparent), transparent 50%),
+          rgba(255,255,255,.05);
+      }
+      body.page-peta .teori-page .teori-icon{
+        position:relative; flex:none; width:88px; height:88px; display:grid; place-items:center;
+        font-size:2.8rem; line-height:1; border-radius:50%;
+        background:radial-gradient(circle at 30% 25%, rgba(255,255,255,.38), transparent 45%),
+                   linear-gradient(135deg,var(--acc-a,#888),var(--acc-b,#bbb));
+        box-shadow:0 0 28px -4px var(--acc-b,#bbb), inset 0 -6px 12px rgba(0,0,0,.22);
+        animation:emojiMelayang 3.6s ease-in-out infinite;
+      }
+      body.page-peta .teori-page .teori-icon::before,
+      body.page-peta .teori-page .teori-icon::after{
+        content:''; position:absolute; inset:0; border-radius:50%;
+        border:2px solid color-mix(in srgb,var(--acc-b,#bbb) 80%,#fff);
+        animation:cincinDenyut 2.8s ease-out infinite;
+      }
+      body.page-peta .teori-page .teori-icon::after{ animation-delay:-1.4s; }
+      @keyframes cincinDenyut{ 0%{ transform:scale(1); opacity:.85; } 100%{ transform:scale(1.6); opacity:0; } }
+      @keyframes emojiMelayang{ 0%,100%{ translate:0 3px; } 50%{ translate:0 -7px; } }
+
+      body.page-peta .teori-page .teori-hero > div{ min-width:0; }
+      body.page-peta .teori-page .teori-kicker{
+        font-size:.72rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+        color:var(--acc-b,#bbb); text-shadow:0 0 12px color-mix(in srgb,var(--acc-a,#888) 70%,transparent);
+      }
+      body.page-peta .teori-page .teori-hero h1{
+        position:relative; margin:.25rem 0 .5rem; padding-bottom:.55rem;
+        font-family:'Cinzel',serif; font-weight:800; letter-spacing:.04em; line-height:1.15;
+        font-size:clamp(1.6rem,6vw,2.4rem);
+        background:linear-gradient(90deg,#fff 0%,var(--acc-b,#f4d64d) 25%,#fff 50%,var(--acc-b,#f4d64d) 75%,#fff 100%);
+        background-size:250% 100%;
+        -webkit-background-clip:text; background-clip:text;
+        -webkit-text-fill-color:transparent; color:transparent;
+        animation:judulKilau 6s linear infinite;
+      }
+      body.page-peta .teori-page .teori-hero h1::after{
+        content:''; position:absolute; left:0; bottom:0; height:2px; width:90px; border-radius:2px;
+        background:linear-gradient(90deg,var(--acc-a,#888),var(--acc-b,#bbb),transparent);
+        box-shadow:0 0 12px var(--acc-b,#bbb);
+        animation:judulGaris 3.2s ease-in-out infinite;
+      }
+      @keyframes judulKilau{ to{ background-position:-250% 0; } }
+      @keyframes judulGaris{ 0%,100%{ width:60px; opacity:.6; } 50%{ width:150px; opacity:1; } }
+      body.page-peta .teori-page .teori-sub{ color:#cfd9f5; font-size:.95rem; line-height:1.5; }
+
+      /* ----- CHIP tokoh & periode ----- */
+      body.page-peta .teori-page .teori-meta{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:.9rem; margin-bottom:1.1rem; }
+      body.page-peta .teori-page .teori-chip{ margin:0; padding:.9rem 1.1rem; display:block; }
+      body.page-peta .teori-page .teori-chip b{
+        display:block; margin-bottom:.3rem; font-size:.74rem; font-weight:800; letter-spacing:.1em;
+        text-transform:uppercase; color:var(--acc-b,#bbb);
+      }
+      body.page-peta .teori-page .teori-chip span{ display:block; color:#fff; font-weight:700; line-height:1.45; }
+
+      /* ----- SECTION ----- */
+      body.page-peta .teori-page .teori-section{ padding:1.15rem 1.25rem; }
+      body.page-peta .teori-page .teori-section h4{
+        display:flex; align-items:center; gap:.65rem; margin:0 0 .8rem;
+        font-family:'Cinzel',serif; font-size:.9rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+        color:var(--acc-b,#bbb); text-shadow:0 0 14px color-mix(in srgb,var(--acc-a,#888) 60%,transparent);
+      }
+      body.page-peta .teori-page .teori-section h4::before{
+        content:''; flex:none; width:9px; height:9px; rotate:45deg; border-radius:2px;
+        background:linear-gradient(135deg,var(--acc-a,#888),var(--acc-b,#bbb));
+        box-shadow:0 0 10px var(--acc-b,#bbb);
+        animation:berdenyut 2.6s ease-in-out infinite;
+      }
+      body.page-peta .teori-page .teori-section h4::after{
+        content:''; flex:1; height:1px;
+        background:linear-gradient(90deg,color-mix(in srgb,var(--acc-b,#bbb) 70%,transparent),transparent);
+      }
+      @keyframes berdenyut{ 0%,100%{ scale:.8; opacity:.7; } 50%{ scale:1.25; opacity:1; } }
+      body.page-peta .teori-page .teori-ringkasan{ margin:0; line-height:1.8; color:#e4eaff; }
+
+      /* jalur persebaran */
+      body.page-peta .teori-page .jalur-chips{ display:flex; flex-wrap:wrap; align-items:center; gap:.5rem .55rem; }
+      body.page-peta .teori-page .jalur-chip{
+        padding:.42rem .9rem; border-radius:999px; color:#fff; font-weight:800; font-size:.85rem;
+        background:linear-gradient(135deg,color-mix(in srgb,var(--acc-a,#888) 40%,transparent),color-mix(in srgb,var(--acc-b,#bbb) 22%,transparent));
+        border:1px solid color-mix(in srgb,var(--acc-b,#bbb) 65%,transparent);
+        box-shadow:0 0 14px -4px var(--acc-b,#bbb);
+        transition:translate .25s ease, scale .25s ease, box-shadow .3s ease;
+      }
+      body.page-peta .teori-page .jalur-chip:hover{ translate:0 -3px; scale:1.06; box-shadow:0 8px 18px -4px var(--acc-a,#888); }
+      body.page-peta .teori-page .jalur-arrow{ color:var(--acc-b,#bbb); font-weight:800; animation:panahGeser 1.6s ease-in-out infinite; }
+      @keyframes panahGeser{ 0%,100%{ translate:-2px 0; opacity:.6; } 50%{ translate:4px 0; opacity:1; } }
+
+      /* dasar & bukti */
+      body.page-peta .teori-page .teori-bukti{ list-style:none; margin:0; padding:0; display:grid; gap:.65rem; }
+      body.page-peta .teori-page .teori-bukti li{
+        position:relative; padding-left:1.6rem; line-height:1.65; color:#e4eaff;
+        transition:translate .25s ease;
+      }
+      body.page-peta .teori-page .teori-bukti li::before{
+        content:''; position:absolute; left:.15rem; top:.55em; width:9px; height:9px; border-radius:50%;
+        background:linear-gradient(135deg,var(--acc-a,#888),var(--acc-b,#bbb));
+        box-shadow:0 0 10px var(--acc-b,#bbb);
+      }
+      body.page-peta .teori-page .teori-bukti li:hover{ translate:4px 0; }
+
+      /* infografik */
+      body.page-peta .teori-page .infographic-slot{
+        margin:0; border-radius:14px; overflow:hidden;
+        border:1px solid color-mix(in srgb,var(--acc-b,#bbb) 40%,transparent);
+        box-shadow:0 0 24px -10px var(--acc-b,#bbb);
+      }
+      body.page-peta .teori-page .infographic-img{ display:block; width:100%; height:auto; cursor:zoom-in; transition:scale .5s ease, filter .3s ease; }
+      body.page-peta .teori-page .infographic-img:hover{ scale:1.03; filter:brightness(1.08); }
+      body.page-peta .teori-page .infographic-empty{
+        padding:2rem 1rem; text-align:center; color:#cfd9f5; line-height:1.6;
+        border:2px dashed color-mix(in srgb,var(--acc-b,#bbb) 50%,transparent); border-radius:14px;
+      }
+      body.page-peta .teori-page .infographic-empty .ie-icon{ display:block; font-size:2.4rem; animation:emojiMelayang 3.6s ease-in-out infinite; }
+      body.page-peta .teori-page .infographic-empty code{ color:var(--acc-b,#bbb); }
+
+      /* catatan kritis (emas) */
+      body.page-peta .teori-page .teori-catatan{
+        padding:1.1rem 1.25rem; border-left:4px solid #f4d64d;
+        background:
+          radial-gradient(circle at var(--mx,50%) var(--my,0%), rgba(244,214,77,calc(var(--spot) * .22)), transparent 62%),
+          linear-gradient(135deg,rgba(244,214,77,.10),rgba(255,255,255,.04));
+        animation:catatanNyala 4s ease-in-out infinite;
+      }
+      body.page-peta .teori-page .teori-catatan b{ display:block; margin-bottom:.4rem; color:#f4d64d; letter-spacing:.04em; }
+      body.page-peta .teori-page .teori-catatan p{ margin:0; line-height:1.75; color:#f1efe0; }
+      @keyframes catatanNyala{ 0%,100%{ box-shadow:0 0 0 0 rgba(244,214,77,0); } 50%{ box-shadow:0 0 26px -6px rgba(244,214,77,.45); } }
+
+      /* tombol sebelumnya / berikutnya */
+      body.page-peta .teori-page .teori-pager{ display:flex; justify-content:space-between; gap:.8rem; margin-top:1.3rem; }
+      body.page-peta .teori-page .teori-pager a{
+        position:relative; overflow:hidden; display:inline-flex; align-items:center;
+        padding:.75rem 1.25rem; border-radius:999px; color:#fff; font-weight:800; text-decoration:none;
+        background:linear-gradient(135deg,var(--acc-a,#888),var(--acc-b,#bbb));
+        box-shadow:0 8px 20px -8px var(--acc-a,#888);
+        transition:translate .25s ease, scale .25s ease, box-shadow .3s ease, filter .3s ease;
+      }
+      body.page-peta .teori-page .teori-pager a::before{
+        content:''; position:absolute; top:0; bottom:0; left:-60%; width:40%;
+        background:linear-gradient(105deg,transparent,rgba(255,255,255,.55),transparent); transform:skewX(-20deg);
+      }
+      body.page-peta .teori-page .teori-pager a:hover{ translate:0 -3px; filter:brightness(1.12); box-shadow:0 12px 24px -6px var(--acc-a,#888); }
+      body.page-peta .teori-page .teori-pager a:hover::before{ animation:kilatSapu .9s ease-out; }
+      body.page-peta .teori-page .teori-pager a:active{ scale:.96; }
+
+      /* masuk berurutan saat di-scroll (diaktifkan script di bawah) */
+      body.page-peta .teori-page.reveal-on .fx:not(.in){ opacity:0; translate:0 50px; scale:.94; }
+      body.page-peta .teori-page.reveal-on .fx.in{
+        animation:kartuMasuk .9s cubic-bezier(.2,.9,.25,1.12) backwards;
+        animation-delay:calc(var(--i,0) * .13s);
+      }
+      @keyframes kartuMasuk{
+        0%  { opacity:0; translate:0 56px; scale:.92; filter:blur(6px); }
+        60% { filter:blur(0); }
+        100%{ opacity:1; translate:0 0; scale:1; filter:blur(0); }
+      }
+      body.page-peta .teori-page.reveal-on .fx.in .jalur-chip{ animation:chipMuncul .5s cubic-bezier(.34,1.56,.64,1) backwards; animation-delay:calc(.3s + var(--k,0) * .12s); }
+      body.page-peta .teori-page.reveal-on .fx.in .teori-bukti li{ animation:slideMasuk .6s ease-out backwards; animation-delay:calc(.3s + var(--k,0) * .13s); }
+      @keyframes chipMuncul{ from{ opacity:0; scale:.6; } to{ opacity:1; scale:1; } }
+      @keyframes slideMasuk{ from{ opacity:0; translate:-18px 0; } to{ opacity:1; translate:0 0; } }
+
+      @media (max-width:520px){
+        body.page-peta .teori-page .teori-hero{ gap:.85rem; padding:1.1rem; }
+        body.page-peta .teori-page .teori-icon{ width:68px; height:68px; font-size:2.1rem; }
+        body.page-peta .teori-page .teori-pager{ flex-direction:column; }
+        body.page-peta .teori-page .teori-pager a{ justify-content:center; }
+      }
+      @media (prefers-reduced-motion:reduce){
+        body.page-peta .teori-page *, body.page-peta .teori-page *::before, body.page-peta .teori-page *::after{ animation:none !important; }
+        body.page-peta .teori-page .fx{ transition:none; }
+      }
+    </style>
+    <link rel="stylesheet" href="plus.css" />
 </head>
 <body class="page-peta">
 
@@ -20,7 +253,7 @@
        dibuka lewat teori.html?teori=yunnan | taiwan | africa | nusantara -->
   <main class="teori-page" id="teoriPage">
 
-    <header class="teori-hero">
+    <header class="teori-hero fx" data-tilt="7">
       <span class="teori-icon" id="teoriIcon"></span>
       <div>
         <div class="teori-kicker">Teori Asal-Usul Nenek Moyang</div>
@@ -30,31 +263,31 @@
     </header>
 
     <div class="teori-meta">
-      <div class="teori-chip"><b>👤 Tokoh</b><span id="teoriTokoh"></span></div>
-      <div class="teori-chip"><b>⏳ Periode</b><span id="teoriPeriode"></span></div>
+      <div class="teori-chip fx" data-tilt="9"><b>👤 Tokoh</b><span id="teoriTokoh"></span></div>
+      <div class="teori-chip fx" data-tilt="9"><b>⏳ Periode</b><span id="teoriPeriode"></span></div>
     </div>
 
-    <section class="teori-section">
+    <section class="teori-section fx" data-tilt="3">
       <h4>Penjelasan</h4>
       <p class="teori-ringkasan" id="teoriRingkasan"></p>
     </section>
 
-    <section class="teori-section">
+    <section class="teori-section fx" data-tilt="3">
       <h4>Infografik</h4>
       <figure class="infographic-slot" id="teoriInfografik"></figure>
     </section>
 
-    <section class="teori-section">
+    <section class="teori-section fx" data-tilt="3">
       <h4>Jalur persebaran</h4>
       <div class="jalur-chips" id="teoriJalur"></div>
     </section>
 
-    <section class="teori-section">
+    <section class="teori-section fx" data-tilt="3">
       <h4>Dasar &amp; bukti</h4>
       <ul class="teori-bukti" id="teoriBukti"></ul>
     </section>
 
-    <div class="teori-catatan">
+    <div class="teori-catatan fx" data-tilt="4">
       <b>🔍 Catatan kritis</b>
       <p id="teoriCatatan"></p>
     </div>
@@ -269,5 +502,61 @@
   </script>
 
 
+
+  <script>
+    /* Efek ala Peta: kartu muncul berurutan saat di-scroll + miring 3D & sorot cahaya mengikuti kursor */
+    (function () {
+      var page = document.getElementById('teoriPage');
+      if (!page) return;
+      var fx = Array.prototype.slice.call(page.querySelectorAll('.fx'));
+
+      // urutan muncul untuk chip jalur & daftar bukti
+      var k = 0;
+      Array.prototype.forEach.call(document.getElementById('teoriJalur').children, function (n) {
+        if (n.classList.contains('jalur-chip')) n.style.setProperty('--k', k++);
+      });
+      Array.prototype.forEach.call(document.getElementById('teoriBukti').children, function (n, i) {
+        n.style.setProperty('--k', i);
+      });
+
+      var kurangiGerak = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (!kurangiGerak && 'IntersectionObserver' in window) {
+        page.classList.add('reveal-on');
+        var io = new IntersectionObserver(function (entri) {
+          var n = 0;
+          entri.forEach(function (x) {
+            if (!x.isIntersecting) return;
+            x.target.style.setProperty('--i', n++);
+            x.target.classList.add('in');
+            io.unobserve(x.target);
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -5% 0px' });
+        fx.forEach(function (c) { io.observe(c); });
+      }
+
+      // miring 3D hanya untuk perangkat dengan mouse
+      if (!kurangiGerak && window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
+        fx.forEach(function (c) {
+          var kuat = parseFloat(c.getAttribute('data-tilt')) || 6;
+          c.addEventListener('pointermove', function (e) {
+            var r = c.getBoundingClientRect();
+            var x = (e.clientX - r.left) / r.width;
+            var y = (e.clientY - r.top) / r.height;
+            c.style.setProperty('--rx', ((x - 0.5) * kuat).toFixed(2) + 'deg');
+            c.style.setProperty('--ry', ((0.5 - y) * kuat).toFixed(2) + 'deg');
+            c.style.setProperty('--mx', (x * 100).toFixed(1) + '%');
+            c.style.setProperty('--my', (y * 100).toFixed(1) + '%');
+          });
+          c.addEventListener('pointerleave', function () {
+            c.style.setProperty('--rx', '0deg');
+            c.style.setProperty('--ry', '0deg');
+          });
+        });
+      }
+    })();
+  </script>
+
+<script src="plus.js" defer></script>
 </body>
 </html>

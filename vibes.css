@@ -1,0 +1,153 @@
+/* ============================================================
+   vibes.css — gaya ringan ala Peta Eksplorasi
+   Dipakai halaman: panduan, papan_skor, pengaturan
+   Semua aturan ada di bawah body.page-vibes, jadi halaman lain aman.
+   ============================================================ */
+@property --spot{ syntax:'<number>'; inherits:true; initial-value:0; }
+@property --ang { syntax:'<angle>';  inherits:false; initial-value:0deg; }
+
+/* ---------- judul halaman: kilau emas + garis hidup ---------- */
+body.page-vibes .page-title{
+  position:relative; display:block; padding-bottom:.7rem; letter-spacing:.04em;
+  background:linear-gradient(90deg,#fff 0%,#f4d64d 25%,#fff 50%,#f4d64d 75%,#fff 100%);
+  background-size:250% 100%;
+  -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent; color:transparent; text-shadow:none;
+  filter:drop-shadow(0 0 14px rgba(244,214,77,.22));
+  animation:vbKilau 6s linear infinite;
+}
+body.page-vibes .page-title::after{
+  content:''; position:absolute; left:50%; bottom:0; height:2px; width:90px;
+  transform:translateX(-50%); border-radius:2px;
+  background:linear-gradient(90deg,transparent,#e0b24a,#f4d64d,#e0b24a,transparent);
+  box-shadow:0 0 12px rgba(244,214,77,.7);
+  animation:vbGaris 3.2s ease-in-out infinite;
+}
+@keyframes vbKilau{ to{ background-position:-250% 0; } }
+@keyframes vbGaris{ 0%,100%{ width:60px; opacity:.6; } 50%{ width:150px; opacity:1; } }
+
+/* ---------- kartu kaca (Panduan & Pengaturan) ---------- */
+body.page-vibes .vfx{
+  --spot:0;
+  position:relative; isolation:isolate; overflow:hidden;
+  border-radius:18px;
+  background:
+    radial-gradient(circle at var(--mx,50%) var(--my,0%),
+      color-mix(in srgb,var(--acc-a,#2f7ce8) calc(var(--spot) * 28%),transparent), transparent 62%),
+    rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:inset 3px 0 0 var(--acc-b,#4a9cf5);
+  color:#e4eaff;
+  transition:translate .3s ease, box-shadow .45s ease, border-color .45s ease, --spot .45s ease;
+}
+body.page-vibes .teori-page .teori-section.vfx{ margin-bottom:1rem; padding:1.1rem 1.25rem; }
+body.page-vibes .vfx:hover{
+  --spot:1; translate:0 -3px; border-color:transparent;
+  box-shadow:inset 3px 0 0 var(--acc-b,#4a9cf5),
+             0 18px 36px -16px color-mix(in srgb,var(--acc-a,#2f7ce8) 70%,transparent),
+             0 0 26px -8px color-mix(in srgb,var(--acc-b,#4a9cf5) 50%,transparent);
+}
+/* bingkai gradien (muncul saat disorot) */
+body.page-vibes .vfx::before{
+  content:''; position:absolute; inset:0; border-radius:inherit; padding:2px; z-index:3;
+  background:conic-gradient(from var(--ang), var(--acc-a,#2f7ce8), transparent 28%, var(--acc-b,#4a9cf5) 52%, transparent 78%, var(--acc-a,#2f7ce8));
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; mask-composite:exclude;
+  opacity:0; transition:opacity .45s ease; pointer-events:none;
+  animation:vbPutar 4s linear infinite;
+}
+body.page-vibes .vfx:hover::before{ opacity:1; }
+@keyframes vbPutar{ to{ --ang:360deg; } }
+/* kilatan cahaya */
+body.page-vibes .vfx::after{
+  content:''; position:absolute; top:0; bottom:0; left:-70%; width:45%; z-index:4;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.22),transparent);
+  transform:skewX(-20deg); opacity:0; pointer-events:none;
+}
+body.page-vibes .vfx:hover::after{ animation:vbSapu .9s ease-out; }
+@keyframes vbSapu{ 0%{ left:-70%; opacity:0; } 15%{ opacity:1; } 100%{ left:140%; opacity:0; } }
+
+/* judul kartu: warna aksen + garis tipis */
+body.page-vibes .vfx h3,
+body.page-vibes .vfx h4{
+  display:flex; align-items:center; gap:.65rem; margin-top:0;
+  font-family:'Cinzel',serif; font-weight:800; letter-spacing:.06em;
+  color:var(--acc-b,#4a9cf5);
+  text-shadow:0 0 14px color-mix(in srgb,var(--acc-a,#2f7ce8) 60%,transparent);
+}
+body.page-vibes .vfx h3::after,
+body.page-vibes .vfx h4::after{
+  content:''; flex:1; height:1px;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--acc-b,#4a9cf5) 70%,transparent),transparent);
+}
+body.page-vibes .vfx p,
+body.page-vibes .vfx .teori-ringkasan{ line-height:1.75; color:#dfe7ff; }
+body.page-vibes .vfx .teori-ringkasan{ margin:0; }
+
+/* ---------- Panduan: baris level berpikir ---------- */
+body.page-vibes .teori-page .jalur-chips{ display:block; margin-top:.55rem; }
+body.page-vibes .teori-page .jalur-chip{
+  display:block; padding:.55rem .9rem; border-radius:12px; color:#fff; font-weight:700; line-height:1.5;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--acc-a,#2f7ce8) 28%,transparent),rgba(255,255,255,.04));
+  border:1px solid color-mix(in srgb,var(--acc-b,#4a9cf5) 40%,transparent);
+  transition:translate .25s ease, box-shadow .3s ease;
+}
+body.page-vibes .teori-page .jalur-chip:hover{ translate:4px 0; box-shadow:0 8px 18px -8px var(--acc-a,#2f7ce8); }
+
+/* ---------- tombol ---------- */
+body.page-vibes .hotspot-submit,
+body.page-vibes .ps-refresh,
+body.page-vibes .kuis-link-btn{
+  position:relative; overflow:hidden;
+  transition:translate .25s ease, scale .25s ease, box-shadow .3s ease, filter .3s ease;
+}
+body.page-vibes .hotspot-submit::before,
+body.page-vibes .ps-refresh::before,
+body.page-vibes .kuis-link-btn::before{
+  content:''; position:absolute; top:0; bottom:0; left:-60%; width:40%; pointer-events:none;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent); transform:skewX(-20deg);
+}
+body.page-vibes .hotspot-submit:not(:disabled):hover,
+body.page-vibes .ps-refresh:hover,
+body.page-vibes .kuis-link-btn:hover{ translate:0 -2px; filter:brightness(1.1); box-shadow:0 10px 20px -8px rgba(0,0,0,.55); }
+body.page-vibes .hotspot-submit:not(:disabled):hover::before,
+body.page-vibes .ps-refresh:hover::before,
+body.page-vibes .kuis-link-btn:hover::before{ animation:vbSapu .9s ease-out; }
+body.page-vibes .hotspot-submit:not(:disabled):active,
+body.page-vibes .ps-refresh:active,
+body.page-vibes .kuis-link-btn:active{ scale:.97; }
+
+/* kolom isian: sorot emas saat fokus */
+body.page-vibes .kuis-input{ transition:border-color .25s ease, box-shadow .25s ease; }
+body.page-vibes .kuis-input:focus{
+  outline:none; border-color:#f4d64d;
+  box-shadow:0 0 0 3px rgba(244,214,77,.22), 0 0 18px -4px rgba(244,214,77,.6);
+}
+
+/* ---------- Papan Skor: hanya sentuhan hover (tata letak tetap dari skor.css) ---------- */
+body.page-vibes .ps-tab{ transition:translate .2s ease, filter .3s ease, background-color .25s ease, color .25s ease, border-color .25s ease, box-shadow .3s ease; }
+body.page-vibes .ps-tab:hover{ translate:0 -2px; filter:brightness(1.15); }
+body.page-vibes .ps-list li{ transition:translate .25s ease, filter .3s ease, box-shadow .3s ease, background-color .25s ease, border-color .25s ease; }
+body.page-vibes .ps-list li:hover{ translate:4px 0; filter:brightness(1.12); box-shadow:0 10px 22px -12px rgba(244,214,77,.55); }
+body.page-vibes .ps-pod{ transition:translate .3s ease, filter .3s ease, box-shadow .3s ease; }
+body.page-vibes .ps-pod:hover{ translate:0 -6px; filter:brightness(1.08); }
+
+/* ---------- muncul halus saat dibuka / di-scroll ---------- */
+body.page-vibes.vb-reveal .vfx:not(.in){ opacity:0; translate:0 36px; }
+body.page-vibes.vb-reveal .vfx.in{
+  animation:vbMasuk .7s cubic-bezier(.2,.9,.25,1.1) backwards;
+  animation-delay:calc(var(--i,0) * .09s);
+}
+@keyframes vbMasuk{
+  from{ opacity:0; translate:0 40px; filter:blur(4px); }
+  60% { filter:blur(0); }
+  to  { opacity:1; translate:0 0; filter:blur(0); }
+}
+
+@media (prefers-reduced-motion:reduce){
+  body.page-vibes .page-title, body.page-vibes .page-title::after,
+  body.page-vibes .vfx::before, body.page-vibes .vfx::after,
+  body.page-vibes .vfx{ animation:none !important; }
+  body.page-vibes .vfx, body.page-vibes .ps-tab, body.page-vibes .ps-list li, body.page-vibes .ps-pod{ transition:none; }
+}

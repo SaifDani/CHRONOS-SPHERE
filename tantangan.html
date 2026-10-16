@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="plus.css" />
 </head>
 <body class="page-peta">
 
@@ -79,9 +81,24 @@
         </div>
       </div>
 
-      <button class="upload-btn" id="tombolUnggah">Salin Ide &amp; Unggah Karya</button>
-      <p class="tm-pesan" id="unggahPesan" hidden></p>
-      <p class="upload-hint" id="unggahHint" hidden>Form unggah karya belum dipasang. Lihat komentar di kode untuk cara memasangnya.</p>
+      <div class="kr-form" id="formKarya">
+        <label class="tm-label" for="krJudul">Judul karya</label>
+        <input class="hotspot-input tm-input" id="krJudul" maxlength="80" placeholder="Contoh: Hemat Air untuk Bumi" autocomplete="off">
+        <div id="krBoxFile">
+          <label class="tm-label" for="krFile">Pilih gambar karya (JPG / PNG / WEBP)</label>
+          <input class="hotspot-input tm-input" type="file" id="krFile" accept="image/jpeg,image/png,image/webp">
+          <img class="kr-pratinjau" id="krPratinjau" alt="Pratinjau karya">
+          <p class="upload-hint">Gambar otomatis dikecilkan supaya cepat terkirim.</p>
+        </div>
+        <div id="krBoxLink" hidden>
+          <label class="tm-label" for="krLink">Link video YouTube</label>
+          <input class="hotspot-input tm-input" id="krLink" inputmode="url" placeholder="https://youtu.be/...">
+          <p class="upload-hint">Unggah videomu ke YouTube dengan mode <b>Tidak Publik (Unlisted)</b>, lalu tempel linknya di sini.</p>
+        </div>
+        <p class="tm-pesan" id="unggahPesan" hidden></p>
+        <button class="upload-btn" id="tombolUnggah">Kirim Karya ke Galeri</button>
+        <p class="upload-hint">Karyamu dilihat gurumu dulu, lalu tampil di <a href="galeri.html">Galeri Karya</a>.</p>
+      </div>
     </div>
 
     <div class="tm-kompetensi">
@@ -355,60 +372,69 @@
     });
 
     /* ============================================================
-       FORM UNGGAH KARYA
-       Buat Google Form dengan pertanyaan: Nama Kelompok, Judul Karya,
-       Format (Video/Infografis/Poster), dan Upload File.
-       Tempel link "Kirim" (bukan link edit) form itu di antara
-       tanda kutip di bawah ini. Kosongkan untuk menonaktifkan tombol.
+       UNGGAH KARYA -> tampil di Galeri Karya (galeri.html)
+       Karya dikirim ke Web App galeri; guru menandai "ya" di Sheet agar tampil.
        ============================================================ */
-    const URL_FORM_UNGGAH = 'https://docs.google.com/forms/d/e/1FAIpQLSd85E9nvM5ceK2u2-1VuzVudAQdwj0uDR3GFBYoprTkcPn5zA/viewform?usp=publish-editor';
-
-    const elPesan = document.getElementById('unggahPesan');
-    function tampilPesan(teks) {
+    const GALERI_URL = 'https://script.google.com/macros/s/AKfycbx0U0iV280vs7M_yxxcd6gqxmzNwcKXmNofRDc_C-9bDvC9ewUIxPB51kHiosIDfu64/exec';
+    const kr = id => document.getElementById(id);
+    const elPesan = kr('unggahPesan');
+    function tampilPesan(teks, galat) {
       elPesan.textContent = teks;
+      elPesan.classList.toggle('galat', !!galat);
       elPesan.hidden = false;
     }
-
-    /* Rangkuman semua langkah, siap ditempel ke Google Form */
-    function susunRangkuman() {
-      const m = MISI[state.misi];
-      const baris = [
-        'NAMA/KELOMPOK: ' + (state.nama.trim() || '-') + ' (' + (state.kelas.trim() || '-') + ')',
-        'MISI: ' + m.no + ' — ' + m.judul,
-        'TANTANGAN: ' + m.soal[state.soal],
-        'FORMAT KARYA: ' + formatDipilih
-      ];
-      LANGKAH.forEach((l, i) => {
-        const isi = state.langkah[i].trim();
-        if (isi) baris.push('', l.judul.toUpperCase() + ' (' + l.tanya + ')', isi);
-      });
-      return baris.join('\n');
+    function idYoutube(u) { const m = /(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/.exec(u || ''); return m ? m[1] : ''; }
+    let dataGambar = null;
+    function aturFormat() {
+      const v = formatDipilih === 'video';
+      kr('krBoxLink').hidden = !v;
+      kr('krBoxFile').hidden = v;
     }
+    document.querySelectorAll('.format-chip').forEach(c => c.addEventListener('click', aturFormat));
+    aturFormat();
 
-    document.getElementById('tombolUnggah').addEventListener('click', () => {
-      if (!URL_FORM_UNGGAH) {
-        document.getElementById('unggahHint').hidden = false;
-        return;
-      }
+    // Kecilkan gambar (maks 1800px, JPEG) supaya cepat terkirim
+    kr('krFile').addEventListener('change', async () => {
+      dataGambar = null; kr('krPratinjau').style.display = 'none';
+      const file = kr('krFile').files[0]; if (!file) return;
+      try {
+        const bmp = await createImageBitmap(file);
+        const skala = Math.min(1, 1800 / Math.max(bmp.width, bmp.height));
+        const c = document.createElement('canvas');
+        c.width = Math.round(bmp.width * skala); c.height = Math.round(bmp.height * skala);
+        const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(bmp, 0, 0, c.width, c.height);
+        const url = c.toDataURL('image/jpeg', 0.85); dataGambar = url.split(',')[1];
+        kr('krPratinjau').src = url; kr('krPratinjau').style.display = 'block'; elPesan.hidden = true;
+      } catch (e) { tampilPesan('Gambar tidak bisa dibaca. Coba file lain.', true); }
+    });
+
+    kr('tombolUnggah').addEventListener('click', () => {
+      if (!namaValid(state.nama)) { tampilPesan('Isi nama aslimu dulu di bagian Jawaban (langkah 2), ya.', true); elNama.focus(); return; }
+      if (!kelasValid(state.kelas)) { tampilPesan('Isi kelasmu dulu, contoh: X-8 atau XI-2.', true); elKelas.focus(); return; }
       if (state.langkah[4].trim().length < MIN_HURUF) {
-        tampilPesan('Isi dulu langkah 💡 Aksi: tulis ide/solusimu sebelum mengunggah karya.');
-        document.getElementById('ideSolusi').focus();
-        return;
+        tampilPesan('Isi dulu langkah 💡 Aksi: tulis ide/solusimu sebelum mengunggah karya.', true);
+        kr('ideSolusi').focus(); return;
       }
-      const teks = susunRangkuman();
-      try { sessionStorage.setItem(KUNCI_IDE, state.langkah[4].trim()); } catch (e) {}
-
-      // Buka form dulu (sinkron) supaya tidak diblokir pop-up blocker
-      window.open(URL_FORM_UNGGAH, '_blank', 'noopener');
-
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(teks).then(
-          () => tampilPesan('Rangkuman ide sudah disalin. Tinggal tempel (paste) di form.'),
-          () => tampilPesan('Form dibuka. Rangkuman gagal disalin otomatis; ide kamu tetap tersimpan di halaman ini.')
-        );
+      const judul = kr('krJudul').value.trim();
+      if (!judul) { tampilPesan('Beri judul karyamu dulu ya.', true); kr('krJudul').focus(); return; }
+      const d = { aksi: 'karya', jenis: formatDipilih, nama: state.nama.trim(), kelas: state.kelas.trim(), kelompok: state.nama.trim(), judul: judul };
+      if (formatDipilih === 'video') {
+        d.link = kr('krLink').value.trim();
+        if (!idYoutube(d.link)) { tampilPesan('Tempel link YouTube yang benar ya.', true); return; }
       } else {
-        tampilPesan('Form dibuka. Salin ide dari kotak Aksi untuk ditempel di form.');
+        if (!dataGambar) { tampilPesan('Pilih gambar karyamu dulu ya.', true); return; }
+        d.mime = 'image/jpeg'; d.data = dataGambar;
       }
+      try { sessionStorage.setItem(KUNCI_IDE, state.langkah[4].trim()); } catch (e) {}
+      const btn = kr('tombolUnggah');
+      btn.disabled = true; btn.textContent = 'Mengirim...';
+      fetch(GALERI_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(d) })
+        .then(() => {
+          tampilPesan('Terkirim ✓ Karyamu sudah masuk dan akan tampil di Galeri Karya setelah dilihat gurumu.');
+          btn.textContent = 'Kirim Karya ke Galeri'; btn.disabled = false;
+          kr('krJudul').value = ''; kr('krLink').value = ''; kr('krFile').value = ''; kr('krPratinjau').style.display = 'none'; dataGambar = null;
+        })
+        .catch(() => { btn.disabled = false; btn.textContent = 'Kirim Karya ke Galeri'; tampilPesan('Gagal mengirim. Periksa internet, lalu coba lagi.', true); });
     });
 
     /* ============================================================
@@ -517,5 +543,6 @@
     ]);
   </script>
 
+<script src="plus.js" defer></script>
 </body>
 </html>

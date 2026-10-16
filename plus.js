@@ -23,7 +23,7 @@
   function amati(id, fn, opsi) { var e = document.getElementById(id); if (e) new MutationObserver(fn).observe(e, opsi); }
   function ulang(e, kelas) { e.classList.remove(kelas); void e.offsetWidth; e.classList.add(kelas); }
 
-  /* KUIS */
+
   if (document.getElementById('layarSoal')) {
     var all = { childList: true, characterData: true, subtree: true };
     amati('fbJudul', function () {
@@ -42,7 +42,7 @@
     }, { attributes: true, attributeFilter: ['hidden'] });
   }
 
-  /* MISI: konfeti saat jendela hadiah/pencapaian muncul */
+
   var app = document.getElementById('app');
   if (app && app.classList.contains('misi')) {
     new MutationObserver(function (ms) {
@@ -59,16 +59,27 @@
     try { sudah = JSON.parse(localStorage.getItem(K)) || []; } catch (e) {}
     var kotak = document.createElement('div'); kotak.className = 'plus-petunjuk';
     frame.parentNode.insertBefore(kotak, frame);
+    var bawah = document.createElement('div'); bawah.className = 'plus-reset-wrap';
+    // taruh di bawah legenda (bukan di antara peta dan legenda, karena legenda memakai margin negatif)
+    var legenda = document.querySelector('.gm-legenda'), jangkar = legenda || frame;
+    jangkar.parentNode.insertBefore(bawah, jangkar.nextSibling);
     var tampil = function () {
       var n = pins.length, j = sudah.length;
       kotak.innerHTML = j >= n ? '🏆 <b>Hebat!</b> Semua ' + n + ' situs sudah kamu jelajahi.'
         : '👆 Ketuk pin untuk mulai · Situs dijelajahi: <b>' + j + '/' + n + '</b>';
+      bawah.innerHTML = j > 0 ? '<button type="button" class="plus-reset">↺ Reset penghitung situs</button>' : '';
       kotak.insertAdjacentHTML('beforeend', '<i><span style="width:' + (j / n * 100) + '%"></span></i>');
       pins.forEach(function (p) { p.classList.toggle('sudah', sudah.indexOf(p.dataset.id) >= 0); });
     };
     pins.forEach(function (p) { p.addEventListener('click', function () {
       if (sudah.indexOf(p.dataset.id) < 0) { sudah.push(p.dataset.id); try { localStorage.setItem(K, JSON.stringify(sudah)); } catch (e) {} }
     }); });
+    bawah.addEventListener('click', function (e) {
+      if (!e.target.closest('.plus-reset')) return;
+      if (!confirm('Reset penghitung situs yang sudah dijelajahi di perangkat ini?')) return;
+      sudah = []; try { localStorage.removeItem(K); } catch (x) {}
+      tampil();
+    });
     tampil();
   }
 })();

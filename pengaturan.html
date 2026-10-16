@@ -8,8 +8,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="vibes.css" />
 </head>
-<body class="page-peta">
+<body class="page-peta page-vibes">
 
   <div class="top-bar">
     <a href="index.html" class="back-link" id="backLink"><span class="back-icon">&larr;</span> Kembali ke Beranda</a>
@@ -22,7 +23,7 @@
   </div>
 
   <div class="challenge-card" style="max-width:480px;">
-    <h3>Nama Pemain</h3>
+    <h3>👤 Nama Pemain</h3>
     <p>Nama ini dipakai saat main Kuis Petualangan dan muncul di Papan Skor.</p>
     <div class="kuis-label">Nama saat ini</div>
     <input class="kuis-input" id="inputNamaBaru" type="text" maxlength="24" placeholder="Contoh: Kelompok 3 (X-8)">
@@ -32,33 +33,33 @@
   </div>
 
   <div class="challenge-card" style="max-width:480px; margin-top:1rem;">
-    <h3>Skor Lokal</h3>
+    <h3>🏆 Skor Lokal</h3>
     <p id="ringkasanSkor">Memuat…</p>
     <button class="hotspot-submit" id="tombolHapusSkor" style="background:linear-gradient(90deg,#e0435f,#ef6f8c);">Hapus skor lokal di perangkat ini</button>
     <p class="upload-hint" id="hintSkor" hidden></p>
   </div>
 
   <div class="challenge-card" style="max-width:480px; margin-top:1rem;">
-    <h3>Progres Misi</h3>
+    <h3>🧭 Progres Misi</h3>
     <p id="ringkasanMisi">Memuat…</p>
     <button class="hotspot-submit" id="tombolResetMisi" style="background:linear-gradient(90deg,#e0435f,#ef6f8c);">Reset progres misi di perangkat ini</button>
     <p class="upload-hint" id="hintMisi" hidden></p>
   </div>
 
   <div class="challenge-card" style="max-width:480px; margin-top:1rem;">
-    <h3>Draf Jawaban Tantangan</h3>
+    <h3>📝 Draf Jawaban Tantangan</h3>
     <p id="ringkasanIde">Memuat…</p>
     <button class="hotspot-submit" id="tombolHapusIde" style="background:linear-gradient(90deg,#e0435f,#ef6f8c);">Hapus draf jawaban tersimpan</button>
   </div>
 
   <div class="challenge-card" style="max-width:480px; margin-top:1rem;">
-    <h3>Untuk Guru</h3>
+    <h3>🔒 Untuk Guru</h3>
     <p>Hapus skor kuis dan/atau jawaban Tantangan di Papan Skor bersama (Google Sheets). Butuh kata sandi guru.</p>
     <a class="hotspot-submit" href="papan_skor.html#reset" style="display:block; box-sizing:border-box; text-align:center; text-decoration:none;">🔒 Buka menu reset data</a>
   </div>
 
   <div class="challenge-card" style="max-width:480px; margin-top:1rem;">
-    <h3>Tentang</h3>
+    <h3>ℹ️ Tentang</h3>
     <p>CHRONOS-SPHERE — SMA Negeri 1 Kedungwaru, Kabupaten Tulungagung.<br>Semua data (nama, skor, progres misi, draf ide) disimpan langsung di browser perangkat ini, bukan di server — jadi kalau ganti HP/laptop atau membersihkan data browser, data lokal ini akan hilang. Skor yang sudah terkirim ke Papan Skor bersama tetap aman tersimpan di Google Sheets.</p>
   </div>
 
@@ -172,5 +173,6 @@
   <script src="nav.js"></script>
   <script src="app.js"></script>
 
+  <script src="vibes.js"></script>
 </body>
 </html>
