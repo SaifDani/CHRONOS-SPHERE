@@ -32,7 +32,7 @@
         transition:transform .22s ease-out, translate .3s ease, scale .3s ease, box-shadow .45s ease, border-color .45s ease, --spot .45s ease;
         will-change:transform;
       }
-      body.page-peta .teori-page .fx:hover{
+      body.page-peta .teori-page .teori-hero:hover{
         --spot:1; translate:0 -4px; scale:1.012; border-color:transparent;
         box-shadow:0 20px 40px -16px color-mix(in srgb,var(--acc-a,#888) 70%,transparent),
                    0 0 28px -8px color-mix(in srgb,var(--acc-b,#bbb) 55%,transparent);
@@ -48,7 +48,7 @@
         opacity:0; transition:opacity .45s ease; pointer-events:none;
         animation:bingkaiPutar 4s linear infinite;
       }
-      body.page-peta .teori-page .fx:hover::before{ opacity:1; }
+      body.page-peta .teori-page .teori-hero:hover::before{ opacity:1; }
       body.page-peta .teori-page .teori-hero::before{ opacity:.8; }
       @keyframes bingkaiPutar{ to{ --ang:360deg; } }
 
@@ -58,7 +58,7 @@
         background:linear-gradient(105deg,transparent,rgba(255,255,255,.28),transparent);
         transform:skewX(-20deg); opacity:0; pointer-events:none;
       }
-      body.page-peta .teori-page .fx:hover::after{ animation:kilatSapu .9s ease-out; }
+      body.page-peta .teori-page .teori-hero:hover::after{ animation:kilatSapu .9s ease-out; }
       body.page-peta .teori-page .teori-hero::after{ animation:kilatPeriodik 8s ease-in-out 1.2s infinite; }
       @keyframes kilatSapu{ 0%{ left:-70%; opacity:0; } 15%{ opacity:1; } 100%{ left:140%; opacity:0; } }
       @keyframes kilatPeriodik{ 0%{ left:-70%; opacity:0; } 5%{ opacity:1; } 20%{ left:140%; opacity:0; } 100%{ left:140%; opacity:0; } }
@@ -152,7 +152,6 @@
         box-shadow:0 0 14px -4px var(--acc-b,#bbb);
         transition:translate .25s ease, scale .25s ease, box-shadow .3s ease;
       }
-      body.page-peta .teori-page .jalur-chip:hover{ translate:0 -3px; scale:1.06; box-shadow:0 8px 18px -4px var(--acc-a,#888); }
       body.page-peta .teori-page .jalur-arrow{ color:var(--acc-b,#bbb); font-weight:800; animation:panahGeser 1.6s ease-in-out infinite; }
       @keyframes panahGeser{ 0%,100%{ translate:-2px 0; opacity:.6; } 50%{ translate:4px 0; opacity:1; } }
 
@@ -167,7 +166,6 @@
         background:linear-gradient(135deg,var(--acc-a,#888),var(--acc-b,#bbb));
         box-shadow:0 0 10px var(--acc-b,#bbb);
       }
-      body.page-peta .teori-page .teori-bukti li:hover{ translate:4px 0; }
 
       /* infografik */
       body.page-peta .teori-page .infographic-slot{
@@ -176,7 +174,6 @@
         box-shadow:0 0 24px -10px var(--acc-b,#bbb);
       }
       body.page-peta .teori-page .infographic-img{ display:block; width:100%; height:auto; cursor:zoom-in; transition:scale .5s ease, filter .3s ease; }
-      body.page-peta .teori-page .infographic-img:hover{ scale:1.03; filter:brightness(1.08); }
       body.page-peta .teori-page .infographic-empty{
         padding:2rem 1rem; text-align:center; color:#cfd9f5; line-height:1.6;
         border:2px dashed color-mix(in srgb,var(--acc-b,#bbb) 50%,transparent); border-radius:14px;
@@ -535,9 +532,9 @@
         fx.forEach(function (c) { io.observe(c); });
       }
 
-      // miring 3D hanya untuk perangkat dengan mouse
+      // miring 3D hanya untuk perangkat dengan mouse, dan hanya di bagian judul (hero)
       if (!kurangiGerak && window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
-        fx.forEach(function (c) {
+        page.querySelectorAll('.teori-hero').forEach(function (c) {
           var kuat = parseFloat(c.getAttribute('data-tilt')) || 6;
           c.addEventListener('pointermove', function (e) {
             var r = c.getBoundingClientRect();
