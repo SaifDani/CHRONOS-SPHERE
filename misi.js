@@ -572,8 +572,8 @@ const EX_S = [
 ];
 const EX_LV = [
   { n:'Pemula', ik:'🌱', d:'Nama situs terlihat di peta dan petunjuk dibuat jelas. Cocok untuk mulai belajar.', bat:4, xp:70, tol:5, nama:true, kor:false, jper:true, tap:0 },
-  { n:'Penjelajah', ik:'🧭', d:'Nama situs tersembunyi sampai dikunjungi. Petunjuk berupa teka-teki, ada soal ketuk koordinat.', bat:3, xp:85, tol:4, nama:false, kor:true, jper:true, tap:.3 },
-  { n:'Ahli', ik:'🏆', d:'Petunjuk butuh penalaran, jurnal tanpa periode, baterai hanya 2. Untuk yang sudah paham.', bat:2, xp:100, tol:3, nama:false, kor:true, jper:false, tap:.2 }
+  { n:'Penjelajah', ik:'🧭', d:'Nama situs tersembunyi sampai dikunjungi. Petunjuk berupa teka-teki, ada soal ketuk koordinat.', bat:3, xp:85, tol:4, nama:false, kor:true, jper:true, tap:0 },
+  { n:'Ahli', ik:'🏆', d:'Petunjuk butuh penalaran, jurnal tanpa periode, baterai hanya 2. Untuk yang sudah paham.', bat:2, xp:100, tol:3, nama:false, kor:true, jper:false, tap:0 }
 ];
 const EX_CLUE = [
   [ { s:1, t:'Situs di Jawa Timur tempat Eugène Dubois menemukan tempurung kepala Homo erectus pada tahun 1891.', h:'Cari situs yang berhubungan dengan Dubois dan Homo erectus.' },
@@ -750,7 +750,7 @@ function ikatEx(m) {
   A.querySelectorAll('[data-b]').forEach(b => b.onclick = () => { ex.bumi = +b.dataset.b; ex.titik = null; gambarEx(m); });
   const tandai = () => {
     if (!(q && q.tap)) return gambarEx(m);
-    const t = q.tap, tol = EX_LV[ex.lv].tap, s = EX_S[ex.bumi];
+    const t = q.tap, tol = ex.titik.situs ? .05 : EX_LV[ex.lv].tap, s = EX_S[ex.bumi];   // toleransi longgar untuk ketukan di peta (layar HP); ketukan pin situs tetap presisi
     if (Math.abs(t.lon - s.lon) > 1.4 || Math.abs(t.lat - s.lat) > .9) { ex.ok = false; ex.msg = 'Titik sasaran tidak terlihat di tampilan ' + s.n + '. Pilih situs di Pulau Jawa dulu (tanpa mengurangi baterai).'; return gambarEx(m); }
     const d = Math.hypot(ex.titik.lon - t.lon, ex.titik.lat - t.lat);
     if (d <= tol) { ex.q++; ex.ok = true; ex.msg = '✓ ' + q.e; ex.titik = null; if (ex.q === Q.length) return exLulus(m, 'Ekspedisi selesai! ' + q.e); return gambarEx(m); }
@@ -759,11 +759,11 @@ function ikatEx(m) {
   const bm = A.querySelector('.ex-bumi');
   if (bm) bm.onclick = e => {
     const r = bm.getBoundingClientRect(), v = bm.viewBox.baseVal, g = e.target.closest ? e.target.closest('.ex-pin') : null;
-    if (g) { const s = EX_S[+g.dataset.i]; ex.titik = { lon:s.lon, lat:s.lat }; }
+    if (g) { const s = EX_S[+g.dataset.i]; ex.titik = { lon:s.lon, lat:s.lat, situs:true }; }
     else { const x = v.x + (e.clientX - r.left) / r.width * v.width, y = v.y + (e.clientY - r.top) / r.height * v.height; ex.titik = { lon:+(x / 10 + 94).toFixed(2), lat:+(7 - y / 10).toFixed(2) }; }
     tandai();
   };
-  const ts = $('exTitikSitus'); if (ts) ts.onclick = () => { const s = EX_S[ex.visit.includes(ex.bumi) ? ex.bumi : ex.visit[0]]; ex.titik = { lon:s.lon, lat:s.lat }; tandai(); };
+  const ts = $('exTitikSitus'); if (ts) ts.onclick = () => { const s = EX_S[ex.visit.includes(ex.bumi) ? ex.bumi : ex.visit[0]]; ex.titik = { lon:s.lon, lat:s.lat, situs:true }; tandai(); };
   const kj = $('exKunjungi');
   if (kj) kj.onclick = () => {
     const C = EX_CLUE[ex.lv], i = ex.sel, c = C[ex.q]; ex.visit.push(i);
